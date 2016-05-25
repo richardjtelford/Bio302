@@ -1,0 +1,109 @@
+---
+title: "Bio302 Practical 1 Exploratory Data Analysis"
+author: "Richard J. Telford"
+date: "May 25, 2016"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_knit$set(root.dir = normalizePath('../../'))
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+Download file combinedETE.csv from the git and place in a subdirectory called data of your project
+
+Import the data into R (hint use read.csv(…))
+
+```{r}
+#Code assumes that rmd file is in "practical/solutions/" and data are in "data/"
+dat <- read.csv("data/combinedETE.csv")
+```
+
+Find the range, mean, median and variance of variable percAgg.
+
+```{r}
+#range
+range(dat$percAgg)
+
+#mean
+(paMean <- mean(dat$percAgg))
+
+#median
+(paMedian <- median(dat$percAgg))
+
+#variance
+var(dat$percAgg)
+
+```
+
+What is the standard error of the mean of percAgg.
+```{r}
+sd(dat$percAgg) / sqrt(length(dat$percAgg))
+```
+
+Plot a histogram of variable percAgg.
+Use abline to mark the position of the mean and median.
+```{r}
+hist(dat$percAgg)
+abline(v = c(paMean, paMedian), col = c(2, 4))
+```
+With `ggplot2`
+
+```{r}
+library("ggplot2")
+g <- ggplot(dat, aes(x = percAgg)) + 
+         geom_histogram() +
+         geom_vline(xintercept = c(mean = paMean, median = paMedian), colour = c(2, 4))
+print(g)       
+```
+
+
+Plot percAgg against numSites
+```{r}
+with(dat, plot(numSites, percAgg))
+```
+
+
+Find the covariance and correlation of percAgg and numSites
+```{r}
+with(dat, cov(percAgg, numSites))
+with(dat, cor(percAgg, numSites))
+```
+
+Is the correlation significant? (hint use cor.test())
+
+```{r}
+with(dat, cor.test(percAgg, numSites))
+```
+
+How should the p-value be interpreted?
+
+There are three levels in factor land.island. Plot percAgg against numSites coloured by the value of land.island.
+
+```{r}
+with(dat, plot(numSites, percAgg, col = land.island))
+
+```
+with ggplot
+```{r}
+g <- ggplot(dat, aes(x = numSites, y = percAgg, colour = land.island)) +
+  geom_point() +
+  geom_smooth(aes(group = 1), show.legend = FALSE)
+print(g)
+```
+
+
+Is the correlation between percAgg and numSites significant for any of the groups?
+```{r}
+with(dat[dat$land.island == "ETE", ], cor(percAgg, numSites))
+with(subset(dat, land.island == "ETE"), cor(percAgg, numSites))
+```
+
+
+```{r}
+by(dat, dat$land.island, function(x)cor.test(x$percAgg, x$numSites))
+```
+
+
+This is a sub-group analysis, what are the dangers of this type of analysis?
