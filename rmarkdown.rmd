@@ -1,0 +1,28 @@
+---
+title: "RMarkdown"
+author: "Richard J. Telford"
+date: "May 25, 2016"
+output: ioslides_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+## Why
+
+ - Interlaced R code and text compiles to make presentation/paper/thesis 
+ - Dynamic documents - update when data/code changes
+ - Simple formatting
+ - Text files - good for version control
+
+
+## Reading list
+
+Reproducible Science with Rmarkdown
+http://pakillo.github.io/Rmarkdown_talk_SevillaR_Nov2014/#/
+
+Rmarkdown reference guide https://www.rstudio.com/wp-content/uploads/2015/03/rmarkdown-reference.pdf
+
+Rmarkdown cheat sheet
+https://www.rstudio.com/wp-content/uploads/2016/03/rmarkdown-cheatsheet-2.0.pdf
+
