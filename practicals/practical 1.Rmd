@@ -1,0 +1,37 @@
+---
+title: "Bio302 Practical 1 Exploratory Data Analysis"
+author: "Richard J. Telford"
+date: "May 25, 2016"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+Download file combinedETE.csv from the git and place in a subdirectory called data of your project
+
+Import the data into R (hint use read.csv(…))
+
+Find the range, mean, median and variance of variable percAgg.
+
+What is the standard error of the mean of percAgg.
+
+Plot a histogram of variable percAgg.
+
+Use abline to mark the position of the mean and median.
+
+Plot percAgg against numSites
+
+Find the covariance and correlation of percAgg and numSites
+
+Is the correlation significant? (hint use cor.test())
+
+How should the p-value be interpreted?
+
+There are three levels in factor land.island. Plot percAgg against numSites coloured by the value of y1.
+
+Is the correlation between percAgg and numSites significant for any of the groups?
+
+This is a sub-group analysis, what are the dangers of this type of analysis?
