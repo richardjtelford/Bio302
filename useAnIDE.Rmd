@@ -24,6 +24,7 @@ A good IDE makes R coding more efficient and reduces some types of bugs
  - Integrated help
  - Project management and version control
  - Help debugging
+ - integration with Rmarkdown
 
 ## Choices
 
