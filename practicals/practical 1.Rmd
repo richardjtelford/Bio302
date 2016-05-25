@@ -30,7 +30,7 @@ Is the correlation significant? (hint use cor.test())
 
 How should the p-value be interpreted?
 
-There are three levels in factor land.island. Plot percAgg against numSites coloured by the value of y1.
+There are three levels in factor land.island. Plot percAgg against numSites coloured by the value of land.island.
 
 Is the correlation between percAgg and numSites significant for any of the groups?
 
