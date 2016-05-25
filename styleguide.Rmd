@@ -60,12 +60,12 @@ Always put a space after a comma, and never before.
 
 ### Good
 ```{r}
-average <- mean(feet / 12 + inches, na.rm = TRUE)`
+average <- mean(feet / 12 + inches, na.rm = TRUE)
 ChickWeight[1, ]
 ```
 ### Bad
 ```{r}
-average<-mean(feet/12+inches,na.rm=TRUE)`
+average<-mean(feet/12+inches,na.rm=TRUE)
 ChickWeight[1,]
 ```
 ##
