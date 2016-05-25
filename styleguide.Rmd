@@ -1,0 +1,205 @@
+---
+title: Adopt a Style Guide
+subtitle: "Bio302 - Biological data analysis II"
+author: 
+- name: "Richard J. Telford"
+institute: Department of Biology, University of Bergen
+date: '2016-05-05'
+output: 
+ ioslides_presentation:
+  widescreen: true
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
+```
+
+## Why
+
+ - Makes code easier to read
+ - Makes code easier to debug
+
+Make your own style - but be consistent
+
+## Naming Things
+
+>    “There are only two hard things in Computer Science: cache invalidation and naming things.”
+
+>    — Phil Karlton
+
+## Naming Objects
+
+ - Names can contain letter numbers "_"" and "."
+ - Names must begin with a letter or "."
+ - Avoid using names of existing functions - confusing
+ - Make names concise yet meaningful
+ - Reserved words include TRUE, for, if
+ 
+## Which of these are valid names?
+
+ - min_height
+ - max.height 
+ - _age 
+ - .mass 
+ - MaxLength 
+ - min-length 
+ - FALSE
+ - 2widths 
+ - celsius2kelvin 
+ - plot
+
+ 
+## Spacing
+
+White-space is free!
+
+Place spaces around all infix operators (=, +, -, <-, etc.) and around = in function calls. 
+
+Always put a space after a comma, and never before.
+
+### Good
+```{r}
+average <- mean(feet / 12 + inches, na.rm = TRUE)`
+ChickWeight[1, ]
+```
+### Bad
+```{r}
+average<-mean(feet/12+inches,na.rm=TRUE)`
+ChickWeight[1,]
+```
+##
+Exception: :, :: and ::: don’t need spaces around them.
+
+### Good
+```{r}
+x <- 1:10
+base::get
+```
+
+### Bad
+
+```{r}
+x <- 1 : 10
+base :: get
+```
+:: notation tells R which package to use
+
+
+## Split long commands over multiple lines
+
+```{r}
+list(
+  total = a + b + c, 
+  mean  = (a + b + c) / n
+)
+```
+
+## Indentation makes code more readable
+
+### Good
+```{r}
+pos <- function(x) {
+  if (is.null(dim(x))) {
+    x[x > 0]
+  } else{
+    x[, colSums(x) > 0, drop  = FALSE]
+  }
+}
+```
+
+### Bad
+```{r}
+pos <- function(x){
+if(is.null(dim(x)))
+{x[x >0]} 
+else{
+x[, colSums(x) > 0, drop  = FALSE]
+}}
+```
+
+## Assignment
+
+Use <-, not =, for assignment.
+
+### Good
+```{r}
+x <- 5
+```
+### Bad
+```{r}
+x = 5
+```
+
+
+## Comments
+
+Use # to start comments.
+
+Help you and others to understand what you did
+
+Comments should explain the why, not the what.
+
+Use comments to break up file into readable chunks for navigation
+```{r}
+#### Load data ####
+
+#### Plot data ####
+```
+ 
+## Split analyses over multiple files
+
+Long scripts become difficult to navigate
+
+Fix by moving parts of the code into different files
+
+For example: 
+ - data import code to "loadData.R"
+ - functions to "functions.R"
+
+Import with  
+```{r}
+source("loadData.R")
+source("functions.R")
+```
+ 
+## Repeated code
+
+Make repeated code into functions.
+
+```r{}
+plot(obj1, ...)
+legend(...)
+
+plot(obj2, ...)
+...
+
+plotObj <- function(obj){
+  plot(obj, ...)
+  legend(...)
+}
+
+plotObj(obj1)
+```
+Single place to maintain
+ 
+## Avoid `attach()`
+
+Unless you like strange bugs
+
+Rarely useful to attach - many better options
+
+https://coderclub.b.uib.no/2016/05/03/dont-get-attached-to-attach/
+ 
+## Reading
+
+Google's R Style Guide [https://google.github.io/styleguide/Rguide.xml](https://google.github.io/styleguide/Rguide.xml)
+
+Hadley Wickham, H. Style Guide _Advanced R_
+[http://adv-r.had.co.nz/Style.html](http://adv-r.had.co.nz/Style.html)
+
+## Exercise
+
+Take some of your existing R code and reformat it according to these style guides. 
+
+Check your code still works!

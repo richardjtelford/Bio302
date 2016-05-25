@@ -1,6 +1,6 @@
 ---
-title: "Bio302 - Biological data analysis II"
-subtitle: Schedule
+title: Schedule & Outline
+subtitle: "Bio302 - Biological data analysis II"
 author: 
 - name: "Richard J. Telford"
 institute: Department of Biology, University of Bergen
@@ -14,6 +14,8 @@ output:
 
 email: richard.telford@uib.no
 
+Class git: https://github.com/richardjtelford/Bio302
+
 ## Schedule
 
 0915 - 1200, 1315 - 1600
@@ -25,8 +27,61 @@ email: richard.telford@uib.no
  - Wednesday 1^st^
  - Friday 3^rd^
 
-
 ## Exam
 
  - Take home exam
  - Deadline two weeks after exam set
+
+## Two Questions
+
+ 1. What statistics do you think you need?
+ 2. What do you find hard about data analysis?
+
+## Course Contents
+
+  1. Statistics
+  2. Techniques for reproducible data analysis
+
+## Assumptions of Least Squares Regression
+
+ 1. The relationship between the response and the predictors is ~linear.
+ 2. The residuals have a mean of zero.
+ 3. The residuals have constant variance (not heteroscedastic).
+ 4. The residuals are independent (uncorrelated).
+ 5. The residuals are normally distributed.
+
+How to identify when these assumptions are violated.
+
+What to do when these assumptions are violated.
+
+## Statistics
+
+ - Exploratory data analysis
+ - Linear regression
+ - Analysis of variance with contrast matrices
+ - Generalised least-squares
+ - Non-linear least-squares
+ - Generalised linear models
+ - Generalised additive models
+ - Mixed effect models
+
+## Reproducible data analysis
+
+ - Is your current data analysis reproducible?
+ - Why is reproducible data analysis important?
+
+  
+## Tools for reproducible data analysis
+
+ - Use an integrated development environment (e.g. RStudio)
+ - Adopt an R style guide
+ - Getting help
+ - Version control with git
+ - Rmarkdown for dynamic documents
+ - Publication quality figures with `ggplot2`
+ 
+## General Reading
+
+ - Gillespie, C and Lovelace, R (2016) Efficient R programming. https://github.com/csgillespie/efficientR
+ - Crawley, MJ (2012) The R Book. Wiley.
+ - Zuur AF et al (2009) Mixed effects models and extensions in ecology with R. Springer. 	

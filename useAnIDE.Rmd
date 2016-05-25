@@ -1,0 +1,69 @@
+---
+title: Use an Integrated Development Environment
+subtitle: "Bio302 - Biological data analysis II"
+author: 
+- name: "Richard J. Telford"
+institute: Department of Biology, University of Bergen
+date: '2016-05-05'
+output: 
+ ioslides_presentation:
+  widescreen: true
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
+```
+
+## Why
+
+A good IDE makes R coding more efficient and reduces some types of bugs
+
+ - Bracket matching
+ - Autocomplete of function/variable names
+ - Integrated help
+ - Project management and version control
+ - Help debugging
+
+## Choices
+
+ - Tinn-R (Windows only)
+ - RKWard
+ - emacs
+ - __RStudio__ [rstudio.com](https://www.rstudio.com)
+
+## Demonstration
+
+ - Autocompletion
+ - Bracket matching
+ - Code formatting
+ - alt-shift-k to get shortcuts
+ 
+## Project management
+  
+Use Rstudio projects for project management
+
+ - Keeps related files together
+ - Keeps track of working directory, History and environment
+ 
+## Exercise
+
+Set up an Rstudio project called Bio302
+
+We will use this project all week.
+
+Open a new script and start to __type__ some code
+
+```{r}
+set.seed(42) # make reproducible
+df <- data.frame(
+  x = 1:10,
+  y = rnorm(10)
+)
+
+plot(df$x, df$y)
+legend("topright", legend = "Random", pch = 1)
+
+```
+
+Become familiar with the autocomplete, sending code to the console and some shortcuts
