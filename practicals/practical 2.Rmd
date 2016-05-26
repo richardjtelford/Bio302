@@ -1,0 +1,33 @@
+---
+title: "Linear models"
+author: "Richard J. Telford"
+date: "May 26, 2016"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Linear Modelling Exercises
+
+1. Import the data found in bird1.csv
+2. Fit a linear model, and interpret the coefficients.
+3. Examine the diagnostics plot. Is everything OK?
+3. Calculate the residual sum of squares (find sum the squared difference between the estimates calculated from the coefficients and the observed values).
+4. Recalculate the Residual sum of squares using different values for the coefficients (in the formula yi = Beta + Beta xi + εi).
+5. Is the new RSS larger or smaller?
+6. Estimate the slope using covariance and variance.
+7. Do you get the same result?
+8. Create a linear model (one-way anova) with the factor of C & T as the predictor
+9. Compare the SST with the regression model.
+10. Are there any difference.
+12. How should the coefficients be interpreted?
+
+13. Import the data found in bird2.csv
+14. Fit a linear model with both temperature and gender as predictors.
+15. How should we interpret the results?
+16. What is the difference in intercept between male and female birds?
+17. How much does the slope differ between male and female?
+18. Is this significant?
+
