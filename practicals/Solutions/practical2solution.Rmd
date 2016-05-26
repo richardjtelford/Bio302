@@ -1,0 +1,152 @@
+---
+title: "Linear models"
+author: "Richard J. Telford"
+date: "May 26, 2016"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Linear Modelling Exercises
+
+1. Import the data found in bird1.csv
+```{r}
+bird1 <- read.csv("../../data/bird1.csv")
+knitr::kable(head(bird1))
+```
+
+Always use relative paths. Absolute paths are machine dependent: not reproducible.
+
+2. Fit a linear model, and interpret the coefficients.
+```{r}
+mod <- lm(weight ~ temp, data = bird1)
+summary(mod)
+```
+Positive intercept - mean weight at zero temp is positive
+Positive slope - heavier at higher temperatures
+
+3. Examine the diagnostics plot. Is everything OK?
+```{r}
+par(mfrow = c(2, 2))
+plot(mod)
+```
+
+With ggplot - first install extra packages if not present
+
+```{r}
+if(!require("devtools")) install.packages("devtools")
+if(!require("ggfortify")) devtools::install_github("sinhrks/ggfortify")
+#ggfortify is not currently on CRAN
+#more info on ggfortify at http://rpubs.com/sinhrks/plot_lm
+```
+
+```{r}
+autoplot(mod, label.size = 3)
+```
+
+3. Calculate the residual sum of squares (find sum the squared difference between the estimates calculated from the coefficients and the observed values).
+```{r}
+#find value with anova()
+anova(mod)
+#now calculate
+modFit <- coef(mod)[1] + coef(mod)[2] * bird1$temp
+modResid <- bird1$weight - modFit
+sum(modResid^2)
+```
+
+4. Recalculate the Residual sum of squares using different values for the coefficients (in the formula yi = Beta0 + Beta1 * xi + εi).
+```{r}
+newFit <- 17 + -1 * bird1$temp
+newResid <- bird1$weight - newFit
+sum(newResid^2)
+```
+
+5. Is the new RSS larger or smaller?
+
+Much larger!
+
+6. Estimate the slope using covariance and variance.
+```{r}
+(beta1 <- with(bird1, cov(weight, temp)/sqrt(var(temp) * var(temp))))
+(beta0 <- with(bird1, mean(weight) - beta1 * mean(temp)))
+```
+
+7. Do you get the same result?
+```{r}
+all.equal(as.vector(coef(mod)[1]), beta0)
+all.equal(as.vector(coef(mod)[2]), beta1)
+```
+
+8. Create a linear model (one-way anova) with the factor of C & T as the predictor
+```{r}
+#plot graph first
+ggplot(bird1, aes(x = treat, y = weight)) + geom_boxplot()
+mod2 <- lm(weight ~ treat, data = bird1)
+```
+
+
+
+9. Compare the SSTot with the regression model.
+```{r}
+sum(anova(mod)$"Sum Sq")
+sum(anova(mod2)$"Sum Sq")
+
+```
+
+10. Are there any difference.
+
+Obviously not. SSTot is property of the data, not of the model.
+
+12. How should the coefficients be interpreted?
+
+ - First coefficient is mean of first factor level
+ - Second coefficient is difference between means of first and second level
+
+13. Import the data found in bird2.csv
+```{r}
+bird2 <- read.csv("../../data/bird2.csv")
+knitr::kable(head(bird2))
+```
+
+14. Fit a linear model with both temperature and gender as predictors.
+```{r}
+mod3 <- lm(weight ~ temp * gender, data = bird2)
+summary(mod3)
+```
+
+15. How should we interpret the results?
+
+ - First coefficient - female intercept 
+ - Second coefficient - effect of temp on females
+ - Third coefficient - difference of male intercept from female intercept
+ - Fourth coefficient - difference of effect on males from effect on females
+
+16. What is the difference in intercept between male and female birds?
+```{r}
+coef(mod3)[3]
+```
+
+
+17. How much does the slope differ between male and female?
+```{r}
+coef(mod3)[4]
+```
+
+18. Is this significant?
+
+Yes
+
+```{r}
+with(bird2, {
+  plot(temp, weight, col = c(2, 4)[gender])
+  lapply(levels(gender), function(g)
+    lines(temp[gender == g], fitted(mod3)[gender == g], col = ifelse(g == "female", 2, 4)))
+  legend("bottomright",legend = c("female", "male"), col = c(2, 4), lty = 1, pch = 1)
+})
+
+ggplot(cbind(bird2, fit = fitted(mod3)), aes(x = temp, y = weight, colour = gender)) +
+  geom_point() +
+  geom_line(aes(y = fit))
+```
