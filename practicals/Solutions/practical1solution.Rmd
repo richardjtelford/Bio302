@@ -13,6 +13,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 Download file combinedETE.csv from the git and place in a subdirectory called data of your project
 
+
 Import the data into R (hint use read.csv(…))
 
 ```{r}
