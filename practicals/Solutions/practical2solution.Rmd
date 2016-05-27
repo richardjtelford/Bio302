@@ -17,7 +17,8 @@ if(interactive()){
   bird1 <- read.csv("data/bird1.csv")
 }else{
   bird1 <- read.csv("../../data/bird1.csv")
-}knitr::kable(head(bird1))
+}
+knitr::kable(head(bird1))
 ```
 
 Always use relative paths. Absolute paths are machine dependent: not reproducible.
@@ -85,11 +86,11 @@ all.equal(as.vector(coef(mod)[2]), beta1)
 8. Create a linear model (one-way anova) with the factor of C & T as the predictor
 ```{r}
 #plot graph first
-ggplot(bird1, aes(x = treat, y = weight)) + geom_boxplot()
+ggplot(bird1, aes(x = treat, y = weight)) +
+  geom_boxplot()
 mod2 <- lm(weight ~ treat, data = bird1)
+summary(mod2)
 ```
-
-
 
 9. Compare the SSTot with the regression model.
 ```{r}
@@ -109,7 +110,11 @@ Obviously not. SSTot is property of the data, not of the model.
 
 13. Import the data found in bird2.csv
 ```{r}
-bird2 <- read.csv("../../data/bird2.csv")
+if(interactive()){
+  bird2 <- read.csv("data/bird2.csv")
+}else{
+  bird2 <- read.csv("../../data/bird2.csv")
+}
 knitr::kable(head(bird2))
 ```
 
@@ -142,6 +147,7 @@ coef(mod3)[4]
 Yes
 
 ```{r}
+par(mfrow = c(1,1))
 with(bird2, {
   plot(temp, weight, col = c(2, 4)[gender])
   lapply(levels(gender), function(g)
@@ -151,5 +157,6 @@ with(bird2, {
 
 ggplot(cbind(bird2, fit = fitted(mod3)), aes(x = temp, y = weight, colour = gender)) +
   geom_point() +
-  geom_line(aes(y = fit))
+  geom_line(aes(y = fit)) +
+  theme_bw()
 ```
