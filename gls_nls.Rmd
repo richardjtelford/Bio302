@@ -50,9 +50,9 @@ Default weight matrix
  - 1s on diagonal
  - 0s off diagonal
 
-y[i] = β[0] + β[1]x[i] + ε[i]
+y~i~ = β~0~ + β~1~x~i~ + ε~i~
 
-k[i]y[i] = k[i]β[0] + k[i]β[1]x[i] + k[i]ε[i]
+k~i~y~i~ = k~i~β~0~ + k~i~β~1~x~i~ + k~i~ε~i~
 
 We adjust the influence of the point
 
@@ -145,7 +145,7 @@ anova(fit_0, fit_gls)
 Copes with spatially/temporally autocorrelated data 
 
   
-```{r, fig.height=5, fig.width=7}
+```{r, fig.height=4.5, fig.width=7}
 year <- time(LakeHuron)
 par(mfrow = c(1, 2))
 acf(resid(lm(LakeHuron ~ year)))
@@ -157,7 +157,7 @@ Many different correlation structures available. Choose appropriate one.
 
 Change off-diagonal values in weights-matrix
 ```{r}
-mod_ar1 <- gls(LakeHuron ~ year, corr=corAR1())
+mod_ar1 <- gls(LakeHuron ~ year, corr = corAR1())
 summary(mod_ar1)
 ```
 
@@ -200,7 +200,7 @@ Transformations:
 ##
 Polynomial
 
-y[i] = β[0] + β[1]x[i] + β[2]x[i]^2^ + ε[i]
+y~i~ = β~0~ + β~1~x~i~ + β~2~x~i~^2^ + ε~i~
 
  - Very useful
  - But can give incorrect predictions
@@ -214,23 +214,23 @@ ggplot(amount, aes(x = calcium, y = amount)) +
 ## NLS
 The relationship has an asymptote, and a exponential decline
 
-yi = β0 + β1 exp(β2xi) + εi
+y~i~ = β~0~ + β~1~ exp(β~2~x~i~) + ε~i~
 
- - β0  = asymptote
- - β0 + β1 = intercept
- - β2 = slope (proportional change)
+ - β~0~  = asymptote
+ - β~0~ + β~1~ = intercept
+ - β~2~ = slope (proportional change)
 
-If x -> inf & β2<0 
-- 		β1 exp(β2xi) = 0
+If x -> inf & β~2~ < 0 
+- 		β~1~ exp(β~2~x~i~) = 0
 
 If x -> 0
- - 		β1 exp(β2xi) = β1
+ - 		β~1~ exp(β~2~x~i~) = β~1~
 
 ##
 ```{r}
 library(nlme)
 fit.nls<-nls(amount ~ b0 + b1 * exp(b2 * calcium), data = amount, 
-             start=c(b0=0,b1=20,b2=-1))
+             start = c(b0 = 0, b1 = 20, b2 = -1))
 summary(fit.nls)
 ```
 
