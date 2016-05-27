@@ -1,0 +1,109 @@
+---
+title: "Maximum likelihood"
+author: "Richard J. Telford"
+date: "May 27, 2016"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Maximum Likelihood
+
+1.Import bird1.csv
+```{r}
+if(interactive()){
+  bird1 <- read.csv("data/bird1.csv")
+}else{
+  bird1 <- read.csv("../../data/bird1.csv")
+}
+```
+
+2.Fit a model using lm
+```{r}
+mod1 <- lm(weight ~ temp, data = bird1)
+summary(mod1)
+```
+3.Pick a point and calculate the likelihood 
+```{r}
+s2 <- sum(resid(mod1) ^ 2) / mod1$df.residual
+s2
+
+L1 <- 1 / sqrt(2 * pi * s2)
+L2 <- exp((-1 / (2 * s2)) * (bird1$weight[13] - fitted(mod1)[13]) ^ 2)
+L1 * L2
+
+dnorm(bird1$weight[13], mean = fitted(mod1)[13], sd = sqrt(s2))
+
+plot(seq(0, 40, length = 100),
+     dnorm(seq(0, 40, length = 100), mean = fitted(mod1)[13], sd = sqrt(s2)),
+     type = "l")
+abline(v =  bird1$weight[13])
+abline(h = dnorm(bird1$weight[13], mean = fitted(mod1)[13], sd = sqrt(s2)))
+```
+
+4.For the same point estimate the log-likelihood
+```{r}
+log(dnorm(bird1$weight[13], mean = fitted(mod1)[13], sd = sqrt(s2)))
+```
+
+5.Estimate the log-likelihood for all points
+```{r}
+L2 <- exp((-1 / (2 * s2)) * (bird1$weight - fitted(mod1)) ^ 2)
+sum(log(L1 * L2))
+
+(lik <- sum(log(
+  dnorm(bird1$weight, mean = fitted(mod1), sd = sqrt(s2))
+  )))
+```
+
+6.Use different coefficients and redo question 2 to 4
+```{r}
+b0 <- 12
+b1 <- 0.5
+new.fit <- b0 + b1 * bird1$temp
+new.resid <- bird1$weight - new.fit
+new.s2 <- sum(new.resid ^ 2) / mod1$df.residual
+
+(new.lik <-sum(log(
+  dnorm(bird1$weight, mean = new.fit, sd = sqrt(new.s2))
+)))
+```
+
+
+7.Use the lm and glm to estimate the relationship of weight and temperature
+
+```{r}
+mod2 <- glm(weight ~ temp, data = bird1)
+```
+
+8.Compare the results
+
+```{r}
+summary(mod1)
+summary(mod2)
+```
+
+9.Calculate the likelihood for the saturated model (mu = y)
+
+```{r}
+(sat <- sum(log(
+  dnorm(bird1$weight, mean = bird1$weight, sd = sqrt(s2))
+  )))
+```
+
+10.Use the log-likelihoods to estimate the Deviance
+
+```{r}
+(D <- -2 * (lik - sat))
+```
+
+11.What is the relationship between the Deviance and the sum of squared residuals, assuming Normal distribution?
+```{r}
+sum(resid(mod1) ^ 2)
+```
+scaled deviance
+```{r}
+D * s2
+```
