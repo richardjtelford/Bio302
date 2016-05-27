@@ -1,0 +1,248 @@
+---
+title: Generalised Least Squares<br>&<br>Non-linear Least Squares
+subtitle: "Bio302 - Biological data analysis II"
+author: 
+- name: "Richard J. Telford"
+institute: Department of Biology, University of Bergen
+date: '2016-05-05'
+output: 
+ ioslides_presentation:
+  widescreen: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(nlme)
+```
+
+## Assumptions of Least Squares
+
+1. The relationship between the response and the predictors is ~linear.
+2. The residuals have a mean of zero.
+3. __The residuals have constant variance (not heteroscedastic).__
+4. The residuals are independent (uncorrelated).
+5. The residuals are normally distributed.
+
+Weighted least squares can be used when variance is not constant
+
+
+## Weighted least squares
+
+If observations have different amounts of uncertainty
+
+Give uncertain observation less weight 
+
+ – less influence on regression
+
+Adjust weight matrix
+
+##
+W = weight matrix
+
+k = sqrt(W)
+
+```{r, echo = FALSE}
+diag(4)
+```
+
+Default weight matrix
+ - 1s on diagonal
+ - 0s off diagonal
+
+y[i] = β[0] + β[1]x[i] + ε[i]
+
+k[i]y[i] = k[i]β[0] + k[i]β[1]x[i] + k[i]ε[i]
+
+We adjust the influence of the point
+
+'We adjust the size of the residuals'
+
+## Galton's Peas
+
+Pea sizes
+```{r, echo = FALSE}
+peas <- read.table(header = TRUE, text = "
+Parent	Progeny	SD
+0.21	0.1726	0.01988
+0.2	0.1707	0.01938
+0.19	0.1637	0.01896
+0.18	0.164	0.02037
+0.17	0.1613	0.01654
+0.16	0.1617	0.01594
+0.15	0.1598	0.01763
+")
+knitr::kable(peas)
+```
+
+##
+
+ - Parent - pea diameter in inches of parent plant 
+ - Progeny - mean pea diameter (inches) of up to 10 plants grown from seeds of the parent plant
+ - SD - standard deviation of offspring peas grown from each parent. 
+ 
+Standard deviations reflect information in the response 
+
+Downweight obervations with large standard deviation and upweight observations with a small standard deviation. 
+
+Use weighted least squares with weights equal to 1/SD^2^. 
+
+## In R
+
+```{r}
+mod <- lm(Progeny ~ Parent, data = peas)
+summary(mod)$coef
+wmod <- lm(Progeny ~ Parent, data = peas, weights = 1 / SD ^ 2)
+summary(wmod)$coef
+```
+
+Weighed regression assumes that the weights are precisely known
+
+##
+```{r}
+ggplot(peas, aes(x = Parent, y = Progeny, size = 1 / SD ^ 2)) + 
+  geom_point() +
+  geom_abline(intercept = coef(mod)[1], slope = coef(mod)[2], col = "black") +
+  geom_abline(intercept = coef(wmod)[1], slope = coef(wmod)[2], col = "red") +
+  labs(size = "Weight")
+```
+
+## Generalised least squares
+
+Solution to non-constant variance (heteroscedastic data)
+
+W = 1/var(response)
+
+Fit using `gls` in package `nlme`.
+
+## Bird1 dataset{.columns-2}
+```{r, echo = FALSE}
+bird1 <- read.csv("data/bird1.csv")
+```
+Variances are different for each treatment
+```{r, fig.height=3.5, fig.width=5}
+ggplot(bird1, aes(x = treat, y = weight)) +
+  geom_boxplot()
+with(bird1, tapply(weight, treat, var))
+```
+
+## GLS{.smaller}
+
+```{r}
+library(nlme)
+fit_gls <- gls(weight ~ treat, data = bird1, weights = varIdent(form = ~ +1|treat))
+summary(fit_gls)
+```
+
+## Model comparison
+```{r}
+fit_0 <- gls(weight ~ treat, data = bird1)
+anova(fit_0, fit_gls)
+```
+
+## Other magic in GLS{.smaller}
+
+Copes with spatially/temporally autocorrelated data 
+
+  
+```{r, fig.height=5, fig.width=7}
+year <- time(LakeHuron)
+par(mfrow = c(1, 2))
+acf(resid(lm(LakeHuron ~ year)))
+pacf(resid(lm(LakeHuron ~ year)))
+par(mfrow = c(1, 1))
+```
+##
+Many different correlation structures available. Choose appropriate one.
+
+Change off-diagonal values in weights-matrix
+```{r}
+mod_ar1 <- gls(LakeHuron ~ year, corr=corAR1())
+summary(mod_ar1)
+```
+
+# Non-linear least squares
+
+## Assumptions of Least Squares
+
+1. __The relationship between the response and the predictors is ~linear.__
+2. The residuals have a mean of zero.
+3. The residuals have constant variance (not heteroscedastic).
+4. The residuals are independent (uncorrelated).
+5. The residuals are normally distributed.
+
+Nonlinear least squares can be used when relationship is non-linear.
+
+## Non-linear least squares{.columns-2}
+
+We know something about the relationship
+
+Upper or lower bound (asymptote)
+
+```{r, echo=FALSE, fig.width=5, fig.height = 3.5}
+amount <- read.csv("data/amount.csv")
+ggplot(amount, aes(x = calcium, y = amount)) +
+  geom_point()
+```
+
+Three options
+
+ - Transform response
+ - Use polynomials (x2)
+ - Non-linear expression
+
+## 
+Transformations:
+
+- AVOID, statistics must be correct on transformed scale
+- Log transform assumes that error is a constant proportion of the response
+
+##
+Polynomial
+
+y[i] = β[0] + β[1]x[i] + β[2]x[i]^2^ + ε[i]
+
+ - Very useful
+ - But can give incorrect predictions
+ 
+ ```{r, echo=FALSE, fig.width=5, fig.height = 3.5}
+ggplot(amount, aes(x = calcium, y = amount)) +
+  geom_point() +
+  geom_smooth(method = "lm", formula = y ~ x + I(x^2))
+```
+
+## NLS
+The relationship has an asymptote, and a exponential decline
+
+yi = β0 + β1 exp(β2xi) + εi
+
+ - β0  = asymptote
+ - β0 + β1 = intercept
+ - β2 = slope (proportional change)
+
+If x -> inf & β2<0 
+- 		β1 exp(β2xi) = 0
+
+If x -> 0
+ - 		β1 exp(β2xi) = β1
+
+##
+```{r}
+library(nlme)
+fit.nls<-nls(amount ~ b0 + b1 * exp(b2 * calcium), data = amount, 
+             start=c(b0=0,b1=20,b2=-1))
+summary(fit.nls)
+```
+
+##
+```{r}
+ggplot(cbind(amount, fit = fitted(fit.nls)), aes(x = calcium, y = amount)) +
+  geom_point() +
+  geom_line(aes(y = fit))
+```
+
+##
+1. Is there a natural expression
+2. Identify parameters
+3. Roughly estimate parameters
+4. Start NLS
