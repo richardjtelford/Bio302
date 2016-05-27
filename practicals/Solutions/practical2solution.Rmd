@@ -13,8 +13,11 @@ knitr::opts_chunk$set(echo = TRUE)
 
 1. Import the data found in bird1.csv
 ```{r}
-bird1 <- read.csv("../../data/bird1.csv")
-knitr::kable(head(bird1))
+if(interactive()){
+  bird1 <- read.csv("data/bird1.csv")
+}else{
+  bird1 <- read.csv("../../data/bird1.csv")
+}knitr::kable(head(bird1))
 ```
 
 Always use relative paths. Absolute paths are machine dependent: not reproducible.
