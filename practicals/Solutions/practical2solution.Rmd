@@ -41,7 +41,11 @@ With ggplot - first install extra packages if not present
 
 ```{r}
 if(!require("devtools")) install.packages("devtools")
-if(!require("ggfortify")) devtools::install_github("sinhrks/ggfortify")
+if(!require("ggfortify")) {
+  devtools::install_github("sinhrks/ggfortify")
+  library("ggfortify")
+}
+
 #ggfortify is not currently on CRAN
 #more info on ggfortify at http://rpubs.com/sinhrks/plot_lm
 ```
