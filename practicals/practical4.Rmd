@@ -1,0 +1,22 @@
+---
+title: "Maximum likelihood"
+author: "Richard J. Telford"
+date: "May 27, 2016"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+1. Import bird1.csv
+2. Fit a model using lm
+3. Pick a point and calculate the likelihood given the mean and residual 
+4. For the same point estimate the log-likelihood
+5. Estimate the log-likelihood for all points
+6. Use different  regression coefficients and redo question 2 to 4
+7. Use lm and glm to estimate the relationship of weight and temperature
+8. Compare the results
+9. Calculate the likelihood for the saturated model (mu~i~ = y~i~)
+10. Use the log-likelihoods to estimate the Deviance
+11. What is the relationship between the Deviance and the sum of squared residuals, assuming Normal distribution?
