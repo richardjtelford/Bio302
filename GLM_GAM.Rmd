@@ -1,0 +1,512 @@
+---
+title: Generalised Linear Models<br>&<br> Generalised Additive Models
+subtitle: "Bio302 - Biological data analysis II"
+author: 
+- name: "Richard J. Telford"
+institute: Department of Biology, University of Bergen
+date: '2016-05-05'
+output: 
+ ioslides_presentation:
+  widescreen: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(mgcv)
+```
+
+## Assumptions of Least Squares
+
+1. The relationship between the response and the predictors is ~linear.
+2. The residuals have a mean of zero.
+3. __The residuals have constant variance (not heteroscedastic).__
+4. The residuals are independent (uncorrelated).
+5. __The residuals are normally distributed.__
+
+Count data, binomial and proportion data do not have normally distributed errors
+
+## Generalised Linear Model (GLM)
+
+ - Fitted with Maximum likelihood
+ - Suitable for various distributions
+ - Variance function
+ - Link function transforms response
+ - Linear predictor
+
+ 
+y~i~ = β~0~ + β~1~x~i~ + ε~i~
+
+g(E(y~i~)) = β~0~ + β~1~x~i~
+
+## Distributions & links  (E(y) = μ){.columns-2}
+
+__Normal (gaussian)__
+
+ - y continuous
+ - All values
+ - μ = E(y~i~) = β~0~ + β~1~x~i~
+ - var(y) = σ^2^
+
+__Poisson__
+
+ - Discrete
+ - Counts
+ - log(μ) = β~0~ + β~1~x~i~
+ - var(y) =μ
+
+__Binomial__
+
+ - Success/failure
+ - log(μ / (1 - μ)) = β~0~ + β~1~x~i~
+ - var(y) = nμ(1 - μ)
+ 
+## Binomial distribution{.columns-2}
+
+Success = 1 & Failure = 0
+
+n = trials 
+
+- number of Successes + Failures in an experiment. Special case n = 1 - Bernoulli trial
+
+p = probability of success
+ 
+(1 - p) = probability of failure
+
+μ = np 
+
+var(y) = np(1 - p) 
+ 
+__Suggest some types of data that you would expect to follow a binomial distribution__
+
+```{r, echo = FALSE, fig.height=4, fig.width=5}
+surv <- read.csv("data/survival.csv")
+ggplot(surv, aes(temp, surv)) + 
+  geom_point() + labs(x = "Temperature", y = "Survival")
+```
+
+##
+Use logistic link:
+
+ - log(p / (1 - p)) = β~0~ + β~1~x~i~
+ - p = exp(β~0~ + β~1~x~i~) / {1 + exp(β~0~ + β~1~x~i~)}
+
+Response = Survival (i.e. success)
+
+Predictor = temperature
+```{r}
+fit_glm <- glm(surv ~ temp, data = surv, family = binomial)
+```
+
+y is 
+
+ - vector of 0 & 1
+ - factor representing success and failure
+ - vector giving the proportion of successes if multiple trials are used. Weights should give number of trials
+ - two column matrix giving number of successes and failures
+ 
+##
+ 
+```{r}
+ anova(fit_glm)
+```
+ 
+##
+ 
+```{r}
+summary(fit_glm)
+```
+
+##
+Response:
+
+ - p = exp(β~0~ + β~1~x~i~) / {1 + exp(β~0~ + β~1~x~i~)}
+ 
+```{r, fig.height=4, fig.width=5} 
+ggplot(cbind(surv, fit = fitted(fit_glm)), aes(x = temp, y = surv)) +
+  geom_point() +
+  geom_line(aes(y = fit), colour = "red")
+```
+
+## Separation
+
+Predictor perfectly separates zeroes and ones in response
+
+```{r}
+df <- data.frame(x = 1:20, y = rep(c(0, 1), each = 10))
+mod <- glm(y ~ x, data = df, family = binomial)
+```
+```{r, echo = FALSE, fig.height=3, fig.width=5}
+ggplot(cbind(df, fit = fitted(mod)), aes(x = x, y = y)) +
+  geom_point() +
+  geom_line(aes(y = fit), colour = "red")
+
+```
+
+## Seperation
+
+Very high coefficient
+
+Very large uncertainty
+
+ - too many categorical predictors?
+ - maximum penalized likelihood package `brglm`
+ - Bayesian analysis `bayesglm` in `arm` package
+
+## Poisson distribution{.columns-2}
+y = discrete (counts)
+
+x = predictor 
+
+mean = μ
+
+var(y) = μ
+
+log(μ) = β~0~ + β~1~x~i~
+
+__Suggest some data types that are Poisson distributed__
+```{r, echo = FALSE, fig.height=4, fig.width=4}
+x <- 1:10
+y <- c(dpois(x, lambda = 1.5), dpois(x, lambda = 4))
+lambda <- rep(c(1.5, 4), each = length(x))
+df <- data.frame(x = factor(x), y, lambda = factor(lambda))
+ggplot(df, aes(x, y, fill = lambda)) + 
+  geom_bar(stat = "identity", position = "dodge") + 
+  scale_x_discrete(breaks = 1:10, labels=1:10) +
+  labs(y = "Probability", fill = "Lamdba", x = "Response")
+```
+
+Shape depends on lambda
+
+With large values of lambda, normal approximation is possible
+
+## Poisson example - Number of species vs. cover
+
+```{r}
+rich <- read.csv("data/sorich.csv")
+str(rich)
+
+```
+
+Predictor is cover
+
+Response is number of species
+
+##
+```{r}
+ggplot(rich, aes(x = cover, y = nsp)) + 
+  geom_point() + 
+  labs(y = "Species Richness", x = "Cover")
+```
+
+##
+```{r}
+fit_glm <- glm(nsp ~ cover, data = rich, family = poisson)
+anova(fit_glm, test = "Chi")
+```
+
+##
+```{r}
+summary(fit_glm)
+```
+
+##
+```{r, fig.height=4, fig.width=5}
+ggplot(cbind(rich, fit = fitted(fit_glm)), aes(x = cover, y = nsp)) + 
+  geom_point() + 
+  geom_line(aes(y = fit), colour = "red") +
+  labs(y = "Species Richness", x = "Cover")
+```
+
+log(μ) = β~0~ + β~1~x~i~
+
+## Overdispersion
+Variance in Binomial and Poisson models is specified: 
+
+ - Poisson var(y) = μ
+ - Binomial var(y) = nμ(1 - μ)
+
+Real data can have more (or less) variance than this if not drawn from a pure Binomial or Poisson process.
+
+ - Overdispersed data has more variance than expected
+ - Overdispersion makes statistical tests too liberal. Increased risk of type I error.
+ 
+## Detecting Overdispersion
+
+Overdispersion if Residual deviance > residual df
+```{r}
+anova(fit_glm)
+```
+
+## Overdispersion{.columns-2}
+
+__What is it:__
+
+ - A dependency between observations
+ - Missing parameter(s)
+
+__When:__
+
+ - Poisson
+ - Binomial if n >1
+<br><br>
+__What to do:__
+
+Find missing parameters
+
+Quasi-likelihood:
+
+ - quasipoisson
+ - quasibinomial
+
+Negative binomial:
+
+ - Counts
+
+Zero-inflated distributions
+
+Hurdle models
+
+## Quasi models
+
+Poisson: var(y) = μ
+
+Quasipoisson: var(y) = φμ
+
+Scale parameter ø modifies relationship between mean and variance
+
+```{r}
+glm_fit1 <- glm(nsp ~ cover, data = rich, family = quasipoisson) 
+```
+
+Fitted model will be the same
+
+Confidence intervals will be wider
+
+P values will be higher
+
+No AIC for model selection. Quasi-AIC?
+
+## Negative binomial
+
+Negative binomial distribution:
+
+Discrete probability distribution of the number of successes in a sequence of independent and identically distributed Bernoulli trials before a specified  number of failures occurs.
+
+Two parameters:
+
+ - p of Bernoulli trials
+ - r failures
+
+Implemented in package `MASS`
+```{r}
+library("MASS")
+fit_nb <- glm.nb(nsp ~ cover, data = rich, link = log)
+```
+
+Has AIC
+
+## Zero-inflated models
+
+Used to model count data that has an excess of zero counts. 
+
+ - Excess zeros are generated by a separate process from the count values 
+ - Excess zeros can be modleled independently.  
+
+Two component models
+
+ - Poisson/Negative binomial component
+ - Binomial component gives excess zeros
+ 
+Fit with package `pscl` function `zeroinfl()`
+
+## Predictions
+
+By default, predictions are on linear-predictor scale
+```{r}
+fit_glm <- glm(nsp ~ cover, data = rich, family = poisson)
+(pred <- predict(fit_glm, newdata = data.frame(cover = 10)))
+```
+
+Transform with inverse of link to put on to response scale
+
+Poisson uses log link
+
+log(μ) = β~0~ + β~1~x~i~
+
+Use exponential function
+```{r}
+exp(pred)
+```
+
+Or ask for predictions on reponse scale
+```{r}
+(pred <- predict(fit_glm, newdata = data.frame(cover = 10), type = "response"))
+```
+
+## {.columns-2}
+
+Link scale (linear predictor scale)
+
+```{r,echo = FALSE}
+newD <- seq(min(rich$cover), max(rich$cover), length = 100)
+pred <- predict(fit_glm, newdata = data.frame(cover = newD), se.fit = TRUE)
+#upper 95%ci
+up <- pred$fit + 1.96 * pred$se.fit
+#lower 95%ci
+down <- pred$fit - 1.96 * pred$se.fit
+```
+
+```{r, fig.height=4, fig.width = 5}
+ggplot(rich, aes(cover, log(nsp))) +
+  geom_point() +
+  geom_line(aes(x, y = fit), data  = data.frame(x = newD, fit = pred$fit), inherit.aes = FALSE)  
+```
+
+Response scale (linear predictor scale)
+
+```{r, fig.height=4, fig.width = 5}
+ggplot(rich, aes(cover, nsp)) +
+  geom_point() +
+  geom_line(aes(x, y = fit), data  = data.frame(x = newD, fit = exp(pred$fit)), inherit.aes = FALSE)
+```
+
+
+## Confidence interval
+Estimate μ and SE on link scale {log(μ) & SE}
+
+Estimate confidence interval (μ ± 2*SE)
+
+Use link-function to obtain values on 'response scale'  {log(μ ± 2*SE)}
+```{r}
+(pred <- predict(fit_glm, newdata = data.frame(cover = 10), se.fit = TRUE))
+```
+
+##
+```{r}
+#estimate
+exp(pred$fit)
+
+#upper 95%ci
+exp(pred$fit + 1.96 * pred$se.fit)
+
+#lower 95%ci
+exp(pred$fit - 1.96 * pred$se.fit)
+```
+
+## {.columns-2}
+
+Link scale (linear predictor scale)
+
+```{r,echo = FALSE}
+newD <- seq(min(rich$cover), max(rich$cover), length = 100)
+pred <- predict(fit_glm, newdata = data.frame(cover = newD), se.fit = TRUE)
+#upper 95%ci
+up <- pred$fit + 1.96 * pred$se.fit
+#lower 95%ci
+down <- pred$fit - 1.96 * pred$se.fit
+```
+
+```{r, fig.height=4, fig.width = 5}
+ggplot(rich, aes(cover, log(nsp))) +
+  geom_point() +
+  geom_line(aes(x, y = fit), data  = data.frame(x = newD, fit = pred$fit), inherit.aes = FALSE) + 
+  geom_ribbon(aes(x, ymax = up, ymin = down), data  = data.frame(x = newD, up, down), inherit.aes = FALSE, alpha = 0.2)  
+```
+
+Response scale (linear predictor scale)
+
+```{r, fig.height=4, fig.width = 5}
+ggplot(rich, aes(cover, nsp)) +
+  geom_point() +
+  geom_line(aes(x, y = fit), data  = data.frame(x = newD, fit = exp(pred$fit)), inherit.aes = FALSE) + 
+  geom_ribbon(aes(x, ymax = up, ymin = down), data  = data.frame(x = newD, up = exp(up), down = exp(down)), inherit.aes = FALSE, alpha = 0.2)  
+```
+
+## Confidence intervals for Binomial
+
+Analogous to calculation for Poisson
+
+Use Logistic link function
+
+log(p/(1-p))= β~0~ + β~1~x~i~
+
+p = exp(β~0~ + β~1~x~i~) / {1 + exp(β~0~ + β~1~x~i~)}
+
+```{r, eval = FALSE}
+fit.p <- predict(fit.glm, se.fit = T, type = "link")
+fit.mu <- with(fit.p, exp(fit) / (1 + exp(fit)))
+fit.do <- with(fit.p, exp(fit - 2 * se.fit) / (1 + exp(fit - 2 * se.fit))
+fit.up <- with(fit.p, exp(fit + 2 * se.fit) / (1 + exp(fit + 2 * se.fit))
+```
+
+## Distributions{.columns-2}
+
+Normal
+
+ - Continuous
+ - Constant variance
+ - All numbers
+
+Poisson
+
+ - Discrete (counts)
+ - Variance = μ
+ - Positive numbers
+
+Binomial
+
+ - Success / failure
+ - One outcome a trial
+ - many trials pr. observation
+ - variance = μ(1 - μ)
+
+Gamma
+
+ - Continuous
+ - positive numbers
+ - variance ∝ μ ^ 2
+ 
+Log normal 
+
+ - `family = gaussian(link = "log")`
+ 
+## Generalised additive models
+
+Assume smooth response to predictor
+
+Data-driven
+
+Don't know what reponse should be
+
+Exploration of data
+
+Can take any distribution and link function available for GLM
+
+##
+Smooth terms
+
+ - s()
+
+Complexity of smooth terms estimated using Generalised cross-validation
+
+Omit the smooth term and get a GLM!
+
+## GAM in R
+
+```{r}
+pot <- read.csv("data/pot.csv")
+library(mgcv)
+mod <- gam(potalp ~ s(alt), data = pot, family = binomial)
+mod2 <- gam(potalp ~ alt + I(alt^2), data = pot, family = binomial)
+anova(mod, mod2, test = "Chi")
+```
+
+##
+```{r}
+ggplot(cbind(pot, fit.gam = fitted(mod), fit.glm = fitted(mod2)), aes(alt, potalp)) +
+  geom_point() +
+  geom_line(aes(y = fit.gam, colour = "GAM")) +
+  geom_line(aes(y = fit.glm, colour = "GLM")) +
+  labs(x = "Elevation", y = "P. alpina", colour = "Model")
+```
