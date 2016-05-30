@@ -166,14 +166,14 @@ log(μ) = β~0~ + β~1~x~i~
 
 __Suggest some data types that are Poisson distributed__
 ```{r, echo = FALSE, fig.height=4, fig.width=4}
-x <- 1:10
+x <- 0:10
 y <- c(dpois(x, lambda = 1.5), dpois(x, lambda = 4))
 lambda <- rep(c(1.5, 4), each = length(x))
 df <- data.frame(x = factor(x), y, lambda = factor(lambda))
 ggplot(df, aes(x, y, fill = lambda)) + 
   geom_bar(stat = "identity", position = "dodge") + 
-  scale_x_discrete(breaks = 1:10, labels=1:10) +
-  labs(y = "Probability", fill = "Lamdba", x = "Response")
+  scale_x_discrete(breaks = 0:10, labels=0:10) +
+  labs(y = "Probability", fill = "Lambda", x = "Response")
 ```
 
 Shape depends on lambda
@@ -273,7 +273,7 @@ Poisson: var(y) = μ
 
 Quasipoisson: var(y) = φμ
 
-Scale parameter ø modifies relationship between mean and variance
+Scale parameter φ modifies relationship between mean and variance
 
 ```{r}
 glm_fit1 <- glm(nsp ~ cover, data = rich, family = quasipoisson) 
@@ -434,10 +434,10 @@ log(p/(1-p))= β~0~ + β~1~x~i~
 p = exp(β~0~ + β~1~x~i~) / {1 + exp(β~0~ + β~1~x~i~)}
 
 ```{r, eval = FALSE}
-fit.p <- predict(fit.glm, se.fit = T, type = "link")
+fit.p <- predict(fit.glm, se.fit = TRUE, type = "link")
 fit.mu <- with(fit.p, exp(fit) / (1 + exp(fit)))
-fit.do <- with(fit.p, exp(fit - 2 * se.fit) / (1 + exp(fit - 2 * se.fit))
-fit.up <- with(fit.p, exp(fit + 2 * se.fit) / (1 + exp(fit + 2 * se.fit))
+fit.do <- with(fit.p, exp(fit - 1.96 * se.fit) / (1 + exp(fit - 1.96 * se.fit))
+fit.up <- with(fit.p, exp(fit + 1.96 * se.fit) / (1 + exp(fit + 1.96 * se.fit))
 ```
 
 ## Distributions{.columns-2}
