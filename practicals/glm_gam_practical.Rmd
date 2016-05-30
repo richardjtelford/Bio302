@@ -1,0 +1,41 @@
+---
+title: "GLM & GAM"
+author: "Richard J. Telford"
+date: "May 30, 2016"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#Exercises GLM & GAM
+
+##Poisson GLM
+1. Import sorich.csv
+2. Fit a linear model for species richness against cover assuming a Normal distribution
+3. Study the diagnostic plots
+4. What distribution is the response?
+5. Do an appropriate analysis
+6. Check for over-dispersion
+7. Interpret the results
+8. How does the width of the confidence interval at cover = 10 change when over dispersion is allowed for
+9. Do the grasses differ from the herb, i.e. include the factor grasherb and test its significance?
+
+
+## How much does over-dispersion affect results
+1. Use `sample()` to randomise the response in sorich
+2. Test if a Poisson GLM with cover as a predictor is significant
+3. Repeat 1000 times with `replicate`
+
+## Binomial GAM
+
+1. Open library mgcv
+2. Import data pot.csv
+3. What type of distribution is the response variable?
+4. What type of link-function do we use?
+5. Do an appropriate GLM analysis?
+6. Interpret the results?
+7. Do a GAM analysis
+8. Compare the GLM and GAM models.
+9. Which model would you prefer, and why?
