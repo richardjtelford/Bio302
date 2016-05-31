@@ -1,0 +1,216 @@
+---
+title: "GLM & GAM"
+author: "Richard J. Telford"
+date: "May 30, 2016"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library("ggplot2")
+```
+
+#Exercises GLM & GAM
+
+##Poisson GLM
+1. Import sorich.csv
+```{r}
+if(interactive()){
+  sorich <- read.csv("data/sorich.csv")
+}else{
+  sorich <- read.csv("../../data/sorich.csv")
+}
+str(sorich)
+```
+
+2. Fit a linear model for species richness against cover assuming a Normal distribution
+```{r}
+mod <- lm(nsp ~ cover, data = sorich)
+```
+
+3. Study the diagnostic plots
+```{r}
+library(ggfortify)
+autoplot(mod)
+```
+
+QQ plot look bad - heavy tail at top end
+Heteroscadistic - unequal variance
+
+4. What distribution is the response?
+
+Discrete data - non-negative count-like. Poisson-like 
+
+5. Do an appropriate analysis
+```{r}
+modP <- glm(nsp ~ cover, data = sorich, family = poisson)
+```
+Need to use `family = poisson` or defaults to Gaussian.
+
+6. Check for over-dispersion
+```{r}
+anova(modP)
+```
+Residual deviance >> Residual degrees of freedom -> over dispersed
+
+7. Interpret the results
+```{r}
+summary(modP)
+```
+Positive effect of cover on richness.
+
+8. How does the width of the confidence interval at cover = 10 change when over dispersion is allowed for
+```{r}
+#Width with poisson model
+predP <- predict(modP, newdata = data.frame(cover = 10), se.fit = TRUE)
+ciP <-with(predP, exp(fit + c(-1, 1) * 1.96 * se.fit))
+ciP
+diff(ciP)
+
+#Width with poisson model
+modQ <- glm(nsp ~ cover, data = sorich, family = quasipoisson)
+predQ <- predict(modQ, newdata = data.frame(cover = 10), se.fit = TRUE)
+ciQ <- with(predQ, exp(fit + c(-1, 1) * 1.96 * se.fit))
+ciQ
+diff(ciQ)
+
+#width with negative binomial          
+library("MASS") 
+modN <- glm.nb(nsp ~ cover, data = sorich)
+predN <- predict(modN, newdata = data.frame(cover = 10), se.fit = TRUE)
+ciN <- with(predN, exp(fit + c(-1, 1) * 1.96 * se.fit))
+ciN
+diff(ciN)
+```
+
+
+9. Do the grasses differ from the herb, i.e. include the factor grasherb and test its significance?
+```{r}
+sorich$grasherb = factor(sorich$grasherb)
+mod2 <- glm.nb(nsp ~ cover + grasherb, data = sorich)
+anova(modN, mod2)
+AIC(modN, mod2)
+mod3 <- glm.nb(nsp ~ cover * grasherb, data = sorich)
+anova(mod2, mod3)
+AIC(mod2, mod3)
+
+preds <- predict(mod3, se.fit = TRUE)
+
+sorich2 <- with(preds, cbind(
+  sorich,
+  fit = exp(fit),
+  up = exp(fit + 1.96 * se.fit),
+  down = exp(fit - 1.96 * se.fit)
+  ))
+
+ggplot(sorich2, aes(x = cover, y = nsp, colour = grasherb)) +
+  geom_jitter(height = 0.2, width = 0.1, alpha  = 0.5) +
+  geom_line(aes(y = fit)) +
+  geom_ribbon(aes(ymax = up, ymin = down), alpha = 0.2, linetype = 0)
+
+```
+
+
+
+## How much does over-dispersion affect results
+1. Use `sample()` to randomise the response in sorich
+```{r}
+sorich_mixed <- sorich
+sorich_mixed$cover <- sample(sorich_mixed$cover)
+```
+
+2. Test if a Poisson GLM with cover as a predictor is significant
+```{r}
+modx <- glm(nsp ~ cover, data = sorich_mixed, family = poisson)
+anova(modx, test = "Chi")
+anova(modx, test = "Chi")$Pr[2]
+```
+
+3. Repeat 1000 times with `replicate`
+```{r}
+res <- replicate(1000, {
+  sorich_mixed$cover <- sample(sorich_mixed$cover)
+  modx <- glm(nsp ~ cover, data = sorich_mixed, family = poisson)
+  anova(modx, test = "Chi")$Pr[2]
+})
+ggplot(data.frame(res), aes(x = res)) + 
+  geom_histogram(binwidth = 0.05, center = 0.025) + 
+  geom_hline(yintercept = 50)
+sum(res < 0.05)
+
+#repeat for quasibinomial
+resQ <- replicate(1000, {
+  sorich_mixed$cover <- sample(sorich_mixed$cover)
+  modx <- glm(nsp ~ cover, data = sorich_mixed, family = quasipoisson)
+  anova(modx, test = "F")$Pr[2]
+})
+ggplot(data.frame(resQ), aes(x = resQ)) + 
+  geom_histogram(binwidth = 0.05, center = 0.025) + 
+  geom_hline(yintercept = 50)
+sum(resQ < 0.05)
+```
+
+## Binomial GAM
+
+1. Open library mgcv
+```{r}
+library("mgcv")
+```
+
+2. Import data pot.csv
+```{r}
+if(interactive()){
+  path <- ""
+}else{
+  path <- "../../"
+}
+pot <- read.csv(paste0(path, "data/pot.csv"))
+summary(pot)
+```
+
+3. What type of distribution is the response variable?
+0 or 1 only. Success-failure. Binomial
+
+4. What type of link-function do we use?
+logit
+
+5. Do an appropriate GLM analysis?
+```{r}
+ggplot(pot, aes(x = alt, y = potalp)) +
+  geom_point()
+
+mod <- glm(potalp ~ alt, data = pot, family = binomial)
+anova(mod, test = "Chi")
+summary(mod)$coef
+
+mod2 <- glm(potalp ~ alt + I(alt^2), data = pot, family = binomial)
+anova(mod, mod2, test = "Chi")
+```
+
+6. Interpret the results?
+Second order polynomial model significant. First order not. alt^2 coeficient negative - Unimodal relationship
+
+7. Do a GAM analysis
+```{r}
+mod_gam <- gam(potalp ~ s(alt), data = pot, family = binomial)
+```
+
+8. Compare the GLM and GAM models.
+```{r}
+mod_glm <- gam(potalp ~ alt + I(alt^2), data = pot, family = binomial)
+anova(mod_glm, mod_gam, test = "Chi")
+AIC(mod_glm, mod_gam)
+
+```
+
+9. Which model would you prefer, and why?
+glm. Simpler, not sigificantly worse, lower AIC. Easier to interpret.
+
+```{r}
+ggplot(cbind(pot, gam = fitted(mod_gam), glm = fitted(mod_glm)), aes(x = alt, y = potalp)) +
+  geom_point() +
+  geom_line(aes(y = gam, colour = "GAM")) +
+  geom_line(aes(y = glm, colour = "GLM")) +
+  labs(x = "Elevation", y = "P. alpina", colour = "Model")
+```
+
