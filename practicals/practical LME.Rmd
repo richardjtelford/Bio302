@@ -1,0 +1,43 @@
+---
+title: "Mixed Effect Models"
+author: "Richard J. Telford"
+date: "June 1, 2016"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+Exercises 
+
+1) Import data LME.csv <br>
+id gives the group id, y is the response, ab and AB are predictors
+
+2) What is a random effect?
+
+3) What is a fixed effect?
+
+4) Fit an appropriate a model with y and AB
+
+5) Interpret the results
+
+6) Fit an appropriate a model with y and ab
+
+7) Interpret the results
+
+8) Include both AB and ab as predictors and do a backward elimination
+
+9) What type of contrast is used?
+
+10) What is the expected mean for the different levels of AB and ab?
+
+11) Use a linear model with AB and compare the results to question 4
+
+12) Use a linear model with ab and compare the results to question 6
+
+15) Import data length.csv <br>
+id is the individual id, day is the predictor, length is the response
+
+16) Find the best model to explain the data
