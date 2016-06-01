@@ -63,6 +63,7 @@ Positive effect of cover on richness.
 ```{r}
 #Width with poisson model
 predP <- predict(modP, newdata = data.frame(cover = 10), se.fit = TRUE)
+predP
 ciP <-with(predP, exp(fit + c(-1, 1) * 1.96 * se.fit))
 ciP
 diff(ciP)
@@ -86,7 +87,7 @@ diff(ciN)
 
 9. Do the grasses differ from the herb, i.e. include the factor grasherb and test its significance?
 ```{r}
-sorich$grasherb = factor(sorich$grasherb)
+sorich$grasherb <- factor(sorich$grasherb)
 mod2 <- glm.nb(nsp ~ cover + grasherb, data = sorich)
 anova(modN, mod2)
 AIC(modN, mod2)
@@ -104,10 +105,9 @@ sorich2 <- with(preds, cbind(
   ))
 
 ggplot(sorich2, aes(x = cover, y = nsp, colour = grasherb)) +
-  geom_jitter(height = 0.2, width = 0.1, alpha  = 0.5) +
+  geom_jitter(height = 0.4, width = 0.3, alpha  = 0.5) +
   geom_line(aes(y = fit)) +
   geom_ribbon(aes(ymax = up, ymin = down), alpha = 0.2, linetype = 0)
-
 ```
 
 
@@ -185,6 +185,7 @@ summary(mod)$coef
 
 mod2 <- glm(potalp ~ alt + I(alt^2), data = pot, family = binomial)
 anova(mod, mod2, test = "Chi")
+summary(mod2)
 ```
 
 6. Interpret the results?
