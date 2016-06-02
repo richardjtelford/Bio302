@@ -1,0 +1,162 @@
+---
+title: "Mixed Effect Models"
+author: "Richard J. Telford"
+date: "June 1, 2016"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE)
+```
+
+## R Markdown
+Exercises 
+
+1) Import data LME.csv <br>
+id gives the group id, y is the response, ab and AB are predictors
+
+```{r}
+library("ggplot2")
+library("gridExtra")
+if(interactive()){
+  path <- ""
+}else{
+  path <- "../../"
+}
+LME <- read.csv(paste0(path, "data/LME.csv"))
+summary(LME)
+
+LME$ab <- as.factor(LME$ab)
+LME$AB <- as.factor(LME$AB)
+
+g_ab <- ggplot(LME, aes(x = ab, y = y)) + geom_boxplot()
+g_AB <- ggplot(LME, aes(x = AB, y = y)) + geom_boxplot()
+grid.arrange(g_ab, g_AB, nrow = 1)
+```
+
+2) What is a random effect?
+
+3) What is a fixed effect?
+
+4) Fit an appropriate a model with y and AB
+```{r}
+library("nlme")
+mod1 <- lme(y ~ AB, data = LME, random =  ~ 1 | id)
+
+library("lme4")
+mod1b <- lmer(y ~ AB + (1|id), data = LME)
+
+```
+
+
+5) Interpret the results
+
+```{r}
+anova(mod1)
+summary(mod1)
+
+anova(mod1b)
+summary(mod1b)
+```
+
+
+6) Fit an appropriate a model with y and ab
+```{r}
+mod2 <- lme(y ~ ab, data = LME, random =  ~ 1 | id)
+
+```
+
+7) Interpret the results
+```{r}
+anova(mod2)
+summary(mod2)
+```
+
+8) Include both AB and ab as predictors and do a backward elimination
+```{r}
+mod3 <- lme(y ~ ab * AB, data = LME, random =  ~ 1 | id)
+summary(mod3)
+anova(mod3)# default  - type="s" sequential - tested in order they appear in model
+anova(mod3, type = "m")#type = "m" marginal  - delete one term from the model at a time.
+#interaction not significant
+mod4 <- lme(y ~ ab + AB, data = LME, random =  ~ 1 | id)
+summary(mod4)
+anova(mod4, type = "m") #AB not significant
+mod2 <- lme(y ~ ab, data = LME, random =  ~ 1 | id)
+anova(mod2)
+
+ggplot(LME, aes(x = interaction(ab, AB), y = y)) + 
+  geom_boxplot()
+
+```
+
+
+9) What type of contrast is used?
+```{r}
+contrasts(LME$AB)#first column of 1s omitted
+```
+
+10) What is the expected mean for the different levels of AB and ab?
+```{r}
+summary(mod4)
+coef(mod4)
+fixef(mod4) #extract fixed effects
+fixef(mod4)[1] #aA
+fixef(mod4)[1] + fixef(mod4)[2] #bA
+fixef(mod4)[1] + fixef(mod4)[3] #aB
+fixef(mod4)[1] + fixef(mod4)[2] + fixef(mod4)[3] #bB
+tapply(LME$y, list(LME$ab, LME$AB), mean)#different because no interaction fitted
+
+library("dplyr")
+LME %>%
+  group_by(ab, AB) %>%
+  summarise(mean = mean(y))
+```
+
+11) Use a linear model with AB and compare the results to question 4
+```{r}
+mod5 <- lm(y ~ AB, data = LME)
+summary(mod5)
+anova(mod5)
+```
+
+12) Use a linear model with ab and compare the results to question 6
+```{r}
+mod6 <- lm(y ~ ab, data = LME)
+summary(mod6)
+```
+
+
+15) Import data length.csv <br>
+id is the individual id, day is the predictor, length is the response
+```{r}
+if(interactive()){
+  path <- ""
+}else{
+  path <- "../../"
+}
+leng <- read.csv(paste0(path, "data/length.csv"))
+summary(leng)
+```
+
+
+16) Find the best model to explain the data
+```{r}
+mod7<-lme(len~days, data=leng, random=~days|id)
+mod8<-lme(len~days, data=leng, random=~1|id)
+anova(mod7,mod8)
+anova(mod8)
+```
+
+```{r}
+leng2 <-cbind(leng,
+  pred1 = predict(mod8, level = 1),
+  pred0 = predict(mod8, level = 0)
+  )
+
+ggplot(leng2, aes(x = days, y = len, group = id)) +
+  geom_line() +
+  geom_line(aes(y = pred1), colour = "blue") +
+  geom_line(aes(y = pred0), colour = "red", size = 2)
+```
+
