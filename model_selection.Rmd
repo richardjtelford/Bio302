@@ -1,0 +1,157 @@
+---
+title: Model Selection
+subtitle: "Bio302 - Biological data analysis II"
+author: 
+- name: "Richard J. Telford"
+institute: Department of Biology, University of Bergen
+date: '2016-05-05'
+output: 
+ ioslides_presentation:
+  widescreen: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+```{r echo=FALSE}
+bird2 <- read.csv("data/bird2.csv")
+```
+
+## Model Selection
+
+Many variables collected
+
+Which should be included in the model?
+
+Variance-Bias trade-off
+
+Models with too few parameters omit important predictors 
+
+	- large prediction errors 
+
+Over-fitted models have many poorly known coefficients 
+
+ 	- large prediction errors
+
+Need to select the best model, minimising these problems
+
+
+## Select the “best” regression model
+
+There is no “best” regression model.
+
+ - What is “best”?
+ - There are several ways to define “best” – they may not all yield the same results.
+ - Optimise goodness of fit diagnostics
+ - “Best” model may have other problems
+ 
+## Goodness of fit diagnostics
+
+Sum of squares 
+
+	- depends on the number of parameters used
+	- declines if more (nested) terms are used
+	- becomes zero when n observation - 1 = n parameters 
+
+R^2^ – depends on the number of parameters used
+
+Adjusted R^2^ – R^2^ adjusted for the number of parameters
+
+AIC Akaike information criterion - 2 \* log - likelihood + 2 \* npar
+	(npar the number of parameters)
+
+BIC Schwarz's Bayesian criterion - 2 \* log - likelihood + log(n) \* npar
+	(n the number of observations)
+
+Want to chose variables that optimise one of these criteria
+
+## Techniques for variable selection
+
+Given these criteria for comparing models, what approaches be used to select models?
+
+Ideally, compare scientifically meaningful models specified prior to seeing the data. This might not always be possible.
+
+Alternative strategies, find the optimal model using 
+
+All possible combinations of predictors
+
+- Computationally intensive with many predictors
+
+Stepwise regression methods
+
+ - Forward selection / Backward elimination
+
+Alternatives
+
+ - Lasso
+ - Least-angle regression
+
+## Forward selection
+
+Choose the single best variable
+
+Do any of the remaining variables improve the model?
+
+Repeat step 2 until the model cannot be further improved
+
+Backwards selection starts with the full model and deletes terms stepwise 
+
+Stepwise regression adds or deletes one variable at each turn 
+
+Automatic procedure like forward selection should be considered exploratory. 
+
+Hypothesis generation rather than hypothesis testing.
+
+```{r, eval = FALSE}
+library(MASS)
+mod <- lm(weight ~ temp * gender + I(temp ^ 2) * gender, data = bird2)
+summary(mod)
+mod2 <- stepAIC(mod, k = 2)
+```
+
+
+## Problems with stepwise variable selection
+
+1. R^2^ values are biased high.
+2. F and Χ^2^ statistics do not have the claimed distribution. Variable selection is based on methods intended for testing pre-specified hypotheses only.
+3. Standard errors of regression coefficient estimates are biased low and confidence intervals for effects and predicted values are falsely narrow.
+4. p-values are too small (i.e. severe multiple testing problems). Proper correction of them is difficult.
+5. Regression coefficients that are biased high in absolute value and need shrinkage.
+6. Rather than solving problems caused by collinearity, variable selection is made arbitrary by collinearity.
+7. It allows us not to think about the problem.
+
+Harrell (2001)
+
+## One Best Model?
+
+AIC can identify the best model for the data 
+
+With another batch of data, a different best model may have been selected
+
+```{r}
+mods <- list()
+mods$m0 <- lm(weight ~ 1, bird2)
+mods$m1 <- lm(weight ~ temp, bird2)
+mods$m2 <- lm(weight ~ gender, bird2)
+mods$m3 <- lm(weight ~ temp + gender, bird2)
+mods$m4 <- lm(weight ~ temp * gender, bird2)
+mods$m5 <- lm(weight ~ temp + I(temp^2), bird2)
+mods$m6 <- lm(weight ~ temp + I(temp^2) + gender, bird2)
+
+sapply(mods, AIC)
+```
+
+## AIC weights & model averaging{.smaller}
+
+$\Delta$AIC - difference between the best AIC and AIC of the other models. Best model has a $\Delta$AIC of zero, highest values for worst models  
+
+AIC weights $exp(-0.5*\Delta{AIC})/(\sum{exp(-0.5*\Delta{AIC})}$ 
+
+AIC weights – probability model is best of those tested 
+
+```{r}
+library("AICcmodavg")
+aictab(mods)
+```
+
+
