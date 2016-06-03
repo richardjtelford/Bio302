@@ -142,9 +142,9 @@ summary(leng)
 
 16) Find the best model to explain the data
 ```{r}
-mod7<-lme(len~days, data=leng, random=~days|id)
-mod8<-lme(len~days, data=leng, random=~1|id)
-anova(mod7,mod8)
+mod7 <- lme(len ~ days, data = leng, random =  ~ days | id)
+mod8 <- lme(len ~ days, data = leng, random =  ~ 1 | id)
+anova(mod7, mod8)
 anova(mod8)
 ```
 
@@ -159,4 +159,3 @@ ggplot(leng2, aes(x = days, y = len, group = id)) +
   geom_line(aes(y = pred1), colour = "blue") +
   geom_line(aes(y = pred0), colour = "red", size = 2)
 ```
-
