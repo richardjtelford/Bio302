@@ -1,0 +1,71 @@
+---
+title: "Makerere R workshop"
+author: 
+- name: "Richard J. Telford"
+institute: Department of Biology, University of Bergen
+date: "October 26, 2016"
+output: 
+ ioslides_presentation:
+  widescreen: true
+---
+
+```{r setup0, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, fig.height = 4, fig.width = 5, cache = TRUE, message = FALSE, cache.lazy = TRUE, eval = TRUE)
+```
+
+## Rationale
+
+ - Introduce Makerere staff & students to recent developments in R
+ - Focus on staff & students with existing R skills who train others
+ 
+All code and presentations at [https://github.com/richardjtelford/Bio302](https://github.com/richardjtelford/Bio302)
+
+ 
+## Contents
+
+ - Integrated Development Environments - Rstudio
+ - Style guide for readable code
+ - `readxl` and `readr` for importing data
+ - `ggplot2` for better graphics including maps with `ggmaps`
+ - `dplyr` and `tidyr` for data manipulation
+ - `lubridate` for date manipulation
+ - Debugging R code
+ - version control - use git (and github)
+ - Rmarkdown for reproducible analyses
+ - Online resources at the University of Bergen
+
+# Use an Integrated Development Environment
+
+```{r child = "useAnIDE.Rmd"}
+``` 
+
+# You need a style guide
+
+```{r child = "styleguide.Rmd"}
+``` 
+
+# Importing data
+
+```{r child = "importing.Rmd"}
+``` 
+
+
+# ggplot2 and allied packages
+
+```{r child = "ggplot_etc.Rmd"}
+``` 
+
+# lubridate for handling dates
+
+```{r child = "lubridate.Rmd"}
+``` 
+
+# Debugging R
+
+```{r child = "DebuggingTools.Rmd"}
+``` 
+
+# Rmarkdown
+
+```{r child = "rmarkdown.rmd"}
+``` 
