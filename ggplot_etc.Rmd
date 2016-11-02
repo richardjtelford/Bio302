@@ -10,7 +10,7 @@ output:
   widescreen: true
 ---
 
-```{r setup, include=FALSE}
+```{r setup_gg, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, fig.height = 4, fig.width = 5, cache = TRUE, message = FALSE, cache.lazy = TRUE)
 library("dplyr")
 ```
@@ -308,7 +308,7 @@ ggpairs(
 ## ggmaps
 
 Use Google Maps as background
-```{r, message = FALSE}
+```{r, message = FALSE, eval = TRUE}
 library(ggmap)
 dat <- data.frame(Long = 5.3, Lat = 60.4)
 map <- get_googlemap(center = "Bergen", zoom = 11)
@@ -319,13 +319,34 @@ g <- ggmap(map) +
 `center` can be vector giving longitude and latitude or string address
 
 ##
-```{r, echo = FALSE}
+```{r, echo = FALSE, eval = TRUE}
 print(g)
 ```
 
 Can add points, lines, polygons, etc.
 
 __Make a satellite map of your field area region__
+
+##Don't like cluttered google maps?
+
+Turn off selected elements
+```{r, eval = FALSE, tidy=TRUE}
+library(ggmap)
+map <- get_googlemap(
+  center = "Hordaland", 
+  zoom = 9, 
+  maptype = "terrain", 
+  language= "fr-FR", 
+  style = 'feature:road|visibility:off&
+    style=feature:administrative.locality|element:labels|visibility:off&
+    style=feature:landscape|visibility:on|saturation:-100|lightness:50&
+    style=feature:landscape|element:labels|visibility:off&
+    style=feature:poi|visibility:off&
+    style=feature:transit|visibility:off'
+)
+
+ggmap(map)
+```
 
 ## ggvis
 
@@ -342,34 +363,50 @@ mtcars %>% ggvis(x = ~wt, y = ~mpg) %>%
    )
 ```
 
+# Data handling
+
 ## Data handling in R
 
 Do all data handling in R - reproducible
 
-## reshape2
+## tidyr
 
-`melt` from fat format to thin format
+`gather` from fat format to thin format
 
-`cast` from thin format to fat format
+```{r eval = FALSE}
+stocks <- data.frame(
+   time = as.Date('2009-01-01') + 0:9,
+   X = rnorm(10, 0, 1),
+   Y = rnorm(10, 0, 2),
+   Z = rnorm(10, 0, 4)
+)
+stock2 <- gather(stocks, key = stock, value = price, -time)
+```
 
-Easier to think about fat formats
 
-Easier to deal with thin formats
+`spread` from thin format to fat format
+```{r, eval = FALSE}
+spread(stock2, key = stock, value = price)
+```
 
-Also `tidyr`
+Fat formats for publication
+
+Thin formats (tidy data) for analysis and plotting
+
+Can be used in `dplyr` pipe chains (see below) 
 
 ## IK foram-temperature data from rioja
 
 ```{r}
 library(rioja)
-library(reshape2)
+library(tidyr)
 data(IK)
 IK_fat <- cbind(sumSST = IK$env$SumSST, IK$spec)
 names(IK_fat)[1:10]
 
-IK_thin <- melt(IK_fat, id.vars = "sumSST")
+IK_thin <- gather(IK_fat, key = species, value = percent, -sumSST)
 names(IK_thin)
-g <- ggplot(IK_thin, aes(x = sumSST, y = value, colour = variable)) + 
+g <- ggplot(IK_thin, aes(x = sumSST, y = percent, colour = species)) + 
   geom_point(show.legend = FALSE) +
   geom_smooth(show.legend = FALSE)
 ```
@@ -385,13 +422,15 @@ Split-apply-combine
 
 Replacement for functions 
  
- - apply
- - sapply
- - by
+ - `apply`
+ - `sapply`
+ - `by`
  
  With consistent outputs
  
-  - ldply  - takes __l__ist returns __d__ata.frame
+  - `ldply`  - takes __l__ist returns __d__ata.frame
+
+**WARNING**: `plyr` and `dplyr` should not be loaded at the same time!
 
 ## dplyr package
 
