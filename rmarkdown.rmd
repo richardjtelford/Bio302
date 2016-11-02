@@ -5,16 +5,103 @@ date: "May 25, 2016"
 output: ioslides_presentation
 ---
 
-```{r setup, include=FALSE}
+```{r setup_rmd, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
 ```
 ## Why
 
  - Interlaced R code and text compiles to make presentation/paper/thesis 
  - Dynamic documents - update when data/code changes
+ - Reproducible analyses
  - Simple formatting
  - Text files - good for version control
 
+## Output formats
+
+Documents
+
+ - PDF
+ - HTML
+ - word
+
+Presentations
+
+ - ioslides
+
+## Formatting
+
+Standard markdown formatting
+
+\*italic\* or \_italics\_ -> *italic*
+
+\*\* bold\*\* or \_\_bold\_\_ -> **bold** 
+
+\#Title
+
+\#\#Subtitle (new page in ioslides)
+
+\#\#\#Sub-subtitle 
+
+\[Link text](biostats.b.uib.no) -> [Link text](biostats.b.uib.no)
+
+\!\[Image description](image.jpg)  -> includes image.jpg
+ 
+Rmarkdown cheat sheet
+[https://www.rstudio.com/wp-content/uploads/2016/03/rmarkdown-cheatsheet-2.0.pdf
+](https://www.rstudio.com/wp-content/uploads/2016/03/rmarkdown-cheatsheet-2.0.pdf)
+
+
+## R chunks
+
+R code in chunks
+
+\```{r chunkName, eval = TRUE}  
+#some R code  
+library(vegan)  
+x <- 2  
+y <- 7  
+\```
+
+Chunk name is optional.
+
+Chunk options
+
+ - `eval` Run the R code
+ - `echo` Show the R code
+
+Full list [http://yihui.name/knitr/options/](http://yihui.name/knitr/options/)
+
+## Inline code
+
+Seven times six is `` `r '\x60r 7 * 6\x60'` ``
+
+Seven times six is `r 7 * 6`
+
+## Nice tables
+
+```{r, echo = TRUE}
+knitr::kable(head(iris))
+```
+
+## Getting stated
+
+In RStudio
+
+`File>>New File>>R Markdown...`
+
+Select options for document format
+
+R gives example document to edit
+
+Click `Knit` to render
+
+## Advanced
+
+Can include bibliographies - [rmarkdown.rstudio.com/authoring_bibliographies_and_citations.html](http://rmarkdown.rstudio.com/authoring_bibliographies_and_citations.html)
+
+Latex/html/css to change formatting
+
+Cache options to avoid recalculating expensive objects
 
 ## Reading list
 
