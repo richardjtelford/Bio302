@@ -10,7 +10,7 @@ output:
   widescreen: true
 ---
 
-```{r setup, include=FALSE}
+```{r setup_dbt, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
@@ -72,16 +72,20 @@ Very useful
 
 ## `browser`
 
-Inserting `browser()` into a function starts the debugger
+Inserting `browser()` into a function starts the debugger.
+
+Use `expr` argument to open debugger only if condition is met.
 
 ## `debug`
-If you don't want to or cannot put `browser` into a function use
+If you don't want to, or cannot, put `browser` into a function use
 
 `debug(foo)` where `foo` is the function you want to debug
 
 Opens the debugger on `foo` next time it is called
 
-Use `undebug(foo)` to turn it off
+Use `undebug(foo)` to turn it off.
+
+`debugonce(foo)` will open the debugger only once.
 
 ## `options(error = recover)`
 
