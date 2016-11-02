@@ -10,8 +10,7 @@ output:
   widescreen: true
 ---
 
-
-```{r setup, include=FALSE}
+```{r setup_stg, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
 ```
 
@@ -52,19 +51,21 @@ Make your own style - but be consistent
  
 ## Spacing
 
-White-space is free!
+White-space is free! 
+
+Makes code more readable
 
 Place spaces around all infix operators (=, +, -, <-, etc.) and around = in function calls. 
 
 Always put a space after a comma, and never before.
 
 ### Good
-```{r}
+```{r, eval = FALSE}
 average <- mean(feet / 12 + inches, na.rm = TRUE)
 ChickWeight[1, ]
 ```
 ### Bad
-```{r}
+```{r, eval = FALSE}
 average<-mean(feet/12+inches,na.rm=TRUE)
 ChickWeight[1,]
 ```
@@ -72,14 +73,14 @@ ChickWeight[1,]
 Exception: :, :: and ::: don’t need spaces around them.
 
 ### Good
-```{r}
+```{r, eval = FALSE}
 x <- 1:10
 base::get
 ```
 
 ### Bad
 
-```{r}
+```{r, eval = FALSE}
 x <- 1 : 10
 base :: get
 ```
@@ -88,7 +89,7 @@ base :: get
 
 ## Split long commands over multiple lines
 
-```{r}
+```{r, eval = FALSE}
 list(
   total = a + b + c, 
   mean  = (a + b + c) / n
@@ -98,7 +99,7 @@ list(
 ## Indentation makes code more readable
 
 ### Good
-```{r}
+```{r, eval = FALSE}
 pos <- function(x) {
   if (is.null(dim(x))) {
     x[x > 0]
@@ -109,7 +110,7 @@ pos <- function(x) {
 ```
 
 ### Bad
-```{r}
+```{r, eval = FALSE}
 pos <- function(x){
 if(is.null(dim(x)))
 {x[x >0]} 
@@ -123,11 +124,11 @@ x[, colSums(x) > 0, drop  = FALSE]
 Use <-, not =, for assignment.
 
 ### Good
-```{r}
+```{r, eval = FALSE}
 x <- 5
 ```
 ### Bad
-```{r}
+```{r, eval = FALSE}
 x = 5
 ```
 
@@ -141,10 +142,11 @@ Help you and others to understand what you did
 Comments should explain the why, not the what.
 
 Use comments to break up file into readable chunks for navigation
-```{r}
+```{r, eval = FALSE}
 #### Load data ####
-
+...
 #### Plot data ####
+...
 ```
  
 ## Split analyses over multiple files
@@ -158,20 +160,23 @@ For example:
  - functions to "functions.R"
 
 Import with  
-```{r}
+```{r, eval = FALSE}
 source("loadData.R")
 source("functions.R")
 ```
  
-## Repeated code
+## Don't repeat yourself
+
+Repeated code is hard to maintain
 
 Make repeated code into functions.
 
-```r{}
+```{r, eval = FALSE}
 plot(obj1, ...)
 legend(...)
 
 plot(obj2, ...)
+legend(...)
 ...
 
 plotObj <- function(obj){
@@ -189,7 +194,7 @@ Unless you like strange bugs
 
 Rarely useful to attach - many better options
 
-https://coderclub.b.uib.no/2016/05/03/dont-get-attached-to-attach/
+[https://coderclub.b.uib.no/2016/05/03/dont-get-attached-to-attach/](https://coderclub.b.uib.no/2016/05/03/dont-get-attached-to-attach/)
  
 ## Reading
 
