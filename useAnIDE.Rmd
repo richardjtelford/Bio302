@@ -45,7 +45,13 @@ A good IDE makes R coding more efficient and reduces some types of bugs
 Use Rstudio projects for project management
 
  - Keeps related files together
- - Keeps track of working directory, History and environment
+ - Keeps track of working directory, history and environment
+ 
+Use relative paths 
+
+`read_table("data/myfile.txt")` # good
+
+`read_table("c:/projects/myProject/mysubproject/mysubsubsubproject/myfolderwithaverylongname/data/myfile.txt")` # bad
  
 ## Exercise
 
@@ -55,16 +61,16 @@ We will use this project all week.
 
 Open a new script and start to __type__ some code
 
-```{r}
+```{r, eval = FALSE}
 set.seed(42) # make reproducible
 df <- data.frame(
   x = 1:10,
   y = rnorm(10)
 )
 
-plot(df$x, df$y)
-legend("topright", legend = "Random", pch = 1)
-
+library(ggplot2)
+ggplot(df, aes(x = x, y = y)) + 
+  geom_point()
 ```
 
 Become familiar with the autocomplete, sending code to the console and some shortcuts
