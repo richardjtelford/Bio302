@@ -57,7 +57,7 @@ g <- ggplot(gapminder, #data
 Can add components to existing ggplot2 object
 ```{r, eval = FALSE}
 g <- ggplot(gapminder, #Data
-       aes(x = gdpPercap, y = lifeExp, size = pop, colour = continent)) + #aesthetics
+       aes(x = gdpPercap, y = lifeExp, size = pop, colour = continent)) #aesthetics
 g <- g +  geom_point() 
 ```
 
@@ -113,30 +113,31 @@ Every geom has an associated stat. Can override default.
 
 ##
 ```{r}
-g <- ggplot(subset(gapminder, year == 1957), aes(x = lifeExp, fill = continent)) +
+g <- ggplot(filter(gapminder, year == 1957), aes(x = lifeExp, fill = continent)) +
   geom_histogram()
 g
-
 ```
 
 ## Setting vs mapping aesthetics
 
 Map aesthetics inside `aes`
 ```{r, fig.height=2, fig.width=3}
-ggplot(subset(gapminder, year == 1957), 
+ggplot(filter(gapminder, year == 1957), 
        aes(x = gdpPercap, y = lifeExp, colour = continent)) +
   geom_point()
+```
 
-ggplot(subset(gapminder, year == 1957), 
+##{.columns-2}
+Try to make all points blue
+```{r, fig.height=2, fig.width=3}
+ggplot(filter(gapminder, year == 1957), 
        aes(x = gdpPercap, y = lifeExp, colour = "blue")) +
   geom_point()
 ```
 
-##
-
 Set aesthetics outside `aes` 
 ```{r, fig.height=3, fig.width=3}
-g2 <- ggplot(subset(gapminder, year == 1957), aes(x = gdpPercap, y = lifeExp)) +
+g2 <- ggplot(filter(gapminder, year == 1957), aes(x = gdpPercap, y = lifeExp)) +
   geom_point(colour = "blue")
 g2
 ```
@@ -335,7 +336,6 @@ __Make a satellite map of your field area region__
 
 Turn off selected elements
 ```{r, eval = FALSE, tidy=TRUE}
-library(ggmap)
 map <- get_googlemap(
   center = "Hordaland", 
   zoom = 9, 
