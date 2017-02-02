@@ -121,19 +121,23 @@ g
 ## Setting vs mapping aesthetics
 
 Map aesthetics inside `aes`
-```{r, fig.height=2, fig.width=3}
+```{r, fig.height=3, fig.width=3}
 ggplot(filter(gapminder, year == 1957), 
        aes(x = gdpPercap, y = lifeExp, colour = continent)) +
   geom_point()
 ```
 
-##{.columns-2}
+##
+
 Try to make all points blue
-```{r, fig.height=2, fig.width=3}
+
+```{r, fig.height=3, fig.width=3}
 ggplot(filter(gapminder, year == 1957), 
        aes(x = gdpPercap, y = lifeExp, colour = "blue")) +
   geom_point()
 ```
+
+##
 
 Set aesthetics outside `aes` 
 ```{r, fig.height=3, fig.width=3}
@@ -180,6 +184,7 @@ Control how the data are mapped onto the aesthetics
  - `scale_y_log10`
 
 Most useful arguments: `breaks`, `labels` and `values`
+
 ##
 ```{r}
 g <- g + scale_fill_manual(values = continent_colors) 
@@ -219,7 +224,7 @@ g + coord_flip()
 
 If the names of your data are not the labels you need
 ```{r}
-g <- g + labs(x = "Life Expectancy", y = "Count", colour = "Continent")
+g <- g + labs(x = "Life Expectancy", y = "Count", fill = "Continent")
 g
 ```
 
@@ -237,11 +242,14 @@ g + theme_classic()
 
  
 ##
+
 Change any element of the figure
+
 ```{r}
 g <- ggplot(gapminder, aes(x = continent, y = lifeExp)) + geom_boxplot()
 g + theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
 ```
+
 See `?theme` to see elements to change
  
 ## legends
@@ -252,7 +260,7 @@ Can turn off with `show.legend` argument
 
 Can move with
 
-`g + theme(legend.justification=c(1,0), legend.position=c(1,0))`
+`g + theme(legend.justification = c(1, 0), legend.position = c(1, 0))`
  
 ## Saving plots
 ```{r}
@@ -272,6 +280,8 @@ grid.arrange(g, g2, ncol = 2, nrow = 1)
 ```
 
 ## Resources
+
+GGplot cheat sheet https://www.rstudio.com/wp-content/uploads/2015/03/ggplot2-cheatsheet.pdf
 
 R Graphics Cookbook - http://www.cookbook-r.com/Graphs/index.html
   
@@ -321,6 +331,7 @@ g <- ggmap(map) +
   geom_point(aes(x = Long, y = Lat), data = dat, size = 2) +
   xlab("Longitude °E") + ylab("Latitude °N")
 ```
+
 `center` can be vector giving longitude and latitude or string address
 
 ##
@@ -351,6 +362,9 @@ map <- get_googlemap(
 
 ggmap(map)
 ```
+
+See https://developers.google.com/maps/documentation/static-maps/
+
 
 ## ggvis
 
@@ -437,7 +451,7 @@ Replacement for functions
 
 ## dplyr package
 
-Select African countries where GDP > 1000 in 1972
+Select African countries where GDP < 1000 in 1972
 
 ```{r}
 with(gapminder, country[gdpPercap < 1000 & year == 1972 & continent == "Africa"])
@@ -457,14 +471,14 @@ gapminder %>%
  filter(gdpPercap < 1000, year == 1972, continent == "Africa") %>%
   select(country)
 ```
+
 Explicit
 
 ## dplyr
 
 Also 
 
- - `mutate` makes new column
- - `transform` modifies existing column
+ - `mutate` modifies column or makes new column
  
 ```{r}
 gapminder %>%
