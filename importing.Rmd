@@ -1,0 +1,63 @@
+---
+title: Lubridate
+subtitle: "Bio302 - Biological data analysis II"
+author: 
+- name: "Richard J. Telford"
+institute: Department of Biology, University of Bergen
+date: '2016-05-05'
+output: 
+ ioslides_presentation:
+  widescreen: true
+---
+
+```{r setup_im, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE, message = FALSE)
+```
+
+## Importing data
+
+Critical step in any analysis
+
+Often difficult
+
+For delimited files (eg. csv)
+
+  try `readr` package
+  
+For excel files
+
+  try `readxl` package
+
+##readr
+
+Replacements for base functions
+
+- `read.table` -> `read_table`
+- `read.csv` -> `read_csv`
+
+Advantages over base functions
+ 
+ - can read compressed files
+ - faster
+ - does not convert strings to factors (except on request)
+ - column types guessed or set by user
+ - gives table of problems
+
+[https://blog.rstudio.org/2015/04/09/readr-0-1-0/](https://blog.rstudio.org/2015/04/09/readr-0-1-0/)
+
+##`read_excel` in `readxl`
+
+Many people keep data in excel format (probably unwise)
+
+Nicely formatted data easy to read with `read_excel`
+
+```{r, eval = FALSE}
+library(readxl)
+df <- read_excel(path = "myExcel", sheet = "Sheet1")
+```
+
+Returns a tibble (tbl_df), convert to a pure `data.frame` with `as.data.frame`.
+
+## Exercise
+
+Use `readxl` package to import an excel file 

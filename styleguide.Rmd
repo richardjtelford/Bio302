@@ -156,6 +156,7 @@ Long scripts become difficult to navigate
 Fix by moving parts of the code into different files
 
 For example: 
+
  - data import code to "loadData.R"
  - functions to "functions.R"
 
@@ -192,7 +193,7 @@ Single place to maintain
 
 Unless you like strange bugs
 
-Rarely useful to attach - many better options
+Very rarely useful to attach - many better options
 
 [https://coderclub.b.uib.no/2016/05/03/dont-get-attached-to-attach/](https://coderclub.b.uib.no/2016/05/03/dont-get-attached-to-attach/)
  

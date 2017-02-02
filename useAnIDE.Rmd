@@ -46,6 +46,7 @@ Use Rstudio projects for project management
 
  - Keeps related files together
  - Keeps track of working directory, history and environment
+ - Integration with version control
  
 Use relative paths 
 

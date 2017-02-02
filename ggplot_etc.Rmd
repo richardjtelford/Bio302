@@ -48,7 +48,7 @@ g <- ggplot(gapminder, #data
   geom_point() + # geometry
   #geom_smooth() + #statistics
   facet_wrap(~year) + #facets
-  #coord_xxx + #coordinated
+  #coord_xxx + #coordinates
   scale_x_log10() + #scales
   labs(x = "GDP per capita") + #labels
   theme() #theme
@@ -63,7 +63,7 @@ g <- g +  geom_point()
 
 ##
 Need to `print` ggplot2 object
-```{r, fig.height=5.5, fig.width=5.5}
+```{r, fig.height=5, fig.width=5.5}
 print(g)
 ```
 
@@ -73,7 +73,7 @@ Data should be a tidy `data.frame`
 
 Variables in columns, and observations the rows
 
-May need to reshape data with `reshape2` or `tidyr` package
+May need to reshape data with `tidyr` package
 
 May need to subset or summarise data
 
@@ -90,6 +90,8 @@ Other aesthetics include
  - `fill` # for areas
  - `ymax`
  - `ymin`
+ - `group` # to denote how data should be grouped
+
 
 ## Geometry
 
@@ -117,7 +119,7 @@ g
 
 ```
 
-## Setting vs mapping aesthetics{.columns-2}
+## Setting vs mapping aesthetics
 
 Map aesthetics inside `aes`
 ```{r, fig.height=2, fig.width=3}
@@ -129,6 +131,8 @@ ggplot(subset(gapminder, year == 1957),
        aes(x = gdpPercap, y = lifeExp, colour = "blue")) +
   geom_point()
 ```
+
+##
 
 Set aesthetics outside `aes` 
 ```{r, fig.height=3, fig.width=3}
@@ -237,7 +241,7 @@ Change any element of the figure
 g <- ggplot(gapminder, aes(x = continent, y = lifeExp)) + geom_boxplot()
 g + theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
 ```
-See ?theme to see elements to change
+See `?theme` to see elements to change
  
 ## legends
 
@@ -383,7 +387,6 @@ stocks <- data.frame(
 stock2 <- gather(stocks, key = stock, value = price, -time)
 ```
 
-
 `spread` from thin format to fat format
 ```{r, eval = FALSE}
 spread(stock2, key = stock, value = price)
@@ -406,9 +409,9 @@ names(IK_fat)[1:10]
 
 IK_thin <- gather(IK_fat, key = species, value = percent, -sumSST)
 names(IK_thin)
-g <- ggplot(IK_thin, aes(x = sumSST, y = percent, colour = species)) + 
+g <- ggplot(IK_thin, aes(x = sumSST, y = percent / 100, colour = species)) + 
   geom_point(show.legend = FALSE) +
-  geom_smooth(show.legend = FALSE)
+  geom_smooth(method = "glm", method.args = list(family = "quasibinomial"), show.legend = FALSE)
 ```
 
 ##
@@ -440,6 +443,14 @@ Select African countries where GDP > 1000 in 1972
 with(gapminder, country[gdpPercap < 1000 & year == 1972 & continent == "Africa"])
 ```
 
+With dplyr
+
+```{r, include = FALSE}
+tmp <- filter(gapminder, gdpPercap < 1000, year == 1972, continent == "Africa")
+select(tmp, country)
+```
+
+##
 Pipe notation
 ```{r}
 gapminder %>%
