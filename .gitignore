@@ -14,3 +14,14 @@ vignettes/*.pdf
 .httr-oauth
 .Rproj.user
 *.html
+
+#markdown cache etc
+*_cache/
+*_files/
+*.md
+*.pdf
+*.html
+
+
+#image files
+*.png
