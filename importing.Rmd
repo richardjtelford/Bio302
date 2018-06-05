@@ -47,7 +47,7 @@ Advantages over base functions
 
 ##`read_excel` in `readxl`
 
-Many people keep data in excel format (probably unwise)
+Many people keep data in Excel format (probably unwise)
 
 Nicely formatted data easy to read with `read_excel`
 
@@ -56,7 +56,7 @@ library(readxl)
 df <- read_excel(path = "myExcel", sheet = "Sheet1")
 ```
 
-Returns a tibble (tbl_df), convert to a pure `data.frame` with `as.data.frame`.
+Returns a tibble (tbl_df).
 
 ## Exercise
 

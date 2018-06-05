@@ -42,13 +42,13 @@ head(gapminder)
 ## Anatomy of a ggplot2 command
 
 Add components together.
-```{r}
+```{r anatomy}
 g <- ggplot(gapminder, #data
        aes(x = gdpPercap, y = lifeExp, size = pop, colour = continent)) + #aesthetics
   geom_point() + # geometry
   #geom_smooth() + #statistics
-  facet_wrap(~year) + #facets
-  #coord_xxx + #coordinates
+  facet_wrap(~ year) + #facets
+  #coord_flip + #coordinates
   scale_x_log10() + #scales
   labs(x = "GDP per capita") + #labels
   theme() #theme
@@ -171,10 +171,10 @@ Works best for simple models. Fit complex models seperately
 
 Uses `x`, `y`, weight from `aes`
 
-`g + geom_smooth(method = "lm", formula = y~x)`
+`g + geom_smooth(method = "lm", formula = y ~ x)`
 
 
-## Scales{.columns-2}
+## Scales
 
 Control how the data are mapped onto the aesthetics
 
@@ -205,8 +205,8 @@ Split the data into partitions
  - `facet_wrap()` By one variable
  - `facet_grid()` By two variables
 
-```{r}
-g2 + facet_wrap(~continent)
+```{r, fig.height = 3.5}
+g2 + facet_wrap(~ continent)
 
 ```
 
@@ -232,7 +232,7 @@ g
 
 ## Themes
 
-Don't like the default plot - change it with themes
+Don't like the default plot? Change it with theme
 
  - `theme_bw()`
  - `theme_classic()`
@@ -245,8 +245,9 @@ g + theme_classic()
 
 Change any element of the figure
 
-```{r}
-g <- ggplot(gapminder, aes(x = continent, y = lifeExp)) + geom_boxplot()
+```{r, fig.height = 3.5}
+g <- ggplot(gapminder, aes(x = continent, y = lifeExp)) + 
+  geom_boxplot()
 g + theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
 ```
 
@@ -256,7 +257,7 @@ See `?theme` to see elements to change
 
 Legends appear automatically when required
 
-Can turn off with `show.legend` argument
+Can turn off with `show.legend` argument to the `geom_xxx`
 
 Can move with
 
@@ -332,7 +333,7 @@ g <- ggmap(map) +
   xlab("Longitude °E") + ylab("Latitude °N")
 ```
 
-`center` can be vector giving longitude and latitude or string address
+`center` can be vector giving longitude and latitude or an address
 
 ##
 ```{r, echo = FALSE, eval = TRUE}
@@ -365,22 +366,6 @@ ggmap(map)
 
 See https://developers.google.com/maps/documentation/static-maps/
 
-
-## ggvis
-
-Interactive grammmer of graphics
-
-Focus of new developments
-
-```{r, eval = FALSE}
-library("ggvis")
-mtcars %>% ggvis(x = ~wt, y = ~mpg) %>%
-   layer_points() %>%
-   layer_smooths(
-     span = input_slider(0.2, 1, value = 0.5, step = 0.05, label = "span")
-   )
-```
-
 # Data handling
 
 ## Data handling in R
@@ -392,7 +377,7 @@ Do all data handling in R - reproducible
 `gather` from fat format to thin format
 
 ```{r eval = FALSE}
-stocks <- data.frame(
+stocks <- data_frame(
    time = as.Date('2009-01-01') + 0:9,
    X = rnorm(10, 0, 1),
    Y = rnorm(10, 0, 2),
@@ -433,22 +418,6 @@ g <- ggplot(IK_thin, aes(x = sumSST, y = percent / 100, colour = species)) +
 print(g)
 ```
 
-## plyr
-
-Split-apply-combine
-
-Replacement for functions 
- 
- - `apply`
- - `sapply`
- - `by`
- 
- With consistent outputs
- 
-  - `ldply`  - takes __l__ist returns __d__ata.frame
-
-**WARNING**: `plyr` and `dplyr` should not be loaded at the same time!
-
 ## dplyr package
 
 Select African countries where GDP < 1000 in 1972
@@ -474,12 +443,20 @@ gapminder %>%
 
 Explicit
 
-## dplyr
+## Six one-table verbs
 
-Also 
+`select` - select columns
 
- - `mutate` modifies column or makes new column
- 
+`filter` - filter rows
+
+`arrange` - sort rows
+
+`mutate` - change or add columns
+
+`group_by` - describe groups in the data for processing (`ungroup` to remove)
+
+`summarise` - summarise data
+
 ```{r}
 gapminder %>%
   mutate(logPop = log(pop))
@@ -495,3 +472,19 @@ gapminder %>%
   group_by(continent) %>%
   summarise(n = n(), mean = mean(pop), median = median(pop))
 ```
+
+## Two-table verbs
+
+Join - merge two tables by a common column
+
+`left_join` - all rows from first table, matching from second
+
+also `right_join`, `inner_join`, `full_join`, `semi_join`
+
+`anti_join` - all rows from first table without a match in second
+
+`bind_rows` - append tables row-wise (more rows)
+
+`bind_cols` - append tables column-wise (more columns)
+
+

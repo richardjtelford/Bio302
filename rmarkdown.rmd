@@ -103,6 +103,10 @@ Latex/html/css to change formatting
 
 Cache options to avoid recalculating expensive objects
 
+Use `knitr::read_chunk` to read code from another file.
+
+Can include citations and automatically formatted reference list. 
+
 ## Reading list
 
 Reproducible Science with Rmarkdown

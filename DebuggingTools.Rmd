@@ -93,7 +93,7 @@ Chance to look at the state of all functions when the error occurred
 
 Very useful
 
-Turn off with `options(error = NULL)`
+Turn off with `options(error = NULL)` - otherwise gets annoying fast 
 
 ## Warnings
 

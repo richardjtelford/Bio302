@@ -28,7 +28,7 @@ as.POSIXct(dat, format = "%d %B %Y %H:%M:%S")
 Lubridate makes this easy.
 
 ```{r}
-library(lubridate)
+library("lubridate")
 dmy_hms(dat)
 ```
 Need to use function with time units in correct order

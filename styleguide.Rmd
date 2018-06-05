@@ -13,6 +13,11 @@ output:
 ```{r setup_stg, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
 ```
+##
+<blockquote class="twitter-tweet" data-lang="en" width = "550"><p lang="en" dir="ltr">The only way to write good code is to write tons of shitty code first. Feeling shame about bad code stops you from getting to good code</p>&mdash; Hadley Wickham (@hadleywickham) <a href="https://twitter.com/hadleywickham/status/589068687669243905">17 April 2015</a></blockquote>
+<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+
 
 ## Why
 
@@ -55,7 +60,7 @@ White-space is free!
 
 Makes code more readable
 
-Place spaces around all infix operators (=, +, -, <-, etc.) and around = in function calls. 
+Place spaces around all infix operators (`%>%`, `+`, `-`, `<-`, (but not `:` or `::` )) and around `=` in function calls. 
 
 Always put a space after a comma, and never before.
 
@@ -69,23 +74,6 @@ ChickWeight[1, ]
 average<-mean(feet/12+inches,na.rm=TRUE)
 ChickWeight[1,]
 ```
-##
-Exception: :, :: and ::: don’t need spaces around them.
-
-### Good
-```{r, eval = FALSE}
-x <- 1:10
-base::get
-```
-
-### Bad
-
-```{r, eval = FALSE}
-x <- 1 : 10
-base :: get
-```
-:: notation tells R which package to use
-
 
 ## Split long commands over multiple lines
 
@@ -132,7 +120,6 @@ x <- 5
 x = 5
 ```
 
-
 ## Comments
 
 Use # to start comments.
@@ -173,21 +160,21 @@ Repeated code is hard to maintain
 Make repeated code into functions.
 
 ```{r, eval = FALSE}
-plot(obj1, ...)
-legend(...)
-
-plot(obj2, ...)
-legend(...)
-...
-
-plotObj <- function(obj){
-  plot(obj, ...)
-  legend(...)
-}
-
-plotObj(obj1)
+my_fun <- function(arg1) {arg1 ^ 2}
+my_fun(7)
 ```
 Single place to maintain
+
+Reuse ggplot objects or entire plots
+
+```{r, eval = FALSE}
+th <- theme(legend.position = "bottom")
+ggplot(iris, aes(x = Petal.Length, y = Sepal.Length, colour = Species))  +
+  geom_point() +
+  th
+```
+
+
  
 ## Avoid `attach()`
 
