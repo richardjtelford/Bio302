@@ -12,8 +12,8 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-library(ggplot2)
-library(nlme)
+library("tidyverse")
+library("nlme")
 ```
 
 ## Assumptions of Least Squares
@@ -123,7 +123,8 @@ Variances are different for each treatment
 ```{r, fig.height=3.5, fig.width=5}
 ggplot(bird1, aes(x = treat, y = weight)) +
   geom_boxplot()
-with(bird1, tapply(weight, treat, var))
+bird1 %>% group_by(treat) %>% 
+  summarise(var = var(weight))
 ```
 
 ## GLS{.smaller}
@@ -229,8 +230,9 @@ If x -> 0
 ##
 ```{r}
 library(nlme)
-fit.nls<-nls(amount ~ b0 + b1 * exp(b2 * calcium), data = amount, 
-             start = c(b0 = 0, b1 = 20, b2 = -1))
+fit.nls <- nls(amount ~ b0 + b1 * exp(b2 * calcium), 
+               data = amount, 
+               start = c(b0 = 0, b1 = 20, b2 = -1))
 summary(fit.nls)
 ```
 
