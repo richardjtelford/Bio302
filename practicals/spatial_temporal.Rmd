@@ -1,0 +1,204 @@
+---
+title: "Spatial and temporal structure"
+author: "Richard J. Telford"
+date: "June 1, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE, message = FALSE)
+```
+
+1) Simulate a 100-observation autocorrelated timeseries with `arima.sim`, with a first order autoregressive coefficient of 0.5. Also make a time vector of `1:100`
+
+```{r}
+library("tidyverse")
+y <- arima.sim(model = list(ar = 0.5), n = 100)
+plot(y)#base plot
+#or for a ggplot, use autoplot (many autoplot functions in ggfortify package)
+library("ggfortify")
+autoplot(y)#uses fortify to convert ts object to a data.frame 
+
+
+set.seed(42)
+df <- tibble(
+  x = 1:100,
+  y = arima.sim(model = list(ar = 0.5), n = 100)
+)
+```
+
+2) Plot the data. 
+
+```{r}
+ggplot(df, aes(x = x, y = y)) + geom_line()
+```
+
+
+
+3) Regress the timeseries against time with an OLS model. Does the model appear to be statistically significant?
+
+```{r}
+mod <- lm(y ~ x, data = df)
+anova(mod)
+```
+
+
+4) Plot the model diagnostics, including an `acf` and `pacf` of the residuals.
+
+```{r}
+library("ggfortify")
+autoplot(mod)
+
+acf(resid(mod))#use autoplot to get ggplot version
+pacf(resid(mod)) # single spike
+```
+
+
+
+4) Use the Durbin-Watson test to test the residuals for autocorrelation.
+
+```{r}
+library("lmtest")
+dwtest(mod)
+
+```
+
+
+5) Fit a gls with an appropriate correlation structure. Is this a better model? How have the p-value and effect size changed?
+
+```{r}
+library("nlme")
+
+mod2 <- gls(y ~ x, data = df, correlation = corAR1())
+anova(mod2)
+list(mod, mod2) %>% map(coef) %>% map("x") # should be unbiased
+
+```
+
+
+
+5) Repeat the above 1000 times and find how autocorrelation affects the distribution of the p-value and the effect size.
+
+
+```{r}
+library("broom")
+library("broom.mixed") # expansion package for broom 
+#no autocorrelation
+
+set.seed(1)
+sim_lm0 <- rerun(.n = 1000, tibble(
+  x = 1:100,
+  y = rnorm(100)
+)) %>% 
+  map(~lm(y ~ x, data = .)) %>% 
+  map_df(tidy) %>% 
+  filter(term == "x") %>% 
+  mutate(sig = p.value < 0.05)
+
+
+set.seed(1)
+sim_lm <- rerun(.n = 1000, tibble(
+  x = 1:100,
+  y = arima.sim(model = list(ar = 0.5), n = 100)
+)) %>% 
+  map(~lm(y ~ x, data = .)) %>% 
+  map_df(tidy) %>% 
+  filter(term == "x") %>% 
+  mutate(sig = p.value < 0.05)
+
+
+set.seed(1)
+sim_gls <- rerun(.n = 1000, tibble(
+  x = 1:100,
+  y = arima.sim(model = list(ar = 0.5), n = 100)
+)) %>% 
+  map(~gls(y ~ x, data = ., correlation = corAR1())) %>% 
+  map_df(tidy) %>% 
+  filter(term == "x") %>% 
+  mutate(sig = p.value < 0.05)
+
+
+all_models <- bind_rows(list(lm_ar0 = sim_lm0,
+               lm_ar0.5 = sim_lm,
+               gls_ar0.5 = sim_gls), .id = "model") %>% 
+  mutate(model = factor(model, levels = c("lm_ar0", "lm_ar0.5", "gls_ar0.5")))
+
+
+nbins <-  20
+ggplot(all_models, aes(x = p.value)) +
+  geom_histogram(binwidth = 1/nbins, center = 1/nbins/2) +
+  geom_hline(yintercept = 1000/nbins, colour = "red") +
+  facet_wrap(~ model, ncol = 1)
+
+
+ggplot(all_models, aes(x = estimate, fill = sig)) +
+  geom_histogram() +
+  geom_vline(xintercept = 0, colour = "grey50", linetype = "dashed") +
+   facet_wrap(~ model, ncol = 1)
+```
+
+
+
+
+## Real data
+
+1) The built-in dataset LakeHuron has annual lake level data from 1885 to 1972
+Load the data with the command data(LakeHuron)
+
+```{r}
+data("LakeHuron")
+Huron <- tibble(year = time(LakeHuron), level = as.vector(LakeHuron))
+```
+
+2) Plot the data.
+
+```{r}
+ggplot(Huron, aes(x = year, y = level)) + 
+  geom_line()
+```
+
+
+3) Regress the LakeHuron lake level against year using a linear model. Is there a significant trend?
+
+```{r}
+mod <- lm(level ~ year, data = Huron)
+summary(mod)
+
+```
+
+
+
+4) Plot the autocorrelation and partial autocorrelation functions for the residuals from this regression. Interpret them.
+
+```{r}
+acf(resid(mod))
+pacf(resid(mod))
+```
+
+
+
+5) Fit an autoregressive models to the residuals. Compare the results with your interpretation of the PACF plot.
+
+```{r}
+ar(resid(mod))
+```
+
+
+6) Fit a gls model using a corAR1 correlation structure. Test if the correlation structure is necessary. Is the trend significant? 
+
+```{r}
+mod_gls <- gls(level ~ year, data = Huron, correlation = corAR1())
+summary(mod_gls)
+```
+
+
+
+7) Fit a gls model using a corARMA correlation structure with two AR terms. Is this model an improvement?
+
+```{r}
+mod_gls2 <- gls(level ~ year, data = Huron, correlation = corARMA(p = 2))
+summary(mod_gls)
+
+anova(mod_gls, mod_gls2)
+```
+
