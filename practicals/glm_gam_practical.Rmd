@@ -1,7 +1,7 @@
 ---
-title: "GLM & GAM"
+title: "GLM"
 author: "Richard J. Telford"
-date: "May 30, 2016"
+date: "`r format(Sys.Date(), "%d %B %Y")`"
 output: html_document
 ---
 
@@ -9,26 +9,26 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-#Exercises GLM & GAM
+#Exercises GLM
 
 ##Poisson GLM
 1. Import sorich.csv
-2. Fit a linear model for species richness against cover assuming a Normal distribution
+2. Fit a linear model for species richness (nsp) against cover assuming a Normal distribution
 3. Study the diagnostic plots
 4. What distribution is the response?
 5. Do an appropriate analysis
 6. Check for over-dispersion
 7. Interpret the results
-8. How does the width of the confidence interval at cover = 10 change when over dispersion is allowed for
-9. Do the grasses differ from the herb, i.e. include the factor grasherb and test its significance?
+8. How does the width of the confidence interval at cover = 10 change when over-dispersion is allowed for
+9. Do the grasses differ from the herb, i.e. make grassherb a factor and include it in the model and test its significance?
 
 
 ## How much does over-dispersion affect results
-1. Use `sample()` to randomise the response in sorich
+1. Use `sample()` to randomise the response in sorich to remove the relationship between the predictor and response.
 2. Test if a Poisson GLM with cover as a predictor is significant
-3. Repeat 1000 times with `replicate`
+3. Repeat 1000 times and find the distribution of p-values
 
-## Binomial GAM
+## Binomial GLM and GAM
 
 1. Open library mgcv
 2. Import data pot.csv

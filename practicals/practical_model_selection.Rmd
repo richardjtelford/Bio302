@@ -1,0 +1,38 @@
+---
+title: "Untitled"
+author: "Richard J. Telford"
+date: "June 8, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Exercise Diagnostics
+
+1. Import sorich.csv
+
+2. Fit a linear model for nsp as a function of cover
+
+3. Examine the diagnostics graphs. What suggests this may not be an appropriate model to fit?
+
+4. Import bird1.csv
+
+5. Fit a linear model for weight as a function of temp
+
+6. Examine the diagnostics graphs. Do they indicate that any action needs to be taken.
+
+7. Fit a model that includes a quadratic term for temp 
+
+8. Compare the diagnostics plots with those from the previous model. Comment on any changes.
+
+9. Extract the AIC from both  models (hint use function AIC). Which is the better model?
+
+10. Calculate the deltaAIC for each model
+
+11. Calculate the AIC weights for each model. Interpret these weights.
+
+12. With the built-in data set `swiss` (use `data(swiss)`), make ols model with lm between Fertility and all other variables. Find the VIF of each predictor. Are there any problem variables?
+
+13. Use `MASS::mvrnorm()` to simulate 100 observation of two predictor variables (x and z) with a given correlation. Simulate a response variable y = b0 + b1x + b2z. Test how the uncertainty in the coefficients changes with the correlation (and hence vif) of the predictor variables.

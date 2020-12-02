@@ -1,0 +1,25 @@
+---
+title: "Practical 3"
+author: "Richard J. Telford"
+date: "`r format(Sys.Date(), '%d %B %Y')`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+## GLS
+
+With the built-in `iris` data.
+
+Make a plot to show how `Petal.Length` varies between species.
+
+Find the variance of `Petal.Length` for each species.
+
+Fit an anova using `lm` between `Petal.Length` and species and examine the diagnostic plots.
+
+Fit a `gls` for the same model. Have the coefficients changed? (remember to load ´nlme´ package)
+
+Fit a `gls` for the same model but allow the variance to be different for each species by adding `varIdent` to the `weights` argument of the model. 
+
+Use `AIC` to test if this is a better model.
