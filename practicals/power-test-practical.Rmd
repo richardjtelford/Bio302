@@ -1,0 +1,48 @@
+---
+title: "Power tests"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Power test app
+
+Run `biostats.apps::power_lm_app()` and explore the effect of the number of observations on the width of the confidence intervals, the proportion of trials that are statistically significant, and the effect size of significant trials.
+
+# Simulating a power test
+
+A scientist is setting up an experiment to test whether a new type of food gives more weight gain in fish. They need to know how many fish they need to sample to have an 80% probability (i.e. power = 0.8) of getting a statistically significant result.
+
+The experiment has a control (standard food) and a treatment arm (new food).
+
+Fish typically have a mass of 1kg with a standard deviation of 0.2kg. The scientist hopes that the new food will give at least 0.1kg extra mass (otherwise it is not worth the extra cost).
+
+Simulate data for a single experiment with 10 fish in each arm of the experiment. Test if your experiment was significant.
+
+Make your simulation into a function and repeat it 100 times. What proportion of trials are statistically significant.
+
+Run the simulation for different numbers of fish. How many are needed to get enough power?
+
+Plot your results.
+
+# A second variable
+
+The scientist thinks that a second variable, temperature, is also important, so expands the experiment to include this second variable with two levels, cool and warm.
+
+Extend your power analysis to cope with the new experimental design.
+
+How many fish do they need to get enough power. 
+
+Plot your result
+
+# Distribution of p values under Null hypothesis
+
+Simulate some data where the null hypothesis is true (ie effect size is zero).
+
+Plot the distribution of p-values. 
+
+Compare this to the distribution of p-values calculated above.
+
+
