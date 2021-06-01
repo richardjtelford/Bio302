@@ -1,0 +1,125 @@
+---
+title: "Untitled"
+author: "Richard J. Telford"
+date: "June 8, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Exercise Diagnostics
+
+1. Import sorich.csv
+
+2. Fit a linear model for nsp as a function of cover
+
+3. Examine the diagnostics graphs. What suggests this may not be an appropriate model to fit?
+
+4. Import bird1.csv
+
+```{r}
+library("tidyverse")
+bird <- read_csv("data/bird1.csv")
+```
+
+
+5. Fit a linear model for weight as a function of temp
+
+```{r}
+mod1 <- lm(weight ~ temp, data = bird)
+```
+
+
+6. Examine the diagnostics graphs. Do they indicate that any action needs to be taken.
+
+```{r}
+library("ggfortify")
+autoplot(mod1)
+```
+
+
+7. Fit a model that includes a quadratic term for temp 
+
+```{r}
+mod2 <- lm(weight ~ temp + I(temp^2), data = bird)
+```
+
+
+8. Compare the diagnostics plots with those from the previous model. Comment on any changes.
+
+```{r}
+autoplot(mod2)
+```
+
+
+9. Extract the AIC from both  models (hint use function AIC). Which is the better model?
+
+```{r}
+AIC(mod1, mod2)
+```
+
+
+10. Calculate the deltaAIC for each model
+
+11. Calculate the AIC weights for each model. Interpret these weights.
+
+```{r}
+ AICcmodavg::aictab(list(mod1, mod2))
+```
+
+
+
+12. With the built-in data set `swiss` (use `data(swiss)`), make ols model between Fertility and all other variables. Find the VIF of each predictor. Are there any problem variables?
+```{r}
+mod3 <- lm(Fertility ~ ., data = swiss)
+olsrr::ols_vif_tol(mod3)
+swiss %>% select(-Fertility) %>% pairs(gap = 0)
+```
+
+13. Use `MASS::mvrnorm()` to simulate 100 observation of two predictor variables (x and z) with a given correlation. Simulate a response variable y = b0 + b1x + b2z. Test how the uncertainty in the coefficients changes with the correlation (and hence vif) of the predictor variables.
+
+
+
+```{r}
+library("broom")
+
+#dplyr function
+analyse <- . %>%   #can reuse code
+  map(as.data.frame) %>% 
+  map(rename, x = V1, z = V2) %>% 
+  map(mutate, y = x + z + rnorm(n)) %>% #true effect size is 1 for both predictors
+  map(~lm(y ~ x + z, data = .)) %>% 
+  map_df(tidy) %>% 
+  filter(term != "(Intercept)")
+
+n <- 100
+nrep = 100
+cor_matrix0 <- matrix(c(1, 0, 0, 1), nrow = 2)
+cor_matrix9 <- matrix(c(1, 0.9, 0.9, 1), nrow = 2)
+cor_matrix99 <- matrix(c(1, 0.99, 0.99, 1), nrow = 2)
+
+bind_rows(
+ r0 = rerun(.n = nrep, {
+    MASS::mvrnorm(n = n, mu = rep(0, 2), Sigma = cor_matrix0)
+  }) %>%
+  analyse(),
+
+  r9 = rerun(.n = nrep, {
+    MASS::mvrnorm(n = n, mu = rep(0, 2), Sigma = cor_matrix9)
+  }) %>%
+  analyse(),
+
+  r99 = rerun(.n = nrep, {
+    MASS::mvrnorm(n = n, mu = rep(0, 2), Sigma = cor_matrix99)
+  }) %>%
+  analyse(), 
+ .id = "correlation"
+) %>% 
+  ggplot(aes(x = correlation, y = estimate, fill = correlation)) + 
+  geom_violin()
+
+
+```
+
