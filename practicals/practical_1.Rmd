@@ -1,0 +1,43 @@
+---
+title: "Bio302 Practical 1 Exploratory Data Analysis"
+author: "Richard J. Telford"
+date: "May 25, 2016"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Part 1 Peguins
+
+Load the `palmerpenguins` package and see the `penguins` data.
+
+Find the range, mean, median and variance of variable `bill_length_mm`.
+
+What is the standard error of the mean of `bill_length_mm`.
+
+Plot a histogram of variable `bill_length_mm`.
+
+Mark the position of the mean and median.
+
+Plot `bill_length_mm` against `bill_depth_mm`
+
+Find the covariance and correlation of `bill_length_mm` against `bill_depth_mm`.
+
+Is the correlation significant? (hint use cor.test())
+
+How should the p-value be interpreted?
+
+There are three levels in factor `species` Plot `bill_length_mm` against `bill_depth_mm`, coloured by `species`
+
+Is the correlation between `bill_length_mm` against `bill_depth_mm` significant for any of the groups?
+
+This is a sub-group analysis, what are the dangers of this type of analysis?
+
+# Part 2 not penguins
+
+Install the `datasauRus` package with `install.packages("datasauRus")` and load it with `library`.
+
+Dataset `datasaurus_dozen` has `x` and `y` variables and a dataset name. 
+For each dataset, calculate the mean and standard deviation of x and y and the correlationn between x and y.
