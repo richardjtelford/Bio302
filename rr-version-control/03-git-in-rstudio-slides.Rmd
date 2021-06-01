@@ -20,7 +20,7 @@ For this lesson we will focus on Git.
 
 ## Two requirements
 
-1. Install Git (you should have already done this)
+1. [Install Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) 
 
 2. Be familiar with using RStudio Projects, which are required for version control features to be enabled
     - RStudio projects make it straightforward to divide your work into multiple contexts, each with their own working directory, workspace, history, and source documents.
@@ -164,14 +164,6 @@ http://r-pkgs.had.co.nz/git.html
 
 http://stackoverflow.com/questions/2712421/r-and-version-control-for-the-solo-data-analyst
 
-## Clone Bio302
+[Happy git with R](https://happygitwithr.com/)
 
-In Rstudio clone https://github.com/richardjtelford/Bio302.git
-
-Or use the shell (from a suitable directory)
-
-`git clone https://github.com/richardjtelford/Bio302.git`
-
-Now `pull` to keep updated
-
-`git pull`
+[Git flight rules](https://github.com/k88hudson/git-flight-rules)
