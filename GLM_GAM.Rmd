@@ -12,8 +12,10 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-library(ggplot2)
+library(tidyverse)
+library(broom)
 library(mgcv)
+theme_set(theme_grey(base_size = 18))
 ```
 
 ## Assumptions of Least Squares
@@ -26,6 +28,56 @@ library(mgcv)
 
 Count data, binomial and proportion data do not have normally distributed errors
 
+## Least squares
+
+```{r, echo = FALSE, fig.height=4}
+dat <- iris %>% filter(Species == "setosa")
+mod <- lm(Sepal.Length ~ Sepal.Width, data = dat)
+mod2 <- augment(mod)
+ggplot(mod, aes(x = Sepal.Width, y = Sepal.Length)) +
+  geom_point() +
+  geom_line(data = mod2, aes(y = .fitted), colour = "red") 
+```
+
+$y_i = \beta_0 + \beta_1x_i + \epsilon_i$
+
+Find $\beta_0$ and $\beta_1$ that minimise $\sum\epsilon ^ 2$
+
+## Maximum Likelihood
+
+How likely are the data given the model? – choose coefficients to maximise likelihood 
+
+Residuals come from a distribution
+
+Normal distribution: $L(y;\mu,\sigma) = \frac{1}{\sigma \sqrt {2\pi } }e^{-\frac{(x - \mu)^2} {{2\sigma ^2 }}}$
+
+```{r, fig.height = 3.3, echo=FALSE}
+Sepal.Width = 4
+mu <- predict(mod, newdata = data.frame(Sepal.Width = Sepal.Width))
+sigma <- sqrt(sum(resid(mod) ^ 2) / mod$df.residual)
+
+tibble(x = seq(4.5, 6.5, .01), y = dnorm(x, mean = mu, sd = sigma)) %>% 
+  ggplot(aes(x, y)) + 
+  geom_line() + 
+  geom_vline(xintercept = mu, colour = "grey40") +
+  geom_vline(data = dat %>% filter(Sepal.Width == !!Sepal.Width) %>% slice(1), aes(xintercept = Sepal.Length), linetype = "dashed", colour = "grey40") +
+  labs(subtitle =paste("Sepal.Width =", Sepal.Width), y = "Likelihood", x = "Sepal.Length")
+```
+
+## Maximum Likelihood
+
+For each observation find the likelihood
+
+Find the product of the likelihoods (fails)
+
+Find the sum of the log-likelihoods 
+
+$\sum{(IL(y;μ,σ))} = {log}(\prod{L(y;μ,σ)})$
+
+Get model with maximum log-likelihood
+
+Deviance is a measure of goodness-of-fit (equivalent to $\sum{\epsilon ^2}$)
+
 ## Generalised Linear Model (GLM)
 
  - Fitted with Maximum likelihood
@@ -35,9 +87,9 @@ Count data, binomial and proportion data do not have normally distributed errors
  - Linear predictor
 
  
-y~i~ = β~0~ + β~1~x~i~ + ε~i~
+$y_i = β_0~ + β_1x_i + ε_i$
 
-g(E(y~i~)) = β~0~ + β~1~x~i~
+$g(E(y_i)) = β_0 + β_1x_i$
 
 ## Distributions & links  (E(y) = μ){.columns-2}
 
@@ -45,21 +97,21 @@ __Normal (gaussian)__
 
  - y continuous
  - All values
- - μ = E(y~i~) = β~0~ + β~1~x~i~
- - var(y) = σ^2^
+ - $\mu = E(y_i) = β_0 + β_1x_i$
+ - $var(y) = σ^2$
 
 __Poisson__
 
  - Discrete
  - Counts
- - log(μ) = β~0~ + β~1~x~i~
- - var(y) =μ
+ - $log(\mu) = β_0 + β_1x_i$
+ - $var(y) = \mu$
 
 __Binomial__
 
  - Success/failure
- - log(μ / (1 - μ)) = β~0~ + β~1~x~i~
- - var(y) = nμ(1 - μ)
+ - $log(\frac{\mu}{1 - \mu}) = β_0 + β_1x_i$
+ - $var(y) = n\mu(1 - μ)$
  
 ## Binomial distribution{.columns-2}
 
@@ -67,29 +119,32 @@ Success = 1 & Failure = 0
 
 n = trials 
 
-- number of Successes + Failures in an experiment. Special case n = 1 - Bernoulli trial
+- number of Successes + Failures in an experiment. 
+- Special case n = 1 -- Bernoulli trial
 
-p = probability of success
+$p$ = probability of success
  
-(1 - p) = probability of failure
+$(1 - p)$ = probability of failure
 
-μ = np 
+$μ = np$ 
 
-var(y) = np(1 - p) 
+$var(y) = np(1 - p)$ 
  
 __Suggest some types of data that you would expect to follow a binomial distribution__
 
 ```{r, echo = FALSE, fig.height=4, fig.width=5}
-surv <- read.csv("data/survival.csv")
+surv <- read.csv("practicals/data/survival.csv")
 ggplot(surv, aes(temp, surv)) + 
-  geom_point() + labs(x = "Temperature", y = "Survival")
+  geom_point() + 
+  labs(x = "Temperature", y = "Survival")
 ```
 
 ##
 Use logistic link:
 
- - log(p / (1 - p)) = β~0~ + β~1~x~i~
- - p = exp(β~0~ + β~1~x~i~) / {1 + exp(β~0~ + β~1~x~i~)}
+ - $log(\frac{p}{1 - p}) = \beta_0~ + \beta_1x_i$
+ 
+ - $p = \frac{exp(β_0 + β_1x_i)}  {1 + exp(β_0 + β_1x_i)}$
 
 Response = Survival (i.e. success)
 
@@ -120,7 +175,7 @@ summary(fit_glm)
 ##
 Response:
 
- - p = exp(β~0~ + β~1~x~i~) / {1 + exp(β~0~ + β~1~x~i~)}
+ $p = \frac{exp(β_0 + β_1x_i)} { 1 + exp(β_0 + β_1x_i)}$
  
 ```{r, fig.height=4, fig.width=5} 
 ggplot(cbind(surv, fit = fitted(fit_glm)), aes(x = temp, y = surv)) +
@@ -151,18 +206,19 @@ Very large uncertainty
 
  - too many categorical predictors?
  - maximum penalized likelihood package `brglm`
- - Bayesian analysis `bayesglm` in `arm` package
+ - Bayesian analysis `bayesglm` in `arm` package, rstan
 
 ## Poisson distribution{.columns-2}
+
 y = discrete (counts)
 
 x = predictor 
 
-mean = μ
+$mean = \mu$
 
-var(y) = μ
+$var(y) = \mu$
 
-log(μ) = β~0~ + β~1~x~i~
+$log(\mu) = β_0 + β_1x_i$
 
 __Suggest some data types that are Poisson distributed__
 ```{r, echo = FALSE, fig.height=4, fig.width=4}
@@ -171,7 +227,7 @@ y <- c(dpois(x, lambda = 1.5), dpois(x, lambda = 4))
 lambda <- rep(c(1.5, 4), each = length(x))
 df <- data.frame(x = factor(x), y, lambda = factor(lambda))
 ggplot(df, aes(x, y, fill = lambda)) + 
-  geom_bar(stat = "identity", position = "dodge") + 
+  geom_col(position = "dodge") + 
   scale_x_discrete(breaks = 0:10, labels=0:10) +
   labs(y = "Probability", fill = "Lambda", x = "Response")
 ```
@@ -183,7 +239,7 @@ With large values of lambda, normal approximation is possible
 ## Poisson example - Number of species vs. cover
 
 ```{r}
-rich <- read.csv("data/sorich.csv")
+rich <- read.csv("practicals/data/sorich.csv")
 str(rich)
 
 ```
@@ -202,7 +258,7 @@ ggplot(rich, aes(x = cover, y = nsp)) +
 ##
 ```{r}
 fit_glm <- glm(nsp ~ cover, data = rich, family = poisson)
-anova(fit_glm, test = "Chi")
+anova(fit_glm, test = "Chisq")
 ```
 
 ##
@@ -223,8 +279,8 @@ log(μ) = β~0~ + β~1~x~i~
 ## Overdispersion
 Variance in Binomial and Poisson models is specified: 
 
- - Poisson var(y) = μ
- - Binomial var(y) = nμ(1 - μ)
+ - Poisson $var(y) = μ$
+ - Binomial $var(y) = nμ(1 - μ)$
 
 Real data can have more (or less) variance than this if not drawn from a pure Binomial or Poisson process.
 
@@ -269,11 +325,11 @@ Hurdle models
 
 ## Quasi models
 
-Poisson: var(y) = μ
+Poisson: $var(y) = μ$
 
-Quasipoisson: var(y) = φμ
+Quasipoisson: $var(y) = \phi\mu$
 
-Scale parameter φ modifies relationship between mean and variance
+Scale parameter $\phi$ modifies relationship between mean and variance
 
 ```{r}
 glm_fit1 <- glm(nsp ~ cover, data = rich, family = quasipoisson) 
@@ -299,7 +355,7 @@ Two parameters:
  - r failures
 
 Implemented in package `MASS`
-```{r}
+```{r, message = FALSE}
 library("MASS")
 fit_nb <- glm.nb(nsp ~ cover, data = rich, link = log)
 ```
@@ -332,7 +388,7 @@ Transform with inverse of link to put on to response scale
 
 Poisson uses log link
 
-log(μ) = β~0~ + β~1~x~i~
+$log(\mu) = \beta_0 + \beta_1x_i$
 
 Use exponential function
 ```{r}
@@ -366,18 +422,18 @@ ggplot(rich, aes(cover, log(nsp))) +
 Response scale (linear predictor scale)
 
 ```{r, fig.height=4, fig.width = 5}
-ggplot(rich, aes(cover, nsp)) +
+ggplot(rich, aes(x = cover, y = nsp)) +
   geom_point() +
   geom_line(aes(x, y = fit), data  = data.frame(x = newD, fit = exp(pred$fit)), inherit.aes = FALSE)
 ```
 
 
 ## Confidence interval
-Estimate μ and SE on link scale {log(μ) & SE}
+Estimate $\mu$ and SE on link scale {$log(\mu)$ & SE}
 
-Estimate confidence interval (μ ± 2*SE)
+Estimate confidence interval ($\mu ± 2*SE$)
 
-Use link-function to obtain values on 'response scale'  {log(μ ± 2*SE)}
+Use link-function to obtain values on 'response scale'  {$exp(\mu ± 2*SE)$}
 ```{r}
 (pred <- predict(fit_glm, newdata = data.frame(cover = 10), se.fit = TRUE))
 ```
@@ -429,9 +485,9 @@ Analogous to calculation for Poisson
 
 Use Logistic link function
 
-log(p/(1-p))= β~0~ + β~1~x~i~
+$log(\frac{p}{1-p})= β_0 + β_1x_i$
 
-p = exp(β~0~ + β~1~x~i~) / {1 + exp(β~0~ + β~1~x~i~)}
+$p = \frac{exp(β_0 + β_1x_i)} {1 + exp(β_0 + β_1x_i)}$
 
 ```{r, eval = FALSE}
 fit.p <- predict(fit.glm, se.fit = TRUE, type = "link")
@@ -451,7 +507,7 @@ Normal
 Poisson
 
  - Discrete (counts)
- - Variance = μ
+ - Variance = $mu$
  - Positive numbers
 
 Binomial
@@ -459,13 +515,13 @@ Binomial
  - Success / failure
  - One outcome a trial
  - many trials pr. observation
- - variance = μ(1 - μ)
+ - variance = $\mu(1 - \mu)$
 
 Gamma
 
  - Continuous
  - positive numbers
- - variance ∝ μ ^ 2
+ - variance $\propto \mu ^ 2$
  
 Log normal 
 
@@ -487,19 +543,22 @@ Can take any distribution and link function available for GLM
 Smooth terms
 
  - s()
+ - y ~ s(x)
 
 Complexity of smooth terms estimated using Generalised cross-validation
 
 Omit the smooth term and get a GLM!
 
+lot more on GAMs at [https://github.com/gavinsimpson/adelaide-2017/blob/master/02-tuesday/02-gams.pdf](https://github.com/gavinsimpson/adelaide-2017/blob/master/02-tuesday/02-gams.pdf)
+
 ## GAM in R
 
 ```{r}
-pot <- read.csv("data/pot.csv")
+pot <- read.csv("practicals/data/pot.csv")
 library(mgcv)
 mod <- gam(potalp ~ s(alt), data = pot, family = binomial)
 mod2 <- gam(potalp ~ alt + I(alt^2), data = pot, family = binomial)
-anova(mod, mod2, test = "Chi")
+anova(mod, mod2, test = "Chisq")
 ```
 
 ##
