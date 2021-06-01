@@ -1,0 +1,211 @@
+---
+title: "Using tidyverse with the Bergenbysykkel  data"
+author: "Richard J. Telford"
+date: "May 15, 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+Dataset 03.csv is the data on the hire of Bergenbysykkel in March 2019 from [https://bergenbysykkel.no/en/open-data/historical](https://bergenbysykkel.no/en/open-data/historical), showing the start and end times and location of each time a bicycle was hired.
+
+## 1 Import the data
+
+Import the data with `read_csv` and examine it.
+
+```{r}
+bike <- readr::read_csv("data/03.csv")#better import (usually) than read.csv
+head(bike)
+```
+
+
+## 2 Explore the data
+Use tidyverse and make plots when useful
+You will probably need to use `group_by`, `count`, `summarise`, `mutate`, `slice` and `ggplot`.
+
+ - Which is the most popular starting station?
+ 
+```{r}
+bike %>% group_by(start_station_name) %>% 
+  count() %>% 
+  ungroup() %>% 
+  slice(which.max(n))
+
+```
+ 
+ 
+ - Plot the number of hires and returns from each station
+ 
+```{r} 
+bike %>% 
+  select(start_station_name, end_station_name) %>% 
+  gather(key = key, value = station) %>% 
+  count(key, station) %>% 
+  filter(n > 10) %>% #remove stations with v low usage
+  mutate(key = factor(key, levels =  c("start_station_name", "end_station_name"))) %>% #force order of bars
+  ggplot(aes(x = station, y = n, fill = key)) + 
+  geom_col(position = position_dodge()) +
+  scale_fill_discrete(labels = c("start_station_name" = "Hire", "end_station_name" = "Return")) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+``` 
+
+ - Which is the most popular pair of start and end stations?
+ 
+```{r}
+bike %>% group_by(start_station_name, end_station_name) %>% 
+  count() %>% 
+  ungroup() %>% 
+  slice(which.max(n))
+
+```
+ 
+ - What was the longest/shortest duration of hire? 
+```{r}
+bike %>% 
+  select(duration) %>% 
+  slice(which.max(duration)) %>% 
+  mutate(duration = duration/60/60)#hours
+
+```
+
+ 
+ - Plot the distribution of hire duration.
+```{r}
+bike %>% 
+ ggplot(aes(x = duration/60)) +#minutes
+  geom_histogram() + 
+  xlim(0, 60)
+```
+ 
+ - What is the median duration of hire from each station?
+```{r}
+bike %>% group_by(start_station_name) %>% 
+  filter(n() > 10) %>% #remove stations with very few hires
+  summarise(med = median(duration)) %>% 
+  arrange(med)
+
+```
+
+ 
+ - Map this information
+```{r}
+med_dur <- bike %>% group_by(start_station_name, start_station_latitude, start_station_longitude) %>% 
+  filter(n() > 10) %>% #remove stations with very few hires
+  summarise(med = median(duration)/60)  
+  
+ggplot(med_dur, aes(x = start_station_longitude, y = start_station_latitude, size = med)) +
+  geom_point(colour = "grey50") +
+  scale_size_area(name = "Median duration") +
+  ggrepel::geom_text_repel(aes(label = start_station_name), size = 3)
+
+```  
+ 
+ - Are there any significant differences in duration between stations.
+```{r}
+mod_dur <- bike %>% group_by(start_station_name, start_station_latitude, start_station_longitude) %>% 
+  filter(n() > 10,  #remove stations with very few hires
+         duration < 60 * 60) %>% #remove outliers
+  lm(duration ~ start_station_name, data = .)
+anova(mod_dur)
+```
+ 
+ 
+ - How far does a typical cyclist travel? (assuming straight line)
+ 
+```{r}
+distances <-  bike %>%
+  mutate(distance = fields::rdist.earth.vec(#long/lat so need great circle distances
+    x1 = cbind(start_station_longitude, start_station_latitude),
+    x2 = cbind(end_station_longitude, end_station_latitude),
+    miles = FALSE
+  ))
+  
+distances %>% 
+  ggplot(aes(x = distance)) + 
+  geom_histogram() + 
+  labs(x = "Distance km")
+ 
+ 
+ 
+```
+ 
+ - What is the relationship between distance travelled and time taken?
+ 
+```{r}
+ggplot(distances, aes(x = distance, y = duration/60)) + geom_point(alpha = 0.2) + ylim(0, 60)
+#could use quantile regression to find lower limit to cloud of points
+```
+ 
+ - How fast was the fastest cyclist (for simplicity assume a straight line of travel)
+```{r}
+distances %>% 
+  mutate(speed = distance/(duration/60/60)) %>% #km/hr
+  select(start_station_name, end_station_name, speed) %>% 
+  arrange(desc(speed)) %>% 
+  slice(1:5)#impressively fast
+```
+ 
+ 
+ 
+## Day and time
+
+
+With help from the `lubridate` package
+ - How does the number of hires vary throughout the day and week?
+```{r}
+library("lubridate")
+bike %>% 
+  mutate(hour = hour(started_at), day = wday(started_at, label = TRUE)) %>%
+  count(day, hour) %>% 
+  ggplot(aes(x = hour, y = n, colour = day)) + geom_line()
+#very different weekday and weekend usage
+```
+
+ 
+ 
+ - How does the average speed vary through the day?
+```{r}
+distances %>% 
+  filter(wday(started_at, week_start = 7) %in% 2:6) %>% #look at weekdays only
+  mutate(hour = hour(started_at)) %>% 
+  mutate(speed = distance/(duration/60/60)) %>%
+  ggplot(aes(x = hour, y = speed, group = hour)) + geom_boxplot()
+  
+```
+ 
+ 
+ - Are some stations more popular at different times of day for hire and return?
+ 
+```{r}
+bike %>% mutate(hour = hour(started_at)) %>%
+  group_by(start_station_name, hour) %>% 
+  count() %>% 
+  group_by(hour) %>% 
+  filter(between(hour, 5, 22)) %>% 
+  mutate(percent = n/sum(n) * 100) %>% 
+  group_by(start_station_name) %>% 
+  filter(sum(n) > 400) %>% #remove little used stations
+  ggplot(aes(x = hour, y = percent, colour = start_station_name)) + 
+  geom_line()
+
+
+bike %>% mutate(day = wday(started_at, label = TRUE)) %>%
+  group_by(start_station_name, day) %>% 
+  count() %>% 
+  group_by(day) %>% 
+  mutate(percent = n/sum(n) * 100) %>% 
+  group_by(start_station_name) %>% 
+  filter(sum(n) > 400) %>% #remove little used stations
+  ggplot(aes(x = day, y = percent, colour = start_station_name, group = start_station_name)) + 
+  geom_line()
+```
+ 
+## Other analyses ... 
+ 
+Do something informative with these data. 
+
+Packages to try `gganimate`,`ggrepel`, `ggmaps` (`get_stamenmap` will work without a google license)
+ 
