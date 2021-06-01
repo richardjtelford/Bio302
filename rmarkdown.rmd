@@ -27,6 +27,7 @@ Documents
 Presentations
 
  - ioslides
+ - xaringan
 
 ## Formatting
 
@@ -42,7 +43,7 @@ Standard markdown formatting
 
 \#\#\#Sub-subtitle 
 
-\[Link text](biostats.b.uib.no) -> [Link text](biostats.b.uib.no)
+\[Link text](biostats.w.uib.no) -> [Link text](biostats.w.uib.no)
 
 \!\[Image description](image.jpg)  -> includes image.jpg
  
@@ -101,7 +102,7 @@ Can include bibliographies - [rmarkdown.rstudio.com/authoring_bibliographies_and
 
 Latex/html/css to change formatting
 
-Cache options to avoid recalculating expensive objects
+Cache options to avoid recalculating expensive objects (`drake` or `targets`)
 
 Use `knitr::read_chunk` to read code from another file.
 
