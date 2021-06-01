@@ -1,0 +1,31 @@
+---
+title: "Git & Github practical"
+author: "Richard Telford"
+date: "5/21/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+# 1) Follow instructions in GitTutorial.html to
+
+- Install git
+- Make an account at Github
+- put your Mt Gonga analysis script onto github. 
+- Modify your analysis and commit and push the change.
+- post a link to your repo in the zoom chat
+
+# 2) Follow instruction in ForkTutorial.html (and BranchTutorial.html) to
+
+- Fork & clone someone else's Mt Gonga repo
+- Make a new branch in Rstudio
+- comment/edit the code and commit your changes
+- Push changes to github
+- From github, open pull request to repo owner.
+
+- Repo owner can accept or reject pull request.
+
