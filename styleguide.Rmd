@@ -3,15 +3,15 @@ title: Adopt a Style Guide
 subtitle: "Bio302 - Biological data analysis II"
 author: 
 - name: "Richard J. Telford"
-institute: Department of Biology, University of Bergen
-date: '2016-05-05'
+institute: Department of Biological Sciences, University of Bergen
+date: '2019-05-05'
 output: 
  ioslides_presentation:
   widescreen: true
 ---
 
 ```{r setup_stg, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
+knitr::opts_chunk$set(echo = TRUE)
 ```
 ##
 <blockquote class="twitter-tweet" data-lang="en" width = "550"><p lang="en" dir="ltr">The only way to write good code is to write tons of shitty code first. Feeling shame about bad code stops you from getting to good code</p>&mdash; Hadley Wickham (@hadleywickham) <a href="https://twitter.com/hadleywickham/status/589068687669243905">17 April 2015</a></blockquote>
@@ -40,6 +40,13 @@ Make your own style - but be consistent
  - Make names concise yet meaningful
  - Reserved words include TRUE, for, if
  
+ Combining words
+ 
+ - CamelCase  
+ - lowerCamelCase
+ - snake_case
+ - best.avoided #confusion potential with R functions
+ 
 ## Which of these are valid names?
 
  - min_height
@@ -52,6 +59,7 @@ Make your own style - but be consistent
  - 2widths 
  - celsius2kelvin 
  - plot
+ - T
 
  
 ## Spacing
@@ -168,10 +176,11 @@ Single place to maintain
 Reuse ggplot objects or entire plots
 
 ```{r, eval = FALSE}
-th <- theme(legend.position = "bottom")
-ggplot(iris, aes(x = Petal.Length, y = Sepal.Length, colour = Species))  +
-  geom_point() +
-  th
+g <- ggplot(iris, aes(x = Petal.Length, y = Sepal.Length, colour = Species))  +
+  geom_point() 
+g
+g2 <- g + aes(y = Petal.Length) # new aesthetics. Use %+% to change dataset
+g2
 ```
 
 
