@@ -1,0 +1,22 @@
+---
+title: "Mt Gonga Biomass"
+author: "Richard Telford"
+date: "5/21/2021"
+output: html_document
+---
+
+Task: Biomass data
+
+Plant Biomass data for alpine grasslands on Gongga Mountain, China, are archived at https://osf.io/6sfqw/ 
+
+There are four sites, each with about 20 plots.
+For each species in each plot, the following are recorded:
+
+- height up to ten times (H1-H10)
+- Biomass (labelled production)
+- Cover
+
+Find the total biomass per plot, and present the results in a figure.
+
+As far as possible, follow best practice when running the analysis.
+
