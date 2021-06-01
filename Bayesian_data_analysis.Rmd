@@ -1,0 +1,180 @@
+---
+title: "Bayesian data analysis"
+author: "Richard J. Telford"
+date: "May 23, 2017"
+output: 
+ ioslides_presentation:
+  widescreen: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, cache = TRUE)
+library("tidyverse")
+```
+
+## Confidence and credibility intervals
+
+Frequentist statistics - confidence intervals
+
+Bayesian statistics - credibility intervals
+
+## Choosing a prior
+
+$Posterior \propto Prior * Likelihood$
+
+Expert knowledge  
+Uninformative priors
+
+## Distributions{.columns-2}
+
+```{r, echo = FALSE, fig.height= 5.3, fig.width=5}
+prior <- data_frame(x = seq(-101, 101, length = 1000), 
+           Uniform = dunif(x, min = -100, max = 100),
+           Cauchy = dcauchy(x, location = 0, scale = 10), 
+           Normal = dnorm(x, mean = 0, sd = 10),
+           Gamma = dgamma(x, shape = 3, scale = 6)
+           )
+gather(prior, key = Distribution, value = Probability, -x) %>% 
+  ggplot(aes(x = x, y = Probability, colour = Distribution)) +
+    geom_line() +
+    theme(legend.position = c(1, 1), legend.justification = c(1, 1))
+
+```
+
+- Bounds
+- Shape
+- Tails
+- Discrete?
+
+## Cromwell's rule
+
+Prior = 0  
+Posterior = 0  
+However good the evidence
+
+`I beseech you, in the bowels of Christ, think it possible that you may be mistaken.`
+
+## Fitting a linear model in a Bayesian framework
+
+$y_i = \beta_0 + \beta_1x_i + \epsilon_i$
+
+```{r, echo = FALSE, fig.height=3.5, fig.width=5}
+ggplot(iris, aes(x = Sepal.Length, y = Petal.Length)) + 
+  geom_point() + 
+  geom_smooth(method = "lm")
+```
+
+- What do we need priors for?
+
+- What are sensible priors?
+
+# Building a Stan model
+
+## Stan model blocks
+
+- data
+- transformed data
+- parameters               (required)
+- transformed parameters
+- model                    (required)
+- generated quantities
+
+## The data
+
+```
+data {
+  int<lower=1> N;                //number of data points
+  real Petal_Length[N];          //response
+  real Sepal_Length[N];          //predictor
+}
+```
+Notes on Stan syntax
+
+- `//` for comment
+- Stan statements must end in `;`
+- No `.` in names
+
+## The parameters
+
+```
+parameters {
+  vector[2] beta;            //intercept and slope
+  real<lower=0> sigma_e;     //error sd
+}
+```
+- Limits on parameters set with, e.g., `<lower=0, upper=1>`
+
+## The model
+
+```
+model {
+  real mu;
+  beta[1] ~ cauchy(0, 10);
+  beta[2] ~ cauchy(0, 2.5);
+  for (i in 1:N){                   // likelihood
+    mu = beta[1] + beta[2] * Sepal_Length[i];
+    Petal_Length[i] ~ normal(mu, sigma_e);
+  }
+}
+```
+- use `=` rather than `<-`
+
+
+## R code
+
+```{r, echo = FALSE}
+model_string <- "
+data {
+  int<lower=1> N;                //number of data points
+  real Petal_Length[N];          //response
+  real Sepal_Length[N];  //predictor
+}
+
+parameters {
+  vector[2] beta;            //intercept and slope
+  real<lower=0> sigma_e;     //error sd
+}
+
+model {
+  real mu;
+  beta[1] ~ cauchy(0, 10);
+  beta[2] ~ cauchy(0, 2.5);
+  for (i in 1:N){                   // likelihood
+    mu = beta[1] + beta[2] * Sepal_Length[i];
+    Petal_Length[i] ~ normal(mu, sigma_e);
+  }
+}"
+```
+```{r, results = "hide", message = FALSE, warning=FALSE}
+
+library(rstan)
+
+data_list <- list(N = nrow(iris), 
+                  Petal_Length = iris$Petal.Length,
+                  Sepal_Length = iris$Sepal.Length)
+
+# Compiling and producing posterior samples from the model.
+stan_samples <- stan(model_code = model_string, data = data_list)
+
+```
+
+## Stan output
+```{r}
+stan_samples
+```
+
+## Convergence
+```{r}
+traceplot(stan_samples)
+```
+
+## Parameter plot
+```{r, message = FALSE, results="hide"}
+plot(stan_samples)
+```
+
+## Comparison with lm
+```{r}
+mod <- lm(Petal.Length ~ Sepal.Length, data = iris)
+summary(mod)
+```

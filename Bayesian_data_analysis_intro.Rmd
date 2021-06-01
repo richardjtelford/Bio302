@@ -1,0 +1,36 @@
+---
+title: "Bayesian data analysis"
+author: "Richard J. Telford"
+date: "May 23, 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introduction
+
+Bayesian data analysis is an alternative approach to fitting models
+
+ - Describe everything in terms of probabilities
+ - combines prior information about model parameters with data to give best estimate of paramters
+ - The interpretation of the '95% credible interval' is simpler than the equivalent '95% confidence interval'
+ - flexible, can fit many different models
+ - computationally intensive, but tractable with modern computers/software
+ - Chosing the prior can be difficult and can have a large influence on the posterior
+
+## Videos
+
+Three part introduction to Bayesian data analysis by Rasmus Bååth
+
+1. [What is Bayes?](http://www.sumsar.net/blog/2017/02/introduction-to-bayesian-data-analysis-part-one/)
+2. [Why use Bayes?](http://www.sumsar.net/blog/2017/02/introduction-to-bayesian-data-analysis-part-two/) 
+3. [How to do Bayes?](http://www.sumsar.net/blog/2017/05/introduction-to-bayesian-data-analysis-part-three/) 
+
+Please watch the videos (about half an hour each) and do the associated practicals when prompted
+
+1. [Exercise 1](http://www.sumsar.net/files/posts/2017-bayesian-tutorial-exercises/modeling_exercise1.html)
+2. [Exercise 2](http://www.sumsar.net/files/posts/2017-bayesian-tutorial-exercises/modeling_exercise2.html)
+
+[Stan cheat sheet](http://www.sumsar.net/files/posts/2017-bayesian-tutorial-exercises/stan_cheat_sheet2.12.pdf)
