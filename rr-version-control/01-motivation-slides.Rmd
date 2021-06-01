@@ -116,7 +116,7 @@ From [Software Carpentry](https://software-carpentry.org/).
 - Provides tools to help enhance collaboration
 - A common location to share off your work
 - Free public repositories
-- Free private repositories under educational licence
+- Free private repositories
 
 
 ## Example
