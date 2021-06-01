@@ -19,14 +19,14 @@ knitr::opts_chunk$set(echo = TRUE)
 5. Do an appropriate analysis
 6. Check for over-dispersion
 7. Interpret the results
-8. How does the width of the confidence interval at cover = 10 change when over dispersion is allowed for
+8. How does the width of the confidence interval at cover = 10 change when over-dispersion is allowed for
 9. Do the grasses differ from the herb, i.e. include the factor grasherb and test its significance?
 
 
 ## How much does over-dispersion affect results
-1. Use `sample()` to randomise the response in sorich
+1. Use `sample()` to randomise the response in sorich to remove the relationship between the preictor and response.
 2. Test if a Poisson GLM with cover as a predictor is significant
-3. Repeat 1000 times with `replicate`
+3. Repeat 1000 times and find the distribution of p-values
 
 ## Binomial GAM
 
