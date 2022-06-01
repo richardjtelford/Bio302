@@ -1,5 +1,5 @@
 ---
-title: "Version control I: Version Control via Git and Github"
+title: "Version Control via Git and Github"
 author: "Reproducible Science Workshop"
 output:
   ioslides_presentation:
@@ -58,13 +58,12 @@ Every time you make a save, you zip the entire directory that your project files
 ## Best - Version Control
 
 <center>
-<img src="fig/motivation-01.png" width="700px" />
+<img src="fig/github_history.png" width="900px" />
 </center>
 
-<br><br><br>
+<br>
 
-From Code for RNeXML R package, plus RNeXML publication in RMarkdown, [https://github.com/ropensci/RNeXML](https://github.com/ropensci/RNeXML).
-
+What you changed and why you changed it.
 
 ## How does a version control system work?
 
@@ -114,9 +113,14 @@ From [Software Carpentry](https://software-carpentry.org/).
 - No need for a server: easy to set up
 - GitHub's strong community: your colleagues are probably already there
 - Provides tools to help enhance collaboration
-- A common location to share off your work
+
+    _"Your closest collaborator is YOU six months ago but you don’t reply to email."_
+    
+- A common location to share/show off your work
 - Free public repositories
 - Free private repositories
+- GitHub Actions - automatically run code
+- GitHub Pages - free website hosting
 
 
 ## Example
@@ -128,3 +132,70 @@ From [Software Carpentry](https://software-carpentry.org/).
 <br><br><br>
 
 From Code for RNeXML R package, plus RNeXML publication in RMarkdown, [https://github.com/ropensci/RNeXML](https://github.com/ropensci/RNeXML).
+
+## Workflow
+
+- Create a git repo for your RStudio project
+- Create a GitHub repo for your project
+- Edit files in Rstudio
+- Commit and push files from the RStudio git pane
+
+
+## More info on the Git pane
+
+File tracking:
+
+- The RStudio Git pane lists every file that’s been added, modified or deleted. 
+
+- The icon describes the change:
+    + ![git-mod](fig/rstudio-git-modified.png) **Modified:** You've changed the contents of the file.
+    + ![git-unt](fig/rstudio-git-unknown.png) **Untracked:** You've added a new file that Git hasn't seen before.
+    + ![git-unt](fig/rstudio-git-deleted.png) **Deleted:** You've deleted a file.
+
+You can get more details about modifications with a ![git-unt](fig/rstudio-git-diff.png):
+
+- Green: added text
+
+- Red: removed text
+
+## What's in my Git pane?
+
+- When you create your repo in an RStudio project you a bonus file: `.gitignore`
+
+- They're both showing up as **untracked** since Git hasn't seen them before. You can stage, commit, and push those files to your repository.
+
+
+- `.gitignore`: Git uses this file to determine which files and directories to ignore, before you make a commit.
+
+## Branches
+
+Feature **branches** let you develop new ideas without risking your main code. Especially important in collaborative work.
+
+If you like the new branch you can **merge** it with the original branch
+
+
+### Conflicts
+
+If the same part of the file has conflicting edits, there is a merge conflict which needs to be fixed. 
+
+
+
+## Collaborating
+
+- **Forking** is creating a copy of a git repository into your own account.  
+-  Forking allows you to make changes to a repository without affecting the main repository of the project.  
+-  This is one of the most exciting aspects of Github - you essentially encouraged to copy and play with anyone's code! 
+- If you have made useful changes, use a **pull request** to suggest the maintainer of the original repo includes your edits.
+
+## Reading
+
+- http://www.r-bloggers.com/rstudio-and-github/
+
+- http://stackoverflow.com/questions/2712421/r-and-version-control-for-the-solo-data-analyst
+
+- [Rstudio, Git and GitHub](http://r-pkgs.had.co.nz/git.html)
+
+- [Happy git with R](https://happygitwithr.com/)
+
+- [Git flight rules](https://github.com/k88hudson/git-flight-rules)
+(what to do when things go wrong.)
