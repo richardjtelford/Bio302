@@ -1,0 +1,268 @@
+---
+title: "Power Tests"
+author: Richard Telford
+date: today
+date-format: "MMMM YYYY"
+format: revealjs
+editor: visual
+echo: true
+---
+
+```{r setup, include=FALSE}
+library("tidyverse")
+theme_set(theme_bw(base_size = 16))
+```
+
+## Power
+
+Statistical power is the probability of avoiding a Type II error given that the alternative hypothesis $H_1$ is true.
+
+Remember
+
+-   Type I error = false positive, rejecting $H_0$ when it is true
+-   Type II error = false negative, not rejecting $H_0$ when it is false
+
+## The need for power
+
+With little power:
+
+-   May not be able to reject $H_0$ when it is false
+-   Exaggerate effect size
+
+Lots of power
+
+-   Probably can reject $H_0$ when it is false
+-   More precise estimates of effect size
+-   More expensive
+
+Need to do power analysis **before** experiment.
+
+## Components of a power analysis
+
+-   Effect size
+-   Type I error rate (significance level - conventionally set to 0.05)
+-   Type II error rate (conventionally aim for 0.8)
+-   Number of observations
+
+Can solve for any of these
+
+Typically want to know how many observations needed.
+
+## One sided Z-test
+
+```{r TP-FP, echo = FALSE}
+library(tidyverse)
+library(patchwork)
+
+n <- 10
+alpha <- 0.05
+delta <- 1
+sd <- 1
+mx <- 2.5
+mn <- -1.5
+
+crit <- qnorm(alpha, mean = 0, sd = sd/sqrt(n), lower.tail = FALSE)
+
+H0 <- tibble(x = seq(mn, mx, length = 1001), 
+       y = dnorm(x = x, mean = 0, sd = sd / sqrt(n)), 
+       what = if_else(x < crit, true = "True negative", false = "False positive"))
+
+H1 <- tibble(x = seq(mn, mx, length = 1001), 
+       y = dnorm(x = x, mean = delta, sd = sd / sqrt(n)), 
+       what = if_else(x > crit, true = "True positive", false = "False negative"))
+  
+H <- bind_rows(`H[0]` = H0, 
+          `H[1]` = H1, 
+          .id = "Hypothesis")
+
+top <- ggplot() +
+  geom_rect(aes(xmin  = xmin, xmax = xmax, ymin = -Inf, ymax = Inf, fill = I(fill)), 
+            data = tibble(xmin = c(mn, crit), xmax = c(crit, mx), fill = c("#D1E5F0", "#FDDBC7"))) +
+  geom_text(aes(x = x, y = 0.5, label = label), tibble(x = c((mn + crit)/2, (mx + crit)/2), label = c("Not significant", "Significant")), size = 5) +
+  geom_vline(aes(xintercept = crit)) +
+    geom_text(
+      aes(y = y, x = x, label = label), 
+      data = tibble(x= 1, y = 0.8, label = "Critical Value", Hypothesis = "H[0]" ), 
+      inherit.aes = FALSE, hjust = "left", nudge_x = 0.01, colour = "red") +
+  geom_segment(
+    aes(x = x, xend = xend, y = y, yend = yend),
+    tibble(x = 1, xend = crit + 0.01, y = .8, yend = 0.5, Hypothesis = "H[0]"), 
+    size = 1.5, colour = "red", arrow = arrow(),  inherit.aes = FALSE)  +
+  theme(axis.title = element_blank(), 
+        axis.text = element_blank(), 
+        axis.ticks = element_blank(), 
+        plot.margin = unit(c(0, 0, 0, 0), units = "mm")) +
+  ylim(0, 1) +
+  scale_x_continuous(expand = c(0, 0))
+
+main <- ggplot(H, mapping = aes(x = x, y = y, fill = what)) + 
+  geom_area() +
+  geom_line(aes(group = 1)) +
+  geom_vline(aes(xintercept = crit)) +
+  ggtext::geom_richtext(
+    mapping = aes(x = x, y = y, label = label), 
+    data = tibble(x = c(1.2, -0.8), y = 0.7, label = c("H<sub>0</sub> is TRUE", "H<sub>1</sub> is TRUE"), Hypothesis = c("H[0]", "H[1]")),
+    inherit.aes = FALSE, fill = NA, label.color = NA, size = 5) +
+  facet_wrap(~ Hypothesis, ncol = 1, labeller = label_parsed, strip.position = "right") +
+  labs(x = "x", y = "Density", linetype = "", fill = "") +
+  theme(
+    strip.background = element_blank(),
+    strip.text = element_blank()) +
+  scale_x_continuous(expand = c(0, 0))
+
+top / main + plot_layout(heights = c(1, 4))
+```
+
+## Analytic power analysis
+
+Some power tests in base R.
+
+-   `power.t.test`
+-   `power.anova.test`
+-   `power.prop.test`
+
+More in `pwr` package
+
+## Power t test
+
+```{r pwr, echo = TRUE}
+library("pwr")
+pow <- pwr.t.test(d = 0.5, sig.level = 0.05, power = 0.8)
+pow
+```
+
+Effect size is Cohen's d $d = \frac{\mu_1 - \mu_2}{\sigma}$
+
+## 
+
+```{r pwr-plot, echo}
+plot(pow)
+```
+
+## Power analysis by simulation
+
+Analytical power analysis becomes complex with more complex statistics
+
+-   Complex experimental design
+-   Autocorrelation
+-   Confounding variables
+-   Non-normal distributions
+-   Violation of assumptions of models
+
+Simulation always possible
+
+---
+
+Simulation lets us ask more interesting questions:
+
+-   Expected uncertainty
+
+-   Apparent effect size
+
+-   Biases
+
+Arnold et al. (2011) Simulation methods to estimate design power:an overview for applied research.
+[BMC Medical Research Methodology](http://www.biomedcentral.com/1471-2288/11/94%3E)
+
+## General approach
+
+-   Simulate your data generating process
+-   Run statistical test on simulated data
+-   Repeat many times
+-   Proportion of runs with significant result is the power.
+
+Trading computer time (cheap) for statistician time (expensive)
+
+## Simulating a t-test
+
+```{r}
+
+# data info
+n <- 30 #number observations in each group
+delta <- 1 # difference between means
+sd <- 2 # standard deviation
+
+# simulate means
+mu <- rep(c(0, delta), each = n)
+
+# add noise
+y <- mu + rnorm(length(mu), sd = sd)
+
+# predictor
+x <- factor(rep(c("A", "B"), each = n))
+
+# run test
+test <- t.test(y ~ x)
+```
+
+## 
+
+```{r}
+test
+
+broom::glance(test)
+```
+
+## Make a function to re-run
+
+```{r}
+sim_t_test <- function(n, delta, sd, ...){
+  # simulate means
+  mu <- rep(c(0, delta), each = n)
+  # add noise
+  y <- mu + rnorm(length(mu), sd = sd)
+  # predictor
+  x <- factor(rep(c("A", "B"), each = n))
+  
+  # run test
+  test <- t.test(y ~ x)
+  broom::tidy(test) %>% mutate(n = n, delta = delta, sd = sd)
+}
+
+sim_t_test(n = 30, delta = 1, sd = 2)
+
+```
+
+## Repeat many times
+
+```{r, message = FALSE}
+nrep = 100
+
+control <- crossing(rep_no = 1:nrep, n = seq(10, 100, 20)) 
+
+runs <- control |> 
+  pmap_df(function(n, rep_no) sim_t_test(n = n, delta = 1, sd = 2)) |> 
+  mutate(sig = p.value <= 0.05)
+
+p <- runs  |> 
+  group_by(n) |> 
+  summarise(power = mean(sig)) |> 
+  ggplot(aes(x = n, y = power)) +
+  geom_line() +
+  geom_point()
+```
+
+## 
+
+```{r echo=FALSE}
+p + geom_hline(yintercept = 0.8, linetype = "dashed", colour = "grey50")
+```
+
+## Magnitude of Effect
+
+```{r, echo = FALSE}
+runs |> 
+  filter(sig) |> 
+  ggplot(aes(x = n, y = estimate, group = n)) +
+  geom_hline(yintercept = -1, colour = "red") +
+  geom_violin(draw_quantiles = 0.5, fill = "grey50", alpha = 0.6)
+
+```
+
+## Summary
+
+-   Power test should be done before experimental work to determine sample size
+-   Analytical and simulation approaches are possible
+-   Key challenge is estimating effect size
+    -   existing estimates are likely biased
+    -   minimum interesting effect size
