@@ -228,10 +228,10 @@ sim_t_test(n = 30, delta = 1, sd = 2)
 ```{r, message = FALSE}
 nrep = 100
 
-control <- crossing(rep_no = 1:nrep, n = seq(10, 100, 20)) 
+n <- rep(seq(10, 100, 20), each = nrep)
 
-runs <- control |> 
-  pmap_df(function(n, rep_no) sim_t_test(n = n, delta = 1, sd = 2)) |> 
+runs <- n |> 
+  map_dfr(~sim_t_test(n = .x, delta = 1, sd = 2)) |> 
   mutate(sig = p.value <= 0.05)
 
 p <- runs  |> 
@@ -242,7 +242,7 @@ p <- runs  |>
   geom_point()
 ```
 
-## 
+---
 
 ```{r echo=FALSE}
 p + geom_hline(yintercept = 0.8, linetype = "dashed", colour = "grey50")
@@ -259,6 +259,10 @@ runs |>
 
 ```
 
+## Help for simulating data
+
+ [`faux`](https://debruine.github.io/faux/) package
+
 ## Summary
 
 -   Power test should be done before experimental work to determine sample size
@@ -266,3 +270,5 @@ runs |>
 -   Key challenge is estimating effect size
     -   existing estimates are likely biased
     -   minimum interesting effect size
+    
+    

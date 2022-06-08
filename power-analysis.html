@@ -527,20 +527,20 @@ NOTE: n is number in *each* group</code></pre>
     Welch Two Sample t-test
 
 data:  y by x
-t = -1.7791, df = 52.733, p-value = 0.08099
+t = -2.468, df = 56.295, p-value = 0.01665
 alternative hypothesis: true difference in means between group A and group B is not equal to 0
 95 percent confidence interval:
- -2.2810878  0.1367533
+ -2.1882259 -0.2275608
 sample estimates:
 mean in group A mean in group B 
-     0.07323997      1.14540719 </code></pre>
+     -0.4047832       0.8031102 </code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a>broom<span class="sc">::</span><span class="fu">glance</span>(test)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 1 × 10
   estimate estimate1 estimate2 statistic p.value parameter conf.low conf.high
      &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;
-1    -1.07    0.0732      1.15     -1.78  0.0810      52.7    -2.28     0.137
+1    -1.21    -0.405     0.803     -2.47  0.0167      56.3    -2.19    -0.228
 # … with 2 more variables: method &lt;chr&gt;, alternative &lt;chr&gt;</code></pre>
 </div>
 </div>
@@ -566,7 +566,7 @@ mean in group A mean in group B
 <pre><code># A tibble: 1 × 13
   estimate estimate1 estimate2 statistic p.value parameter conf.low conf.high
      &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;
-1   -0.934     0.248      1.18     -1.88  0.0649      58.0    -1.93    0.0597
+1    -1.29    -0.332     0.955     -2.36  0.0215      58.0    -2.38    -0.197
 # … with 5 more variables: method &lt;chr&gt;, alternative &lt;chr&gt;, n &lt;dbl&gt;,
 #   delta &lt;dbl&gt;, sd &lt;dbl&gt;</code></pre>
 </div>
@@ -577,10 +577,10 @@ mean in group A mean in group B
 <div class="cell">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a>nrep <span class="ot">=</span> <span class="dv">100</span></span>
 <span id="cb11-2"><a href="#cb11-2"></a></span>
-<span id="cb11-3"><a href="#cb11-3"></a>control <span class="ot">&lt;-</span> <span class="fu">crossing</span>(<span class="at">rep_no =</span> <span class="dv">1</span><span class="sc">:</span>nrep, <span class="at">n =</span> <span class="fu">seq</span>(<span class="dv">10</span>, <span class="dv">100</span>, <span class="dv">20</span>)) </span>
+<span id="cb11-3"><a href="#cb11-3"></a>n <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="fu">seq</span>(<span class="dv">10</span>, <span class="dv">100</span>, <span class="dv">20</span>), <span class="at">each =</span> nrep)</span>
 <span id="cb11-4"><a href="#cb11-4"></a></span>
-<span id="cb11-5"><a href="#cb11-5"></a>runs <span class="ot">&lt;-</span> control <span class="sc">|&gt;</span> </span>
-<span id="cb11-6"><a href="#cb11-6"></a>  <span class="fu">pmap_df</span>(<span class="cf">function</span>(n, rep_no) <span class="fu">sim_t_test</span>(<span class="at">n =</span> n, <span class="at">delta =</span> <span class="dv">1</span>, <span class="at">sd =</span> <span class="dv">2</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb11-5"><a href="#cb11-5"></a>runs <span class="ot">&lt;-</span> n <span class="sc">|&gt;</span> </span>
+<span id="cb11-6"><a href="#cb11-6"></a>  <span class="fu">map_dfr</span>(<span class="sc">~</span><span class="fu">sim_t_test</span>(<span class="at">n =</span> .x, <span class="at">delta =</span> <span class="dv">1</span>, <span class="at">sd =</span> <span class="dv">2</span>)) <span class="sc">|&gt;</span> </span>
 <span id="cb11-7"><a href="#cb11-7"></a>  <span class="fu">mutate</span>(<span class="at">sig =</span> p.value <span class="sc">&lt;=</span> <span class="fl">0.05</span>)</span>
 <span id="cb11-8"><a href="#cb11-8"></a></span>
 <span id="cb11-9"><a href="#cb11-9"></a>p <span class="ot">&lt;-</span> runs  <span class="sc">|&gt;</span> </span>
@@ -591,14 +591,18 @@ mean in group A mean in group B
 <span id="cb11-14"><a href="#cb11-14"></a>  <span class="fu">geom_point</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="section-2" class="slide level2">
-<h2></h2>
+<section class="slide level2">
+
 
 <img data-src="power-analysis_files/figure-revealjs/unnamed-chunk-5-1.png" width="960" class="r-stretch"></section>
 <section id="magnitude-of-effect" class="slide level2">
 <h2>Magnitude of Effect</h2>
 
 <img data-src="power-analysis_files/figure-revealjs/unnamed-chunk-6-1.png" width="960" class="r-stretch"></section>
+<section id="help-for-simulating-data" class="slide level2">
+<h2>Help for simulating data</h2>
+<p><a href="https://debruine.github.io/faux/"><code>faux</code></a> package</p>
+</section>
 <section id="summary" class="slide level2">
 <h2>Summary</h2>
 <ul>
