@@ -9,7 +9,14 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Power test app
 
-Run `biostats.apps::power_lm_app()` and explore the effect of the number of observations on the width of the confidence intervals, the proportion of trials that are statistically significant, and the effect size of significant trials.
+Run `biostats.tutorials::power_lm_app()` and explore the effect of the number of observations on the width of the confidence intervals, the proportion of trials that are statistically significant, and the effect size of significant trials.
+
+If you don't have `biostats.tutorials` yet, you can install it with
+
+```{r, eval = FALSE}
+remotes::install_github("biostats-r/biostats.tutorials")
+```
+
 
 # Simulating a power test
 
