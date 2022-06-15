@@ -1,0 +1,221 @@
+---
+title: Debugging Tools
+subtitle: "Bio302 - Biological data analysis II"
+author: Richard Telford
+institute: Department of Biology, University of Bergen
+date: today
+date-format: "MMMM YYYY"
+format: revealjs
+editor: visual
+echo: true
+---
+
+```{r}
+#| include: false
+library(tidyverse)
+```
+
+
+
+## Debugging
+
+Detective work
+
+Imagination needed
+
+Form a hypothesis about what is going wrong - experiment
+
+Tools available to help identify the problem
+
+## Syntax errors
+
+Code not accepted by R
+
+Brackets & commas often the problem
+
+Read the error message - helps to locate the problem
+
+
+```{r, error=TRUE}
+rnorm(n = 10 mean = 1, sd = 1)
+```
+```{r, error=TRUE}
+ggplot(bird1, aes(temp, weight))
++ geom_point()
+```
+
+```{r, error = TRUE}
+sapply(bird1, function(x){mean(x))
+```
+
+
+## Debugging tools
+
+
+- `traceback`
+- `print`
+- `browser`
+- `debug` / `undebug`
+- `options(error = recover)`
+
+## `traceback()`
+
+Run immediately after an error
+
+Prints the stack of functions called. 
+
+Helps identify where the error first occurred
+
+
+
+
+## `print`
+
+Insert print statements into your function to see some objects when the function runs
+
+```{r}
+vol_cylinder <- function(radius, height){
+  area <- pi * radius ^ 2
+  print(area) ## print for debugging
+  volume <- area * height
+}
+```
+
+
+Very useful, especially with loops, to show progress
+
+## `browser`
+
+Inserting `browser()` into a function starts the debugger.
+
+Find out where the error occurs and state of all objects
+
+```{r}
+vol_cylinder <- function(radius, height){
+  area <- pi * radius ^ 2
+  browser() ## opens debugger
+  volume <- area * height
+}
+```
+
+In the debugger
+
+ - any code to see examine objects or test code
+ - n to run next line of code
+ - c to continue execution
+ - Q to quit 
+
+
+## `debug`
+
+If you don't want to, or cannot, put `browser` into a function use
+
+`debug(foo)` where `foo` is the function you want to debug
+
+Opens the debugger on `foo` next time it is called
+
+Use `undebug(foo)` to turn it off.
+
+`debugonce(foo)` will open the debugger only once.
+
+## `options(error = recover)`
+
+Chance to look at the state of all functions when the error occurred
+
+Very useful
+
+Turn off with `options(error = NULL)` - otherwise gets annoying fast 
+
+## Warnings
+
+```{r warn, warning=TRUE}
+as.numeric("One")
+```
+
+
+Not necessarily benign
+
+Can be difficult to track down
+
+By default not printed until calculations completed
+
+Promote to errors with
+
+``` r
+options(warn = 2)
+```
+
+Now can `traceback()` and other tools
+
+## Why is my code so slow?
+
+```{r}
+#| fig-alt: Cartoon from XKCD
+#| fig-link: https://xkcd.com/1205/
+#| echo: false
+knitr::include_graphics("figs/is_it_worth_the_time.png")
+```
+
+Don't spend longer optimising code than you will ever save
+
+Don't let optimising code obfuscate it
+
+Safe, reliable code & understandable code >>> speed
+
+## Timing code with `tictoc`
+
+```{r}
+library(tictoc)
+tic()
+#slow code
+Sys.sleep(4)
+toc()
+```
+
+
+
+## Benchmarking code
+
+Test which version of the code is faster 
+
+```{r}
+new_mean <- function(x){sum(x)/length(x)}
+x <- rnorm(10000)
+bm <- bench::mark(
+  mean = mean(x),
+  new_mean = new_mean(x)) # use check = FALSE if results should not be identical
+bm
+```
+---
+```{r}
+plot(bm)
+```
+
+## Profiler
+
+Try the R profiler
+
+RStudio menu > Profile > Start Profiling
+
+Or use `profvis::profvis`
+
+Checks what code is doing every 0.01 second. 
+
+Flame graph of how much time each function is using (and all function called by it).
+
+## Getting help
+
+`?lm` opens help file on function `lm`
+
+`example(lm)` runs the examples from `lm`
+
+`??regression` finds help about regression
+
+
+Stackoverflow.com
+
+ - Check for existing answers
+ - Minimal example
+ - Make problem reproducible
+ - Minimal dataset
+ `dput` or make random data (set seed first)
