@@ -1,0 +1,27 @@
+rstudio:
+  recommended: 2022.12.0.353
+  options:
+    save_workspace:
+      value: never
+    load_workspace:
+      value: 'FALSE'
+      message: For reproducibility
+R:
+  recommended: '4.3'
+  minimum: 4.2
+git:
+  recommended: '2.9'
+quarto:
+  recommended: '1.3'
+  minimum: 1.0
+packages:
+  tidyverse:
+    recommended: '2'
+    minimum: '1.3'
+  usethis:
+    recommended: '2.1'
+  quarto:
+    recommended: '1.2'
+    minimum: '1'
+  lme4: NA
+
