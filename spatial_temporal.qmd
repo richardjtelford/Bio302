@@ -1,0 +1,377 @@
+---
+title: "Spatial and temporal autocorrelation"
+subtitle: Bio302
+author: "Richard J. Telford (Richard.Telford@uib.no)"
+date: today
+date-format: "MMMM YYYY"
+format: revealjs
+editor: visual
+echo: true
+---
+
+```{r}
+#| label: setup
+#| include: false
+library("tidyverse")
+library("patchwork")
+library("ggtext")
+theme_set(theme_bw(base_size = 16))
+set.seed(42)
+```
+
+## Assumptions of Least Squares
+
+1.  Linear relationship between response and predictors.
+2.  The residuals have a mean of zero.
+3.  The residuals have constant variance (not heteroscedastic).
+4.  [**The residuals are independent (uncorrelated).**]{style="color: red;"}
+5.  The residuals are normally distributed.
+
+Spatial, temporal or phylogenetic autocorrelation violates this assumption
+
+## Autocorrelation pervades biological data
+
+Response variable autocorrelated because
+
+1.  predictor variable is autocorrelated residuals are independent -- not a problem
+2.  nuisance variables are autocorrelated add extra predictors until autocorrelation is accounted for
+3.  contagious processes (e.g. dispersal)
+
+Potential problem for time series data and spatial data.
+
+## Simulated time series [with]{style="color: #E41A1C;"} and [without]{style="color: #377EB8;"} autocorrelation
+
+```{r}
+#| label: effect-fig
+#| echo: false
+#| code-fold: true
+
+library(broom)
+x <- 1:100
+# plot 1
+plot1 <- tibble(x = c(x, x), y = c(rnorm(100), arima.sim(list(ar = 0.7), n = 100)), 
+       data = rep(c("i.i.d.", "ar1"), each = 100)) |> 
+  ggplot(aes(x = x, y = y, colour = data)) +
+  geom_line(show.legend = FALSE) +
+  labs(x = "Time", y = "Value")  +
+  scale_colour_brewer(palette = "Set1") +
+  theme(plot.title = element_markdown())
+
+ar_run <- map(1:1000, ~ {
+  y <- arima.sim(model = list(ar = 0.7), n = length(x))
+  mod <- lm(y ~ x)
+  tidy(mod) 
+}) |> 
+  list_rbind()
+
+idd_run <- map(1:1000, ~ {
+  y <- rnorm(100)
+  mod <- lm(y ~ x)
+  tidy(mod) 
+}) |> 
+  list_rbind()
+
+both_runs <- bind_rows(
+  ar1 = ar_run,
+  i.d.d. = idd_run,
+  .id = "data"
+) |> 
+  filter(term == "x")
+  
+plot2 <- both_runs |> 
+  ggplot(aes(x = estimate, fill = data)) +
+  geom_histogram(position = "identity", alpha = 0.5, show.legend = FALSE) + 
+  geom_vline(xintercept = 0, linetype = "dashed") +
+  scale_fill_brewer(palette = "Set1") +
+  labs(x = "Effect")
+
+plot3 <- both_runs |> 
+  ggplot(aes(x = p.value, fill = data)) +
+  geom_histogram(position = "identity", alpha = 0.5, show.legend = FALSE, boundary = 0, binwidth = 0.025 ) + 
+  geom_vline(xintercept = 0.05, linetype = "dashed") +
+  scale_fill_brewer(palette = "Set1") +
+  labs(x = "P value")
+
+ plot1 + plot2 + plot3
+```
+
+## Why
+
+Residuals are not independent -- do not contribute a full degree of freedom each.
+
+-   $H_0$ rejected more often than the data justify. Type I error.
+-   Lower "effective sample size": $n’$ instead of $n$.\
+    t statistic = $\beta_0/se(\beta_0)$\
+    $se=standard~deviation/\sqrt{n}$\
+    if $n$ > $n'$, the t statistic is inflated, p value too low
+-   Confidence intervals too narrow
+-   Estimated coefficients are unbiased
+
+## Effective sample size \< number of observations
+
+First order autoregressive model $y_i = ρ_1y_{i-1}+e_i$
+
+$N_{eff} = N(1-ρ_1)/(1+ρ_1)$
+
+```{r}
+#| label: ar-fig
+#| code-fold: true
+bind_rows(
+  tidy(arima.sim(model = list(ar = 0.9), n = 100)) |> 
+    mutate(label = paste0("p[1]==0.9~N[eff]==", round(100 * (1-0.9)/(1+0.9), 2))), 
+    tidy(arima.sim(model = list(ar = 0.3), n = 100)) |> 
+    mutate(label = paste0("p[1]==0.3~N[eff]==", round(100 * (1-0.3)/(1+0.3), 2)))
+) |> 
+  ggplot(aes(x = index, y = value)) +
+  geom_line() +
+  facet_wrap(facets = vars(label), labeller = label_parsed)+ 
+  labs(x = "Time")
+```
+
+```{r}
+#| eval: false
+x1 <- arima.sim(list(ar = .9), n = 100)
+```
+
+## What not to do!
+
+1.  Adjust the significance level, e.g., consider p \<= 0.01 instead of p \<= 0.05?\
+    Don't how much to adjust. Could end up with a test that is too conservative
+2.  Drop observations to include only "independent samples?"\
+    Wastes data and easy to mistake "critical distance to independence"
+
+## Lake Huron water level
+
+```{r}
+#| label: huron-fig
+#| code-fold: true
+
+LakeHuron_df <- tidy(LakeHuron)
+ggplot(LakeHuron_df, aes(x = index, y = value)) +
+  geom_line() + 
+  labs(x = "Year", y = "Lake level (feet)")
+```
+
+## Autocorrelation in the residuals
+
+```{r}
+#| label: pacf-fig1
+mod1 <- lm(value ~ index, data = LakeHuron_df)
+summary(mod1)$coef
+
+acf(resid(mod1))
+```
+
+## Autocorrelation Function
+
+::: columns
+::: {.column width="60%"}
+Autocorrelation function: correlation of the series with its lagged self
+
+Correlation at lag(0) = 1
+
+Autoregressive processes
+
+$y_i = ρ_1y_i-1+e_i$
+
++ve autocorrelation - ACF exponentially declines
+
+-ve autocorrelation - ACF oscillates, exponential decline in magnitude
+:::
+
+::: {.column width="40%"}
+```{r}
+#| label: acf-fig2
+acf(resid(mod1))
+```
+:::
+:::
+
+## Partial Autocorrelation Function
+
+::: columns
+::: {.column width="55%"}
+Correlation of the series with itself, lagged k steps with effect of autocorrelation at steps \<k removed
+
+PACF at lag(0) is not defined
+
+PACF at lag(1) = ACF at lag(1)
+
+Autoregressive processes will have spikes in the PACF.
+Number of significant spikes indicate the order
+:::
+
+::: {.column width="45%"}
+```{r}
+#| label: pacf-fig
+pacf(resid(mod1))
+```
+:::
+:::
+
+## Identifiying the autocorrelation process
+
+
+Non-stationary series have an ACF that remains significant at many lags, rather than quickly declining to zero.
+
+Autoregressive processes have an exponentially declining ACF and spikes in the first one or more lags of the PACF.
+Number of spikes indicates the order of the autoregression.
+
+Moving average processes have spikes in the first one or more lags of the ACF and an exponentially declining PACF.
+Number of spikes indicates the order of the moving average.
+
+Mixed (ARMA) processes typically show exponential declines in both the ACF and the PACF.
+
+## Identifying the autocorrelation process
+
+Fit an autoregressive model
+
+```{r}
+ar(resid(mod1))
+```
+
+More general models with autoregressive, integration and moving average components can be fitted with `arima()` Use AIC to select best model.
+
+## Durbin-Watson test
+
+Durbin-Watson statistic always between 0 and 4
+
+-   == 2 No autocorrelation
+
+-   \<2 Positive autocorrelation
+
+-   \> 2 Negative autocorrelation
+
+```{r}
+#| label: dw-test
+library(lmtest)
+dwtest(mod1)
+```
+
+## gls
+
+```{r}
+library(nlme)
+fit.gls <- gls(value ~ index, data = LakeHuron_df)
+summary(fit.gls)$coef
+
+summary(mod1)$coef
+```
+
+## gls with corAR1
+
+```{r}
+fit2.gls<-gls(value ~ index, data = LakeHuron_df, corr=corAR1())
+summary(fit2.gls)
+```
+
+## anova to compare models
+
+```{r}
+anova(fit.gls,fit2.gls)
+```
+
+## The weights matrix
+
+::: columns
+::: {.column width="50%"}
+Weight Matrix for uncorrelated observations
+
+```{r}
+#| label: identity
+#| echo: false
+diag(4)
+```
+
+Off diagonal terms are zero
+:::
+
+::: {.column width="50%"}
+Weight Matrix for correlated observations
+
+```{r}
+#| label: non_identity
+#| echo: false
+c(1, 0.8, .64, .51, 0.8, 1, 0.8, .64, .64, .8, 1, .8, .51, .64, .8, 1) |> 
+  matrix(nrow  = 4)
+
+```
+
+Off diagonal terms can be non-zero
+:::
+:::
+
+## Spatial autocorrelation
+
+```{r}
+#| label: meuse-fig
+#| code-fold: true
+library(gstat)
+data(meuse, package = "sp")
+ggplot(meuse, aes(x = x, y = y, size = zinc)) +
+  geom_point() +
+  scale_size_area() + 
+  labs(size = "Zinc ppm", title = "Zinc concentration on Meuse floodplain")
+```
+
+## The variogram
+
+Average squared difference between points a given distance apart
+
+$$\hat\gamma(h\pm\delta) :=\frac{1}{2|N(h \pm \delta)|}\sum_{(i,j)\in N(h \pm \delta)} |z_i-z_j|^2$$
+
+## The variogram
+
+Variogram of zinc concentrations on Meuse floodplain
+
+```{r}
+#| label: variogram-fig
+vg <- variogram(zinc ~ 1, ~ x + y, data = meuse)
+plot(vg, pch = 16, col = 2)
+```
+
+Sill, range, nugget
+
+## Variogram models
+
+::: columns
+::: {.column width="40%"}
+Several different models
+
+-   Spherical model
+-   Circular model
+-   Exponential model
+-   Gaussian model
+
+Different shapes
+:::
+
+::: {.column width="60%"}
+```{r}
+#| label: variogram-model
+vg <- variogram(zinc ~ 1, ~ x + y, data = meuse)
+fit.vg <- fit.variogram(
+  object = vg, 
+  model = vgm(psill = 100000, "Sph", range = 900, nugget = 30000))
+plot(vg, model = fit.vg, pch = 16, col = 2)
+```
+:::
+:::
+
+## gls/lme and correlation structures
+
+|              |                                                                                                                                                              |
+|------------|------------------------------------------------------------|
+| `corAR1()`   | autoregressive process of order 1. Requires equal time steps                                                                                               |
+| `corARMA()`  | autoregressive moving average process. Arbitrary orders for AR and MA components. Requires equal time steps |
+| `corCAR1()`  | continuous autoregressive process -- uneven time steps allowed                                             |
+| `corExp()`   | exponential spatial correlation                                                                                                                              |
+| `corSpher()` | spherical spatial correlation.                                                                                                                               |
+| `corGaus()`  | Gaussian spatial correlation.                                                                                                                                |
+
+## Conclusions
+
+-   Do not ignore autocorrelation
+-   It can seriously bias your interpretations
+-   Coefficients are unbiased but uncertain
+-   An imperfectly specified autocorrelation structure often better than incorrectly assuming no autocorrelation
