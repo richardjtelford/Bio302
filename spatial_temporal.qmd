@@ -182,7 +182,9 @@ $y_i = ρ_1y_i-1+e_i$
 ::: {.column width="40%"}
 ```{r}
 #| label: acf-fig2
-acf(resid(mod1))
+library(ggfortify)
+acf(resid(mod1), plot = FALSE) |> 
+  autoplot()
 ```
 :::
 :::
@@ -204,23 +206,112 @@ Number of significant spikes indicate the order
 ::: {.column width="45%"}
 ```{r}
 #| label: pacf-fig
-pacf(resid(mod1))
+pacf(resid(mod1), plot = FALSE) |> 
+  autoplot()
 ```
 :::
 :::
 
-## Identifiying the autocorrelation process
+## Which autocorrelation process?
+
+### Non-stationary series
+
+```{r}
+#| label: non_stationary
+#| echo: !expr 1
+x <- cumsum(rnorm(100))
+p1 <- ggplot(data = NULL, aes(x = 1:100, y = x)) + 
+  geom_line() + 
+  labs(x = "Time")
+p2 <- acf(x, plot = FALSE) |> 
+  autoplot()
+p1 + p2
+```
 
 
-Non-stationary series have an ACF that remains significant at many lags, rather than quickly declining to zero.
+ACF remains significant at many lags, rather than quickly declining to zero.
 
-Autoregressive processes have an exponentially declining ACF and spikes in the first one or more lags of the PACF.
-Number of spikes indicates the order of the autoregression.
+##
 
-Moving average processes have spikes in the first one or more lags of the ACF and an exponentially declining PACF.
-Number of spikes indicates the order of the moving average.
+### Autoregressive processes
 
-Mixed (ARMA) processes typically show exponential declines in both the ACF and the PACF.
+$y_i = ρ_1y_i-1+ρ_2y_i-2+e_i$
+
+:::: {.columns}
+
+::: {.column width="50%"}
+```{r}
+#| label: ar_pos_fig
+#| echo: !expr 1
+x <- arima.sim(list(ar = .7), n = 100)
+p1 <- ggplot(data = NULL, aes(x = 1:100, y = x)) + 
+  geom_line() + 
+  labs(x = "Time")
+p2 <- acf(x, plot = FALSE) |> 
+  autoplot()
+p3 <- pacf(x, plot = FALSE) |> 
+  autoplot()
+p1 + p2 + p3
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+#| label: ar_neg_fig
+#| echo: !expr 1
+x <- arima.sim(list(ar = c(1, -.5)), n = 100)
+p1 <- ggplot(data = NULL, aes(x = 1:100, y = x)) + 
+  geom_line() + 
+  labs(x = "Time")
+p2 <- acf(x, plot = FALSE) |> 
+  autoplot()
+p3 <- pacf(x, plot = FALSE) |> 
+  autoplot()
+p1 + p2 + p3
+```
+:::
+
+::::
+
+
+
+
+
+
+Exponentially declining ACF and spikes in the first one or more lags of the PACF.
+\# spikes indicates the AR order
+
+## 
+
+###  Moving average processes
+
+$w_t\stackrel{iid}{\sim}\mathcal{N}(0,\sigma^2_w)$
+
+$x_t = \mu + w_t + \theta_1w_{t-1}$
+
+
+```{r}
+#| label: ma-fig
+#| echo: !expr 1
+x <- arima.sim(model = list(ma = 0.8), n = 100)
+p1 <- ggplot(data = NULL, aes(x = 1:100, y = x)) + 
+  geom_line() + 
+  labs(x = "Time")
+p2 <- acf(x, plot = FALSE) |> 
+  autoplot()
+p3 <- pacf(x, plot = FALSE) |> 
+  autoplot()
+p1 + p2 + p3
+```
+
+spikes in the first one or more lags of the ACF and an exponentially declining PACF.
+\# spikes indicates the MA order 
+
+## 
+
+### Mixed (ARMA) processes
+
+typically show exponential declines in both the ACF and the PACF.
 
 ## Identifying the autocorrelation process
 
@@ -357,6 +448,19 @@ plot(vg, model = fit.vg, pch = 16, col = 2)
 ```
 :::
 :::
+
+
+## Variogram shapes
+```{r}
+#| label: fields-fig
+#| echo: false
+#| message: false
+#| fig-width: 12
+#| fig-height: 8
+
+show.vgms(par.strip.text = list(cex = 1.5))
+```
+
 
 ## gls/lme and correlation structures
 

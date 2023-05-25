@@ -513,7 +513,9 @@ index        -0.02420111 0.004036108 -5.996151 3.545230e-08</code></pre>
 <p>-ve autocorrelation - ACF oscillates, exponential decline in magnitude</p>
 </div><div class="column" style="width:40%;">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="fu">acf</span>(<span class="fu">resid</span>(mod1))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="fu">library</span>(ggfortify)</span>
+<span id="cb7-2"><a href="#cb7-2"></a><span class="fu">acf</span>(<span class="fu">resid</span>(mod1), <span class="at">plot =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb7-3"><a href="#cb7-3"></a>  <span class="fu">autoplot</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img data-src="spatial_temporal_files/figure-revealjs/acf-fig2-1.png" width="960"></p>
 </div>
@@ -531,7 +533,8 @@ index        -0.02420111 0.004036108 -5.996151 3.545230e-08</code></pre>
 <p>Autoregressive processes will have spikes in the PACF. Number of significant spikes indicate the order</p>
 </div><div class="column" style="width:45%;">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a><span class="fu">pacf</span>(<span class="fu">resid</span>(mod1))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a><span class="fu">pacf</span>(<span class="fu">resid</span>(mod1), <span class="at">plot =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb8-2"><a href="#cb8-2"></a>  <span class="fu">autoplot</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img data-src="spatial_temporal_files/figure-revealjs/pacf-fig-1.png" width="960"></p>
 </div>
@@ -539,18 +542,59 @@ index        -0.02420111 0.004036108 -5.996151 3.545230e-08</code></pre>
 </div>
 </div>
 </section>
-<section id="identifiying-the-autocorrelation-process" class="slide level2">
-<h2>Identifiying the autocorrelation process</h2>
-<p>Non-stationary series have an ACF that remains significant at many lags, rather than quickly declining to zero.</p>
-<p>Autoregressive processes have an exponentially declining ACF and spikes in the first one or more lags of the PACF. Number of spikes indicates the order of the autoregression.</p>
-<p>Moving average processes have spikes in the first one or more lags of the ACF and an exponentially declining PACF. Number of spikes indicates the order of the moving average.</p>
-<p>Mixed (ARMA) processes typically show exponential declines in both the ACF and the PACF.</p>
+<section id="which-autocorrelation-process" class="slide level2">
+<h2>Which autocorrelation process?</h2>
+<h3 id="non-stationary-series">Non-stationary series</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a>x <span class="ot">&lt;-</span> <span class="fu">cumsum</span>(<span class="fu">rnorm</span>(<span class="dv">100</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+
+</div>
+<img data-src="spatial_temporal_files/figure-revealjs/non_stationary-1.png" width="960" class="r-stretch"><p>ACF remains significant at many lags, rather than quickly declining to zero.</p>
+</section>
+<section id="section" class="slide level2">
+<h2></h2>
+<h3 id="autoregressive-processes">Autoregressive processes</h3>
+<p><span class="math inline">\(y_i = ρ_1y_i-1+ρ_2y_i-2+e_i\)</span></p>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a>x <span class="ot">&lt;-</span> <span class="fu">arima.sim</span>(<span class="fu">list</span>(<span class="at">ar =</span> .<span class="dv">7</span>), <span class="at">n =</span> <span class="dv">100</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img data-src="spatial_temporal_files/figure-revealjs/ar_pos_fig-1.png" width="960"></p>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a>x <span class="ot">&lt;-</span> <span class="fu">arima.sim</span>(<span class="fu">list</span>(<span class="at">ar =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="sc">-</span>.<span class="dv">5</span>)), <span class="at">n =</span> <span class="dv">100</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img data-src="spatial_temporal_files/figure-revealjs/ar_neg_fig-1.png" width="960"></p>
+</div>
+</div>
+</div>
+</div>
+<p>Exponentially declining ACF and spikes in the first one or more lags of the PACF. # spikes indicates the AR order</p>
+</section>
+<section id="section-1" class="slide level2">
+<h2></h2>
+<h3 id="moving-average-processes">Moving average processes</h3>
+<p><span class="math inline">\(w_t\stackrel{iid}{\sim}\mathcal{N}(0,\sigma^2_w)\)</span></p>
+<p><span class="math inline">\(x_t = \mu + w_t + \theta_1w_{t-1}\)</span></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a>x <span class="ot">&lt;-</span> <span class="fu">arima.sim</span>(<span class="at">model =</span> <span class="fu">list</span>(<span class="at">ma =</span> <span class="fl">0.8</span>), <span class="at">n =</span> <span class="dv">100</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+
+</div>
+<img data-src="spatial_temporal_files/figure-revealjs/ma-fig-1.png" width="960" class="r-stretch"><p>spikes in the first one or more lags of the ACF and an exponentially declining PACF. # spikes indicates the MA order</p>
+</section>
+<section id="section-2" class="slide level2">
+<h2></h2>
+<h3 id="mixed-arma-processes">Mixed (ARMA) processes</h3>
+<p>typically show exponential declines in both the ACF and the PACF.</p>
 </section>
 <section id="identifying-the-autocorrelation-process" class="slide level2">
 <h2>Identifying the autocorrelation process</h2>
 <p>Fit an autoregressive model</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a><span class="fu">ar</span>(<span class="fu">resid</span>(mod1))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a><span class="fu">ar</span>(<span class="fu">resid</span>(mod1))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
@@ -574,8 +618,8 @@ Order selected 2  sigma^2 estimated as  0.501</code></pre>
 <li><p>&gt; 2 Negative autocorrelation</p></li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a><span class="fu">library</span>(lmtest)</span>
-<span id="cb11-2"><a href="#cb11-2"></a><span class="fu">dwtest</span>(mod1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1"></a><span class="fu">library</span>(lmtest)</span>
+<span id="cb15-2"><a href="#cb15-2"></a><span class="fu">dwtest</span>(mod1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
     Durbin-Watson test
@@ -589,14 +633,14 @@ alternative hypothesis: true autocorrelation is greater than 0</code></pre>
 <section id="gls" class="slide level2">
 <h2>gls</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a><span class="fu">library</span>(nlme)</span>
-<span id="cb13-2"><a href="#cb13-2"></a>fit.gls <span class="ot">&lt;-</span> <span class="fu">gls</span>(value <span class="sc">~</span> index, <span class="at">data =</span> LakeHuron_df)</span>
-<span id="cb13-3"><a href="#cb13-3"></a><span class="fu">summary</span>(fit.gls)<span class="sc">$</span>coef</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1"></a><span class="fu">library</span>(nlme)</span>
+<span id="cb17-2"><a href="#cb17-2"></a>fit.gls <span class="ot">&lt;-</span> <span class="fu">gls</span>(value <span class="sc">~</span> index, <span class="at">data =</span> LakeHuron_df)</span>
+<span id="cb17-3"><a href="#cb17-3"></a><span class="fu">summary</span>(fit.gls)<span class="sc">$</span>coef</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> (Intercept)        index 
 625.55491791  -0.02420111 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1"></a><span class="fu">summary</span>(mod1)<span class="sc">$</span>coef</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1"></a><span class="fu">summary</span>(mod1)<span class="sc">$</span>coef</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>                Estimate  Std. Error   t value     Pr(&gt;|t|)
 (Intercept) 625.55491791 7.764293095 80.568174 5.808677e-90
@@ -607,8 +651,8 @@ index        -0.02420111 0.004036108 -5.996151 3.545230e-08</code></pre>
 <section id="gls-with-corar1" class="slide level2">
 <h2>gls with corAR1</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1"></a>fit2.gls<span class="ot">&lt;-</span><span class="fu">gls</span>(value <span class="sc">~</span> index, <span class="at">data =</span> LakeHuron_df, <span class="at">corr=</span><span class="fu">corAR1</span>())</span>
-<span id="cb17-2"><a href="#cb17-2"></a><span class="fu">summary</span>(fit2.gls)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1"></a>fit2.gls<span class="ot">&lt;-</span><span class="fu">gls</span>(value <span class="sc">~</span> index, <span class="at">data =</span> LakeHuron_df, <span class="at">corr=</span><span class="fu">corAR1</span>())</span>
+<span id="cb21-2"><a href="#cb21-2"></a><span class="fu">summary</span>(fit2.gls)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Generalized least squares fit by REML
   Model: value ~ index 
@@ -643,7 +687,7 @@ Degrees of freedom: 98 total; 96 residual</code></pre>
 <section id="anova-to-compare-models" class="slide level2">
 <h2>anova to compare models</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1"></a><span class="fu">anova</span>(fit.gls,fit2.gls)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1"></a><span class="fu">anova</span>(fit.gls,fit2.gls)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>         Model df      AIC      BIC    logLik   Test  L.Ratio p-value
 fit.gls      1  3 317.8056 325.4986 -155.9028                        
@@ -686,12 +730,12 @@ fit2.gls     2  4 225.8304 236.0878 -108.9152 1 vs 2 93.97515  &lt;.0001</code><
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1"></a><span class="fu">library</span>(gstat)</span>
-<span id="cb23-2"><a href="#cb23-2"></a><span class="fu">data</span>(meuse, <span class="at">package =</span> <span class="st">"sp"</span>)</span>
-<span id="cb23-3"><a href="#cb23-3"></a><span class="fu">ggplot</span>(meuse, <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y, <span class="at">size =</span> zinc)) <span class="sc">+</span></span>
-<span id="cb23-4"><a href="#cb23-4"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
-<span id="cb23-5"><a href="#cb23-5"></a>  <span class="fu">scale_size_area</span>() <span class="sc">+</span> </span>
-<span id="cb23-6"><a href="#cb23-6"></a>  <span class="fu">labs</span>(<span class="at">size =</span> <span class="st">"Zinc ppm"</span>, <span class="at">title =</span> <span class="st">"Zinc concentration on Meuse floodplain"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1"></a><span class="fu">library</span>(gstat)</span>
+<span id="cb27-2"><a href="#cb27-2"></a><span class="fu">data</span>(meuse, <span class="at">package =</span> <span class="st">"sp"</span>)</span>
+<span id="cb27-3"><a href="#cb27-3"></a><span class="fu">ggplot</span>(meuse, <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y, <span class="at">size =</span> zinc)) <span class="sc">+</span></span>
+<span id="cb27-4"><a href="#cb27-4"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb27-5"><a href="#cb27-5"></a>  <span class="fu">scale_size_area</span>() <span class="sc">+</span> </span>
+<span id="cb27-6"><a href="#cb27-6"></a>  <span class="fu">labs</span>(<span class="at">size =</span> <span class="st">"Zinc ppm"</span>, <span class="at">title =</span> <span class="st">"Zinc concentration on Meuse floodplain"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 
 </div>
@@ -705,8 +749,8 @@ fit2.gls     2  4 225.8304 236.0878 -108.9152 1 vs 2 93.97515  &lt;.0001</code><
 <h2>The variogram</h2>
 <p>Variogram of zinc concentrations on Meuse floodplain</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1"></a>vg <span class="ot">&lt;-</span> <span class="fu">variogram</span>(zinc <span class="sc">~</span> <span class="dv">1</span>, <span class="sc">~</span> x <span class="sc">+</span> y, <span class="at">data =</span> meuse)</span>
-<span id="cb24-2"><a href="#cb24-2"></a><span class="fu">plot</span>(vg, <span class="at">pch =</span> <span class="dv">16</span>, <span class="at">col =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1"></a>vg <span class="ot">&lt;-</span> <span class="fu">variogram</span>(zinc <span class="sc">~</span> <span class="dv">1</span>, <span class="sc">~</span> x <span class="sc">+</span> y, <span class="at">data =</span> meuse)</span>
+<span id="cb28-2"><a href="#cb28-2"></a><span class="fu">plot</span>(vg, <span class="at">pch =</span> <span class="dv">16</span>, <span class="at">col =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
 </div>
 <img data-src="spatial_temporal_files/figure-revealjs/variogram-fig-1.png" width="960" class="r-stretch"><p>Sill, range, nugget</p>
@@ -725,11 +769,11 @@ fit2.gls     2  4 225.8304 236.0878 -108.9152 1 vs 2 93.97515  &lt;.0001</code><
 <p>Different shapes</p>
 </div><div class="column" style="width:60%;">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1"></a>vg <span class="ot">&lt;-</span> <span class="fu">variogram</span>(zinc <span class="sc">~</span> <span class="dv">1</span>, <span class="sc">~</span> x <span class="sc">+</span> y, <span class="at">data =</span> meuse)</span>
-<span id="cb25-2"><a href="#cb25-2"></a>fit.vg <span class="ot">&lt;-</span> <span class="fu">fit.variogram</span>(</span>
-<span id="cb25-3"><a href="#cb25-3"></a>  <span class="at">object =</span> vg, </span>
-<span id="cb25-4"><a href="#cb25-4"></a>  <span class="at">model =</span> <span class="fu">vgm</span>(<span class="at">psill =</span> <span class="dv">100000</span>, <span class="st">"Sph"</span>, <span class="at">range =</span> <span class="dv">900</span>, <span class="at">nugget =</span> <span class="dv">30000</span>))</span>
-<span id="cb25-5"><a href="#cb25-5"></a><span class="fu">plot</span>(vg, <span class="at">model =</span> fit.vg, <span class="at">pch =</span> <span class="dv">16</span>, <span class="at">col =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1"></a>vg <span class="ot">&lt;-</span> <span class="fu">variogram</span>(zinc <span class="sc">~</span> <span class="dv">1</span>, <span class="sc">~</span> x <span class="sc">+</span> y, <span class="at">data =</span> meuse)</span>
+<span id="cb29-2"><a href="#cb29-2"></a>fit.vg <span class="ot">&lt;-</span> <span class="fu">fit.variogram</span>(</span>
+<span id="cb29-3"><a href="#cb29-3"></a>  <span class="at">object =</span> vg, </span>
+<span id="cb29-4"><a href="#cb29-4"></a>  <span class="at">model =</span> <span class="fu">vgm</span>(<span class="at">psill =</span> <span class="dv">100000</span>, <span class="st">"Sph"</span>, <span class="at">range =</span> <span class="dv">900</span>, <span class="at">nugget =</span> <span class="dv">30000</span>))</span>
+<span id="cb29-5"><a href="#cb29-5"></a><span class="fu">plot</span>(vg, <span class="at">model =</span> fit.vg, <span class="at">pch =</span> <span class="dv">16</span>, <span class="at">col =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img data-src="spatial_temporal_files/figure-revealjs/variogram-model-1.png" width="960"></p>
 </div>
@@ -737,6 +781,10 @@ fit2.gls     2  4 225.8304 236.0878 -108.9152 1 vs 2 93.97515  &lt;.0001</code><
 </div>
 </div>
 </section>
+<section id="variogram-shapes" class="slide level2">
+<h2>Variogram shapes</h2>
+
+<img data-src="spatial_temporal_files/figure-revealjs/fields-fig-1.png" width="1152" class="r-stretch"></section>
 <section id="glslme-and-correlation-structures" class="slide level2">
 <h2>gls/lme and correlation structures</h2>
 <table>
