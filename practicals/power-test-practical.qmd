@@ -1,6 +1,6 @@
 ---
 title: "Power tests"
-output: html_document
+format: html
 ---
 
 ```{r setup, include=FALSE}
