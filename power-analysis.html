@@ -572,7 +572,7 @@ mean in group A mean in group B
 <span id="cb9-8"><a href="#cb9-8"></a>  </span>
 <span id="cb9-9"><a href="#cb9-9"></a>  <span class="co"># run test</span></span>
 <span id="cb9-10"><a href="#cb9-10"></a>  test <span class="ot">&lt;-</span> <span class="fu">t.test</span>(y <span class="sc">~</span> x)</span>
-<span id="cb9-11"><a href="#cb9-11"></a>  broom<span class="sc">::</span><span class="fu">tidy</span>(test) <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">n =</span> n, <span class="at">delta =</span> delta, <span class="at">sd =</span> sd)</span>
+<span id="cb9-11"><a href="#cb9-11"></a>  broom<span class="sc">::</span><span class="fu">tidy</span>(test) <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">n =</span> n, <span class="at">delta =</span> delta, <span class="at">sd =</span> sd)</span>
 <span id="cb9-12"><a href="#cb9-12"></a>}</span>
 <span id="cb9-13"><a href="#cb9-13"></a></span>
 <span id="cb9-14"><a href="#cb9-14"></a><span class="fu">sim_t_test</span>(<span class="at">n =</span> <span class="dv">30</span>, <span class="at">delta =</span> <span class="dv">1</span>, <span class="at">sd =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>

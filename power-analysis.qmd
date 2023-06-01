@@ -217,7 +217,7 @@ sim_t_test <- function(n, delta, sd, ...){
   
   # run test
   test <- t.test(y ~ x)
-  broom::tidy(test) %>% mutate(n = n, delta = delta, sd = sd)
+  broom::tidy(test) |> mutate(n = n, delta = delta, sd = sd)
 }
 
 sim_t_test(n = 30, delta = 1, sd = 2)
