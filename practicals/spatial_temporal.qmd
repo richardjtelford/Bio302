@@ -1,0 +1,48 @@
+---
+title: "Spatial and temporal structure"
+author: "Richard J. Telford"
+date: today
+format: html
+---
+
+1) Simulate a 100-observation autocorrelated timeseries with `arima.sim`, with a first order autoregressive coefficient of 0.5. Also make a time vector of `1:100`
+
+
+2) Plot the data. 
+
+
+
+3) Regress the timeseries against time with an OLS model. Does the model appear to be statistically significant?
+
+4) Plot the model diagnostics, including an `acf` and `pacf` of the residuals.
+
+
+5) Use the Durbin-Watson test to test the residuals for autocorrelation.
+
+
+
+6) Fit a gls with an appropriate correlation structure. Is this a better model? How have the p-value and effect size changed?
+
+
+7) Repeat the above 1000 times and find how autocorrelation affects the distribution of the p-value and the effect size.
+
+
+## Real data
+
+1) The built-in dataset `LakeHuron` has annual lake level data from 1885 to 1972
+Load the data with the command `data(LakeHuron)`
+
+2) Plot the data.
+
+3) Regress the LakeHuron lake level against year using a linear model. Is there a significant trend?
+
+4) Plot the autocorrelation and partial autocorrelation functions for the residuals from this regression. Interpret them.
+
+5) Fit an autoregressive models to the residuals. Compare the results with your interpretation of the PACF plot.
+
+
+6) Fit a gls model using a corAR1 correlation structure. Test if the correlation structure is necessary. Is the trend significant? 
+
+7) Fit a gls model using a corARMA correlation structure with two AR terms. Is this model an improvement?
+
+
