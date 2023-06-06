@@ -401,7 +401,7 @@ Richard J. Telford (Richard.Telford@uib.no)
 </div>
 </div>
 
-  <p class="date">May 2023</p>
+  <p class="date">June 2023</p>
 </section>
 <section id="assumptions-of-least-squares" class="slide level2">
 <h2>Assumptions of Least Squares</h2>
@@ -554,7 +554,7 @@ index        -0.02420111 0.004036108 -5.996151 3.545230e-08</code></pre>
 <section id="section" class="slide level2">
 <h2></h2>
 <h3 id="autoregressive-processes">Autoregressive processes</h3>
-<p><span class="math inline">\(y_i = ρ_1y_i-1+ρ_2y_i-2+e_i\)</span></p>
+<p><span class="math inline">\(y_i = ρ_1y_{i-1}+ρ_2y_{i-2}+e_i\)</span></p>
 <div class="columns">
 <div class="column" style="width:50%;">
 <div class="cell">
@@ -651,7 +651,7 @@ index        -0.02420111 0.004036108 -5.996151 3.545230e-08</code></pre>
 <section id="gls-with-corar1" class="slide level2">
 <h2>gls with corAR1</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1"></a>fit2.gls<span class="ot">&lt;-</span><span class="fu">gls</span>(value <span class="sc">~</span> index, <span class="at">data =</span> LakeHuron_df, <span class="at">corr=</span><span class="fu">corAR1</span>())</span>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1"></a>fit2.gls<span class="ot">&lt;-</span><span class="fu">gls</span>(value <span class="sc">~</span> index, <span class="at">data =</span> LakeHuron_df, <span class="at">corr =</span> <span class="fu">corAR1</span>())</span>
 <span id="cb21-2"><a href="#cb21-2"></a><span class="fu">summary</span>(fit2.gls)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Generalized least squares fit by REML

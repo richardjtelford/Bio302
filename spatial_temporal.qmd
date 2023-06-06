@@ -235,7 +235,7 @@ ACF remains significant at many lags, rather than quickly declining to zero.
 
 ### Autoregressive processes
 
-$y_i = ρ_1y_i-1+ρ_2y_i-2+e_i$
+$y_i = ρ_1y_{i-1}+ρ_2y_{i-2}+e_i$
 
 :::: {.columns}
 
@@ -352,7 +352,7 @@ summary(mod1)$coef
 ## gls with corAR1
 
 ```{r}
-fit2.gls<-gls(value ~ index, data = LakeHuron_df, corr=corAR1())
+fit2.gls<-gls(value ~ index, data = LakeHuron_df, corr = corAR1())
 summary(fit2.gls)
 ```
 
