@@ -1,0 +1,52 @@
+project:
+  type: website
+  output-dir: docs
+  # resources:
+  # - shinylive-sw.js
+  render:
+    - gls_nls.qmd
+    - power-analysis.qmd
+    - spatial_temporal.qmd
+    - iterating-with-purrr.qmd
+  
+    
+
+# website:
+#   title: "Bio302 - Biostatistikk"
+#   favicon: figures/favicon.png
+#   sidebar:
+#     background: light
+#     pinned: true
+#     align: center
+#     tools:
+#       - icon: github
+#         href: https://github.com/biostats-r/bio300B
+#         text: GitHub
+#     style: docked
+#     contents:
+#       - href: index.qmd
+#         text: Home
+#       - href: lectures.qmd
+#         text: Lectures
+#       - href: materials.qmd
+#         text: Resources
+#       - href: packages_used.qmd
+#         text: Packages used
+#       - href: https://github.com/biostats-r/bio300B/discussions
+#         text: Forum
+
+format:
+  html:
+    code-tools:
+      source: true
+      toggle: false
+      caption: none
+    highlight-style: a11y
+    theme:
+      light: [zephyr, css/light.scss]
+      dark: [zephyr, css/dark.scss, css/light.scss]
+    code-link: true
+
+execute:
+  freeze: auto
+
