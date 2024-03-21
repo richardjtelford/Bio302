@@ -3,9 +3,11 @@ library(dplyr)
 pak <- read.csv(
   text = "package, recommended, minimum, message
         tidyverse, \"2.0\", \"1.3\", NA
-        usethis, 2.1, NA, NA
-        quarto, 1.2, 1.0, NA
-        lme4, NA, NA, NA",
+        usethis, 2.2, NA, NA
+        quarto, 1.3, 1.0, NA
+        lme4, NA, NA, NA
+        DHARMa, NA, NA, NA
+        performance, NA, NA, NA",
   strip.white = TRUE
 ) |> mutate(across(c(recommended, minimum), as.character))
 
@@ -20,7 +22,7 @@ opt <- read.csv(text = 'option, value, message
              "load_workspace", "FALSE", "For reproducibility"',
              strip.white = TRUE)
 
-f  <- "bio302.yaml"
+f  <- "checker/bio302.yaml"
 (chk_make(path = f, programs = prog, packages = pak, options = opt))
 chk_requirements(f)
 
