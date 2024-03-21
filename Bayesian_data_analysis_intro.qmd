@@ -1,13 +1,10 @@
 ---
 title: "Bayesian data analysis"
 author: "Richard J. Telford"
-date: "May 23, 2017"
+date: today
+date-format: "MMMM YYYY"
 output: html_document
 ---
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
 
 ## Introduction
 
@@ -18,7 +15,7 @@ Bayesian data analysis is an alternative approach to fitting models
  - The interpretation of the '95% credible interval' is simpler than the equivalent '95% confidence interval'
  - flexible, can fit many different models
  - computationally intensive, but tractable with modern computers/software
- - Chosing the prior can be difficult and can have a large influence on the posterior
+ - Choosing the prior can be difficult and can have a large influence on the posterior
 
 ## Videos
 
@@ -32,5 +29,7 @@ Please watch the videos (about half an hour each) and do the associated practica
 
 1. [Exercise 1](http://www.sumsar.net/files/posts/2017-bayesian-tutorial-exercises/modeling_exercise1.html)
 2. [Exercise 2](http://www.sumsar.net/files/posts/2017-bayesian-tutorial-exercises/modeling_exercise2.html)
+
+You will need to install the `rstan` package
 
 [Stan cheat sheet](http://www.sumsar.net/files/posts/2017-bayesian-tutorial-exercises/stan_cheat_sheet2.12.pdf)
