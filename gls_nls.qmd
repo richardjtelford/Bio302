@@ -1,26 +1,27 @@
 ---
-title: Generalised Least Squares<br>&<br>Non-linear Least Squares
+title: Generalised Least Squares & Non-linear Least Squares
 subtitle: "Bio302 - Biological data analysis II"
 author: 
 - name: "Richard J. Telford"
 institute: Department of Biology, University of Bergen
-date: '2016-05-05'
-output: 
- ioslides_presentation:
-  widescreen: true
+date: today
+date-format: "MMMM YYYY"
+format: revealjs
+editor: visual
+echo: true
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
 library("tidyverse")
 library("nlme")
+theme_set(theme_bw(base_size = 16))
 ```
 
 ## Assumptions of Least Squares
 
 1. The relationship between the response and the predictors is ~linear.
 2. The residuals have a mean of zero.
-3. __The residuals have constant variance (not heteroscedastic).__
+3. [**The residuals have constant variance (not heteroscedastic).**]{style="color: red;"}
 4. The residuals are independent (uncorrelated).
 5. The residuals are normally distributed.
 
@@ -116,8 +117,9 @@ W = 1/var(response)
 Fit using `gls` in package `nlme`.
 
 ## Bird1 dataset{.columns-2}
+
 ```{r, echo = FALSE}
-bird1 <- read.csv("data/bird1.csv")
+bird1 <- read.csv("practicals/data/bird1.csv")
 ```
 Variances are different for each treatment
 ```{r, fig.height=3.5, fig.width=5}
@@ -153,6 +155,7 @@ acf(resid(lm(LakeHuron ~ year)))
 pacf(resid(lm(LakeHuron ~ year)))
 par(mfrow = c(1, 1))
 ```
+
 ##
 Many different correlation structures available. Choose appropriate one.
 
@@ -166,31 +169,43 @@ summary(mod_ar1)
 
 ## Assumptions of Least Squares
 
-1. __The relationship between the response and the predictors is ~linear.__
+1. [**The relationship between the response and the predictors is ~linear.**]{style="color: red;"}
 2. The residuals have a mean of zero.
 3. The residuals have constant variance (not heteroscedastic).
 4. The residuals are independent (uncorrelated).
 5. The residuals are normally distributed.
 
-Nonlinear least squares can be used when relationship is non-linear.
+Non-linear least squares can be used when relationship is non-linear.
 
-## Non-linear least squares{.columns-2}
+## Non-linear least squares
+
+:::: {.columns}
+
+::: {.column width="50%"}
 
 We know something about the relationship
-
-Upper or lower bound (asymptote)
-
 ```{r, echo=FALSE, fig.width=5, fig.height = 3.5}
-amount <- read.csv("data/amount.csv")
+amount <- read.csv("practicals/data/amount.csv")
 ggplot(amount, aes(x = calcium, y = amount)) +
   geom_point()
 ```
 
+
+
+Upper or lower bound (asymptote)
+:::
+
+::: {.column width="50%"}
 Three options
 
  - Transform response
- - Use polynomials (x2)
+ - Use polynomials ($x^2$)
  - Non-linear expression
+:::
+
+::::
+
+
 
 ## 
 Transformations:
@@ -201,12 +216,12 @@ Transformations:
 ##
 Polynomial
 
-y~i~ = β~0~ + β~1~x~i~ + β~2~x~i~^2^ + ε~i~
+$$y_i=\beta_0 + \beta_1x_i+\beta_2x^2 + \epsilon_i$$
 
  - Very useful
- - But can give incorrect predictions
+ - Can give incorrect predictions
  
- ```{r, echo=FALSE, fig.width=5, fig.height = 3.5}
+```{r, echo=FALSE, fig.width=5, fig.height = 3.5}
 ggplot(amount, aes(x = calcium, y = amount)) +
   geom_point() +
   geom_smooth(method = "lm", formula = y ~ x + I(x^2))
@@ -215,18 +230,38 @@ ggplot(amount, aes(x = calcium, y = amount)) +
 ## NLS
 The relationship has an asymptote, and a exponential decline
 
-y~i~ = β~0~ + β~1~ exp(β~2~x~i~) + ε~i~
+:::: {.columns}
 
- - β~0~  = asymptote
- - β~0~ + β~1~ = intercept
- - β~2~ = slope (proportional change)
+::: {.column width="50%"}
+$y_i = \beta_0 + \beta_1\exp(\beta_2x_i) + \epsilon_i$
+<br>
+If $\beta_2 < 0$
 
-If x -> inf & β~2~ < 0 
-- 		β~1~ exp(β~2~x~i~) = 0
+x -> inf 
 
-If x -> 0
- - 		β~1~ exp(β~2~x~i~) = β~1~
+- $\beta_1\exp(\beta_2x_i) = 0$ 
 
+x -> 0 
+
+- $\beta_1\exp(\beta_2x_i) = β_1$ 
+
+
+:::
+
+::: {.column width="50%"}
+```{r, echo=FALSE, fig.width=5, fig.height = 3}
+ggplot(amount, aes(x = calcium, y = amount)) +
+  geom_point()
+```
+ - $\beta_0$ = asymptote
+ - $\beta_0 + \beta_1$ = intercept
+ - $\beta_2$ = slope (proportional change)
+:::
+
+::::
+
+
+ 
 ##
 ```{r}
 library(nlme)
