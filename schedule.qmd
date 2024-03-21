@@ -1,0 +1,31 @@
+---
+title: "Bio302 Schedule"
+format: revealjs
+editor: visual
+---
+
+## Who I am
+
+ - Palaeoecologist/ecologist with numerical interests
+ - R user since 2002
+ 
+ - Interested in
+    - Reconstructing environmental change
+    - Effect of climate change on ecosystems
+    - Reproducibility in science
+
+email: richard.telford@uib.no
+
+Class git: [https://github.com/richardjtelford/Bio302](https://github.com/richardjtelford/Bio302)
+
+## Schedule
+
+Thursdays 1015 - 1700
+Fridays 1015 - 1700
+
+
+
+## Exam
+
+ - Take home exam
+ - Deadline two weeks after exam set
