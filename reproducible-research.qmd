@@ -68,7 +68,7 @@ What to do when these assumptions are violated.
 ```{r}
 #| echo: false
 #| out-width: 600px
-knitr::include_graphics("F1.large.jpg")
+knitr::include_graphics("figs/F1.large.jpg")
 ``` 
 
 Estimating the reproducibility of psychological science [_Science_](https://science.sciencemag.org/content/349/6251/aac4716)
@@ -172,7 +172,7 @@ knitr::include_graphics("https://royalsocietypublishing.org/cms/attachment/07568
 #| echo: false
 #| cache: true
 #| out-width: 700px
-knitr::include_graphics("10.1177_2515245917747646-fig2.jpeg")
+knitr::include_graphics("figs/10.1177_2515245917747646-fig2.jpeg")
 ``` 
 
 Silberzahn et al. (2018) Many Analysts, One Data Set: Making Transparent How Variations in Analytic Choices Affect Results. [_Advances in Methods and Practices in Psychological Science_](https://doi.org/10.1177/2515245917747646)
@@ -184,7 +184,7 @@ Silberzahn et al. (2018) Many Analysts, One Data Set: Making Transparent How Var
 #| echo: false
 #| cache: true
 #| out-width: 500px
-knitr::include_graphics("pone.0200303.g001.PNG_L.png")
+knitr::include_graphics("figs/pone.0200303.g001.PNG_L.png")
 ``` 
 
 Fraser H et al (2018) Questionable research practices in ecology and evolution. [PLoS ONE](https://doi.org/10.1371/journal.pone.0200303)
