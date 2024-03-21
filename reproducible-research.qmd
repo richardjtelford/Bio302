@@ -4,10 +4,11 @@ subtitle: "Bio302 - Biological data analysis II"
 author: 
 - name: "Richard J. Telford"
 institute: Department of Biological Sciences, University of Bergen
-date: '2021-05-19'
-output: 
- ioslides_presentation:
-  widescreen: true
+date: today
+date-format: "MMMM YYYY"
+format: revealjs
+editor: visual
+echo: true
 ---
 
 
@@ -64,7 +65,9 @@ What to do when these assumptions are violated.
 
 ## Reproducibility Crisis
 
-```{r echo = FALSE, out.width = 600}
+```{r}
+#| echo: false
+#| out-width: 600px
 knitr::include_graphics("F1.large.jpg")
 ``` 
 
@@ -72,7 +75,9 @@ Estimating the reproducibility of psychological science [_Science_](https://scie
 
 ## Ocean Acidification and Fish Behaviour
 
-```{r echo = FALSE, out.width = 700}
+```{r}
+#| echo: false
+#| out-width: 700px
 knitr::include_graphics("figs/journal.pbio.3001511.g001.PNG")
 ``` 
 
@@ -128,14 +133,21 @@ Many assumptions
 
 ## [Multiple testing](https://imgs.xkcd.com/comics/significant.png)
 
-```{r echo = FALSE, out.width = "200px", cache = TRUE}
+```{r}
+#| echo: false
+#| cache: true
+#| out-width: 200px
 knitr::include_graphics("https://imgs.xkcd.com/comics/significant.png")
 
 ``` 
 
  
 ## False discovery rate
-```{r echo = FALSE, out.width = "350px", cache = TRUE}
+
+```{r}
+#| echo: false
+#| cache: true
+#| out-width: 350px
 knitr::include_graphics("https://imgs.xkcd.com/comics/frequentists_vs_bayesians.png")
 ``` 
 
@@ -146,14 +158,20 @@ knitr::include_graphics("https://imgs.xkcd.com/comics/frequentists_vs_bayesians.
 
 _If you use p=0.05 to suggest that you have made a discovery, you will be wrong at least 30% of the time. If, as is often the case, experiments are underpowered, you will be wrong most of the time_
 
-```{r echo = FALSE, out.width = "500px", cache = TRUE}
+```{r}
+#| echo: false
+#| cache: true
+#| out-width: 500px
 knitr::include_graphics("https://royalsocietypublishing.org/cms/attachment/07568509-44a9-46a5-beab-65000fa05dae/rsos140216f01.jpg")
 
 ``` 
 
 ## Choice of statistical methods
 
-```{r echo = FALSE, out.width = "700px", cache = TRUE}
+```{r}
+#| echo: false
+#| cache: true
+#| out-width: 700px
 knitr::include_graphics("10.1177_2515245917747646-fig2.jpeg")
 ``` 
 
@@ -162,7 +180,10 @@ Silberzahn et al. (2018) Many Analysts, One Data Set: Making Transparent How Var
 ## Questionable research practices
 
 
-```{r echo = FALSE, out.width = "500px", cache = TRUE}
+```{r}
+#| echo: false
+#| cache: true
+#| out-width: 500px
 knitr::include_graphics("pone.0200303.g001.PNG_L.png")
 ``` 
 
@@ -199,11 +220,13 @@ Explore publication bias with a shiny app.
 In RStudio
 
  - install `remotes` R package
- - install `biostats.tutorials` package with `remotes::install_github("biostats-r/biostats.apps")`
+ - install `biostats.tutorials` package with `remotes::install_github("biostats-r/biostats.tutorials")`
  - load `biostats.tutorials` package with `library()`
  - run `publication_bias_app()`
  
-The app simulates the effect of publication bias on the literature is only "significant" studies are published
+The app simulates the effect of publication bias on the literature is only "significant" studies are published.
+
+Find conditions that cause large publication biases.
 
 
 ## Misconduct?
@@ -221,6 +244,21 @@ Viglione (2020) ‘Avalanche’ of spider-paper retractions shakes behavioural-e
 - Reproducible workflows
 - Data management plans
 - Archiving data and code
+
+## Registered reports
+
+1. Write introduction and methods
+2. Peer review
+3. Accept in principle
+3. Do experiments
+4. Write rest of paper
+5. Second peer review
+
+Deviations from the accepted plan can be made but need to be noted.
+
+
+
+[Gya et al. 2023]( https://doi.org/10.1002/ece3.10023) Registered Reports: A new chapter at Ecology & Evolution
 
 ## Reproducible workflows
 
