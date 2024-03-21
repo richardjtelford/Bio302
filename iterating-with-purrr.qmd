@@ -1,0 +1,139 @@
+---
+title: "Iterating with purrr"
+author: Richard Telford
+date: today
+date-format: "MMMM YYYY"
+format: revealjs
+editor: visual
+echo: true
+---
+
+## Iterating in R
+
+```{r, include = FALSE}
+library(tidyverse)
+```
+
+Want to use a function several times
+
+-   Run function manually many times and collect results
+
+-   Vectorisation
+
+-   \`for\` loop
+
+-   `purrr::map`
+
+## Vectorisation
+
+Iterate over a vector
+
+Many simple R functions are already vectorised
+
+```{r}
+1:10 + 2
+```
+
+## `for` loops
+
+Common in other languages
+
+```{r}
+output <- list(10) # pre-allocate space
+for(i in 1:10){
+  output[i] <- i ^ 2
+}
+```
+
+Need to pre-allocate space or `for` loops **very** slow
+
+Also `while(condition){}` loop
+
+## `lapply` nd friends
+
+
+
+## Purrr package
+
+Replacement for `lapply`. More consistent behaviour.
+
+
+## Nest
+
+## Parallel processing in R
+
+Your computer has several cores
+
+```{r}
+future::availableCores()
+```
+
+By default R is single threaded.
+
+Parallel processing uses more than one core - can make code much faster.
+
+
+
+## Concept
+
+
+-  Split list X across multiple cores
+-   Copy the function (and environment) to each cores
+-   Apply the function to each subset 
+-   Assemble the results into a single list and return
+
+## Parallel processing with `furrr`
+
+Every `purrr` function for iterating has a `furrr` equivalent
+
+Step 1 - declare a parallel back-end
+
+```{r}
+library(future)
+plan(multisession) 
+```
+---
+Step 2 - use the `furrr` equivalent of the `purrr` function 
+
+```{r echo=FALSE}
+sim_t_test <- function(n, delta, sd, ...){
+  # simulate means
+  mu <- rep(c(0, delta), each = n)
+  # add noise
+  y <- mu + rnorm(length(mu), sd = sd)
+  # predictor
+  x <- factor(rep(c("A", "B"), each = n))
+  
+  # run test
+  test <- t.test(y ~ x)
+  broom::tidy(test) %>% mutate(n = n, delta = delta, sd = sd)
+}
+```
+
+```{r}
+library(tictoc) # timing
+nrep = 100
+n <- rep(seq(10, 100, 20), each = nrep)
+
+# with purrr
+tic()
+runs <- n |> 
+  map_dfr(~sim_t_test(n = .x, delta = 1, sd = 2))
+toc()
+
+library(furrr)
+# with furrr
+tic()
+runs <- n |> 
+  future_map_dfr(~sim_t_test(n = .x, delta = 1, sd = 2), 
+                 .options = furrr_options(seed = TRUE))
+toc()
+```
+
+Why is it slower?
+
+## Alternative parallel processing
+
+- parallel::mclapply() - replacement for `lapply`
+- `foreach` package - similar to `for` loop
+

@@ -1,0 +1,520 @@
+[
+  {
+    "objectID": "iterating-with-purrr.html#iterating-in-r",
+    "href": "iterating-with-purrr.html#iterating-in-r",
+    "title": "Iterating with purrr",
+    "section": "Iterating in R",
+    "text": "Iterating in R\nWant to use a function several times\n\nRun function manually many times and collect results\nVectorisation\n`for` loop\npurrr::map"
+  },
+  {
+    "objectID": "iterating-with-purrr.html#vectorisation",
+    "href": "iterating-with-purrr.html#vectorisation",
+    "title": "Iterating with purrr",
+    "section": "Vectorisation",
+    "text": "Vectorisation\nIterate over a vector\nMany simple R functions are already vectorised\n\n1:10 + 2\n\n [1]  3  4  5  6  7  8  9 10 11 12"
+  },
+  {
+    "objectID": "iterating-with-purrr.html#for-loops",
+    "href": "iterating-with-purrr.html#for-loops",
+    "title": "Iterating with purrr",
+    "section": "for loops",
+    "text": "for loops\nCommon in other languages\n\noutput &lt;- list(10) # pre-allocate space\nfor(i in 1:10){\n  output[i] &lt;- i ^ 2\n}\n\nNeed to pre-allocate space or for loops very slow\nAlso while(condition){} loop"
+  },
+  {
+    "objectID": "iterating-with-purrr.html#lapply-nd-friends",
+    "href": "iterating-with-purrr.html#lapply-nd-friends",
+    "title": "Iterating with purrr",
+    "section": "lapply nd friends",
+    "text": "lapply nd friends"
+  },
+  {
+    "objectID": "iterating-with-purrr.html#purrr-package",
+    "href": "iterating-with-purrr.html#purrr-package",
+    "title": "Iterating with purrr",
+    "section": "Purrr package",
+    "text": "Purrr package\nReplacement for lapply. More consistent behaviour."
+  },
+  {
+    "objectID": "iterating-with-purrr.html#nest",
+    "href": "iterating-with-purrr.html#nest",
+    "title": "Iterating with purrr",
+    "section": "Nest",
+    "text": "Nest"
+  },
+  {
+    "objectID": "iterating-with-purrr.html#parallel-processing-in-r",
+    "href": "iterating-with-purrr.html#parallel-processing-in-r",
+    "title": "Iterating with purrr",
+    "section": "Parallel processing in R",
+    "text": "Parallel processing in R\nYour computer has several cores\n\nfuture::availableCores()\n\nsystem \n    12 \n\n\nBy default R is single threaded.\nParallel processing uses more than one core - can make code much faster."
+  },
+  {
+    "objectID": "iterating-with-purrr.html#concept",
+    "href": "iterating-with-purrr.html#concept",
+    "title": "Iterating with purrr",
+    "section": "Concept",
+    "text": "Concept\n\nSplit list X across multiple cores\nCopy the function (and environment) to each cores\nApply the function to each subset\nAssemble the results into a single list and return"
+  },
+  {
+    "objectID": "iterating-with-purrr.html#parallel-processing-with-furrr",
+    "href": "iterating-with-purrr.html#parallel-processing-with-furrr",
+    "title": "Iterating with purrr",
+    "section": "Parallel processing with furrr",
+    "text": "Parallel processing with furrr\nEvery purrr function for iterating has a furrr equivalent\nStep 1 - declare a parallel back-end\n\nlibrary(future)\nplan(multisession)"
+  },
+  {
+    "objectID": "iterating-with-purrr.html#alternative-parallel-processing",
+    "href": "iterating-with-purrr.html#alternative-parallel-processing",
+    "title": "Iterating with purrr",
+    "section": "Alternative parallel processing",
+    "text": "Alternative parallel processing\n\nparallel::mclapply() - replacement for lapply\nforeach package - similar to for loop"
+  },
+  {
+    "objectID": "power-analysis.html#power",
+    "href": "power-analysis.html#power",
+    "title": "Power Tests",
+    "section": "Power",
+    "text": "Power\nStatistical power is the probability of avoiding a Type II error given that the alternative hypothesis \\(H_1\\) is true.\nRemember\n\nType I error = false positive, rejecting \\(H_0\\) when it is true\nType II error = false negative, not rejecting \\(H_0\\) when it is false"
+  },
+  {
+    "objectID": "power-analysis.html#the-need-for-power",
+    "href": "power-analysis.html#the-need-for-power",
+    "title": "Power Tests",
+    "section": "The need for power",
+    "text": "The need for power\nWith little power:\n\nMay not be able to reject \\(H_0\\) when it is false\nExaggerate effect size\n\nLots of power\n\nProbably can reject \\(H_0\\) when it is false\nMore precise estimates of effect size\nMore expensive\n\nNeed to do power analysis before experiment."
+  },
+  {
+    "objectID": "power-analysis.html#components-of-a-power-analysis",
+    "href": "power-analysis.html#components-of-a-power-analysis",
+    "title": "Power Tests",
+    "section": "Components of a power analysis",
+    "text": "Components of a power analysis\n\nEffect size\nType I error rate (significance level - conventionally set to 0.05)\nType II error rate (conventionally aim for 0.8)\nNumber of observations\n\nCan solve for any of these\nTypically want to know how many observations needed."
+  },
+  {
+    "objectID": "power-analysis.html#one-sided-z-test",
+    "href": "power-analysis.html#one-sided-z-test",
+    "title": "Power Tests",
+    "section": "One sided Z-test",
+    "text": "One sided Z-test"
+  },
+  {
+    "objectID": "power-analysis.html#analytic-power-analysis",
+    "href": "power-analysis.html#analytic-power-analysis",
+    "title": "Power Tests",
+    "section": "Analytic power analysis",
+    "text": "Analytic power analysis\nSome power tests in base R.\n\npower.t.test\npower.anova.test\npower.prop.test\n\nMore in pwr package"
+  },
+  {
+    "objectID": "power-analysis.html#power-t-test",
+    "href": "power-analysis.html#power-t-test",
+    "title": "Power Tests",
+    "section": "Power t test",
+    "text": "Power t test\n\nlibrary(\"pwr\")\npow &lt;- pwr.t.test(d = 0.5, sig.level = 0.05, power = 0.8)\npow\n\n\n     Two-sample t test power calculation \n\n              n = 63.76561\n              d = 0.5\n      sig.level = 0.05\n          power = 0.8\n    alternative = two.sided\n\nNOTE: n is number in *each* group\n\n\nEffect size is Cohen’s d \\(d = \\frac{\\mu_1 - \\mu_2}{\\sigma}\\)"
+  },
+  {
+    "objectID": "power-analysis.html#section",
+    "href": "power-analysis.html#section",
+    "title": "Power Tests",
+    "section": "",
+    "text": "plot(pow)"
+  },
+  {
+    "objectID": "power-analysis.html#power-analysis-by-simulation",
+    "href": "power-analysis.html#power-analysis-by-simulation",
+    "title": "Power Tests",
+    "section": "Power analysis by simulation",
+    "text": "Power analysis by simulation\nAnalytical power analysis becomes complex with more complex statistics\n\nComplex experimental design\nAutocorrelation\nConfounding variables\nNon-normal distributions\nViolation of assumptions of models\n\nSimulation always possible"
+  },
+  {
+    "objectID": "power-analysis.html#general-approach",
+    "href": "power-analysis.html#general-approach",
+    "title": "Power Tests",
+    "section": "General approach",
+    "text": "General approach\n\nSimulate your data generating process\nRun statistical test on simulated data\nRepeat many times\nProportion of runs with significant result is the power.\n\nTrading computer time (cheap) for statistician time (expensive)"
+  },
+  {
+    "objectID": "power-analysis.html#simulating-a-t-test",
+    "href": "power-analysis.html#simulating-a-t-test",
+    "title": "Power Tests",
+    "section": "Simulating a t-test",
+    "text": "Simulating a t-test\n\n# data info\nn &lt;- 30 #number observations in each group\ndelta &lt;- 1 # difference between means\nsd &lt;- 2 # standard deviation\n\n# simulate means\nmu &lt;- rep(c(0, delta), each = n)\n\n# add noise\ny &lt;- mu + rnorm(length(mu), sd = sd)\n\n# predictor\nx &lt;- factor(rep(c(\"A\", \"B\"), each = n))\n\n# run test\ntest &lt;- t.test(y ~ x)"
+  },
+  {
+    "objectID": "power-analysis.html#section-1",
+    "href": "power-analysis.html#section-1",
+    "title": "Power Tests",
+    "section": "",
+    "text": "test\n\n\n    Welch Two Sample t-test\n\ndata:  y by x\nt = 0.28387, df = 54.841, p-value = 0.7776\nalternative hypothesis: true difference in means between group A and group B is not equal to 0\n95 percent confidence interval:\n -0.9678095  1.2872071\nsample estimates:\nmean in group A mean in group B \n      0.6829540       0.5232552 \n\nbroom::glance(test)\n\n# A tibble: 1 × 10\n  estimate estimate1 estimate2 statistic p.value parameter conf.low conf.high\n     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;\n1    0.160     0.683     0.523     0.284   0.778      54.8   -0.968      1.29\n# ℹ 2 more variables: method &lt;chr&gt;, alternative &lt;chr&gt;"
+  },
+  {
+    "objectID": "power-analysis.html#make-a-function-to-re-run",
+    "href": "power-analysis.html#make-a-function-to-re-run",
+    "title": "Power Tests",
+    "section": "Make a function to re-run",
+    "text": "Make a function to re-run\n\nsim_t_test &lt;- function(n, delta, sd, ...){\n  # simulate means\n  mu &lt;- rep(c(0, delta), each = n)\n  # add noise\n  y &lt;- mu + rnorm(length(mu), sd = sd)\n  # predictor\n  x &lt;- factor(rep(c(\"A\", \"B\"), each = n))\n  \n  # run test\n  test &lt;- t.test(y ~ x)\n  broom::tidy(test) |&gt; mutate(n = n, delta = delta, sd = sd)\n}\n\nsim_t_test(n = 30, delta = 1, sd = 2)\n\n# A tibble: 1 × 13\n  estimate estimate1 estimate2 statistic p.value parameter conf.low conf.high\n     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;\n1   -0.666    0.0413     0.707     -1.36   0.180      58.0    -1.65     0.316\n# ℹ 5 more variables: method &lt;chr&gt;, alternative &lt;chr&gt;, n &lt;dbl&gt;, delta &lt;dbl&gt;,\n#   sd &lt;dbl&gt;"
+  },
+  {
+    "objectID": "power-analysis.html#repeat-many-times",
+    "href": "power-analysis.html#repeat-many-times",
+    "title": "Power Tests",
+    "section": "Repeat many times",
+    "text": "Repeat many times\n\nnrep = 100\n\nn &lt;- rep(seq(10, 100, 20), each = nrep)\n\nruns &lt;- n |&gt; \n  map(~sim_t_test(n = .x, delta = 1, sd = 2)) |&gt; \n  list_rbind() |&gt; \n  mutate(sig = p.value &lt;= 0.05)\n\np &lt;- runs  |&gt; \n  group_by(n) |&gt; \n  summarise(power = mean(sig)) |&gt; \n  ggplot(aes(x = n, y = power)) +\n  geom_line() +\n  geom_point()"
+  },
+  {
+    "objectID": "power-analysis.html#magnitude-of-effect",
+    "href": "power-analysis.html#magnitude-of-effect",
+    "title": "Power Tests",
+    "section": "Magnitude of Effect",
+    "text": "Magnitude of Effect"
+  },
+  {
+    "objectID": "power-analysis.html#help-for-simulating-data",
+    "href": "power-analysis.html#help-for-simulating-data",
+    "title": "Power Tests",
+    "section": "Help for simulating data",
+    "text": "Help for simulating data\nfaux package"
+  },
+  {
+    "objectID": "power-analysis.html#summary",
+    "href": "power-analysis.html#summary",
+    "title": "Power Tests",
+    "section": "Summary",
+    "text": "Summary\n\nPower test should be done before experimental work to determine sample size\nAnalytical and simulation approaches are possible\nKey challenge is estimating effect size\n\nexisting estimates are likely biased\nminimum interesting effect size"
+  },
+  {
+    "objectID": "gls_nls.html#assumptions-of-least-squares",
+    "href": "gls_nls.html#assumptions-of-least-squares",
+    "title": "Generalised Least Squares & Non-linear Least Squares",
+    "section": "Assumptions of Least Squares",
+    "text": "Assumptions of Least Squares\n\nThe relationship between the response and the predictors is ~linear.\nThe residuals have a mean of zero.\nThe residuals have constant variance (not heteroscedastic).\nThe residuals are independent (uncorrelated).\nThe residuals are normally distributed.\n\nWeighted least squares can be used when variance is not constant"
+  },
+  {
+    "objectID": "gls_nls.html#weighted-least-squares",
+    "href": "gls_nls.html#weighted-least-squares",
+    "title": "Generalised Least Squares & Non-linear Least Squares",
+    "section": "Weighted least squares",
+    "text": "Weighted least squares\nIf observations have different amounts of uncertainty\nGive uncertain observation less weight\n– less influence on regression\nAdjust weight matrix"
+  },
+  {
+    "objectID": "gls_nls.html#section",
+    "href": "gls_nls.html#section",
+    "title": "Generalised Least Squares & Non-linear Least Squares",
+    "section": "",
+    "text": "W = weight matrix\nk = sqrt(W)\n\n\n     [,1] [,2] [,3] [,4]\n[1,]    1    0    0    0\n[2,]    0    1    0    0\n[3,]    0    0    1    0\n[4,]    0    0    0    1\n\n\nDefault weight matrix - 1s on diagonal - 0s off diagonal\nyi = β0 + β1xi + εi\nkiyi = kiβ0 + kiβ1xi + kiεi\nWe adjust the influence of the point\n‘We adjust the size of the residuals’"
+  },
+  {
+    "objectID": "gls_nls.html#galtons-peas",
+    "href": "gls_nls.html#galtons-peas",
+    "title": "Generalised Least Squares & Non-linear Least Squares",
+    "section": "Galton’s Peas",
+    "text": "Galton’s Peas\nPea sizes\n\n\n\n\n\nParent\nProgeny\nSD\n\n\n\n\n0.21\n0.1726\n0.01988\n\n\n0.20\n0.1707\n0.01938\n\n\n0.19\n0.1637\n0.01896\n\n\n0.18\n0.1640\n0.02037\n\n\n0.17\n0.1613\n0.01654\n\n\n0.16\n0.1617\n0.01594\n\n\n0.15\n0.1598\n0.01763"
+  },
+  {
+    "objectID": "gls_nls.html#section-1",
+    "href": "gls_nls.html#section-1",
+    "title": "Generalised Least Squares & Non-linear Least Squares",
+    "section": "",
+    "text": "Parent - pea diameter in inches of parent plant\nProgeny - mean pea diameter (inches) of up to 10 plants grown from seeds of the parent plant\nSD - standard deviation of offspring peas grown from each parent.\n\nStandard deviations reflect information in the response\nDownweight obervations with large standard deviation and upweight observations with a small standard deviation.\nUse weighted least squares with weights equal to 1/SD2."
+  },
+  {
+    "objectID": "gls_nls.html#in-r",
+    "href": "gls_nls.html#in-r",
+    "title": "Generalised Least Squares & Non-linear Least Squares",
+    "section": "In R",
+    "text": "In R\n\nmod &lt;- lm(Progeny ~ Parent, data = peas)\nsummary(mod)$coef\n\n             Estimate  Std. Error  t value     Pr(&gt;|t|)\n(Intercept) 0.1270286 0.006993245 18.16447 9.293731e-06\nParent      0.2100000 0.038613733  5.43848 2.852305e-03\n\nwmod &lt;- lm(Progeny ~ Parent, data = peas, weights = 1 / SD ^ 2)\nsummary(wmod)$coef\n\n             Estimate  Std. Error   t value     Pr(&gt;|t|)\n(Intercept) 0.1279642 0.006811243 18.787197 7.868650e-06\nParent      0.2048012 0.038154826  5.367635 3.020519e-03\n\n\nWeighed regression assumes that the weights are precisely known"
+  },
+  {
+    "objectID": "gls_nls.html#section-2",
+    "href": "gls_nls.html#section-2",
+    "title": "Generalised Least Squares & Non-linear Least Squares",
+    "section": "",
+    "text": "ggplot(peas, aes(x = Parent, y = Progeny, size = 1 / SD ^ 2)) + \n  geom_point() +\n  geom_abline(intercept = coef(mod)[1], slope = coef(mod)[2], col = \"black\") +\n  geom_abline(intercept = coef(wmod)[1], slope = coef(wmod)[2], col = \"red\") +\n  labs(size = \"Weight\")"
+  },
+  {
+    "objectID": "gls_nls.html#generalised-least-squares",
+    "href": "gls_nls.html#generalised-least-squares",
+    "title": "Generalised Least Squares & Non-linear Least Squares",
+    "section": "Generalised least squares",
+    "text": "Generalised least squares\nSolution to non-constant variance (heteroscedastic data)\nW = 1/var(response)\nFit using gls in package nlme."
+  },
+  {
+    "objectID": "gls_nls.html#bird1-dataset",
+    "href": "gls_nls.html#bird1-dataset",
+    "title": "Generalised Least Squares & Non-linear Least Squares",
+    "section": "Bird1 dataset",
+    "text": "Bird1 dataset\nVariances are different for each treatment\n\nggplot(bird1, aes(x = treat, y = weight)) +\n  geom_boxplot()\n\nbird1 %&gt;% group_by(treat) %&gt;% \n  summarise(var = var(weight))\n\n# A tibble: 2 × 2\n  treat   var\n  &lt;chr&gt; &lt;dbl&gt;\n1 C      17.7\n2 T      22.0"
+  },
+  {
+    "objectID": "gls_nls.html#gls",
+    "href": "gls_nls.html#gls",
+    "title": "Generalised Least Squares & Non-linear Least Squares",
+    "section": "GLS",
+    "text": "GLS\n\nlibrary(nlme)\nfit_gls &lt;- gls(weight ~ treat, data = bird1, weights = varIdent(form = ~ +1|treat))\nsummary(fit_gls)\n\nGeneralized least squares fit by REML\n  Model: weight ~ treat \n  Data: bird1 \n       AIC      BIC    logLik\n  117.3734 120.9348 -54.68668\n\nVariance function:\n Structure: Different standard deviations per stratum\n Formula: ~+1 | treat \n Parameter estimates:\n       C        T \n1.000000 1.114728 \n\nCoefficients:\n            Value Std.Error   t-value p-value\n(Intercept) 15.14  1.330682 11.377629       0\ntreatT      10.57  1.992745  5.304241       0\n\n Correlation: \n       (Intr)\ntreatT -0.668\n\nStandardized residuals:\n        Min          Q1         Med          Q3         Max \n-1.66497663 -0.82289498  0.01425861  0.67497806  1.61807588 \n\nResidual standard error: 4.207984 \nDegrees of freedom: 20 total; 18 residual"
+  },
+  {
+    "objectID": "gls_nls.html#model-comparison",
+    "href": "gls_nls.html#model-comparison",
+    "title": "Generalised Least Squares & Non-linear Least Squares",
+    "section": "Model comparison",
+    "text": "Model comparison\n\nfit_0 &lt;- gls(weight ~ treat, data = bird1)\nanova(fit_0, fit_gls)\n\n        Model df      AIC      BIC    logLik   Test   L.Ratio p-value\nfit_0       1  3 115.4793 118.1504 -54.73966                         \nfit_gls     2  4 117.3734 120.9348 -54.68668 1 vs 2 0.1059596  0.7448"
+  },
+  {
+    "objectID": "gls_nls.html#other-magic-in-gls",
+    "href": "gls_nls.html#other-magic-in-gls",
+    "title": "Generalised Least Squares & Non-linear Least Squares",
+    "section": "Other magic in GLS",
+    "text": "Other magic in GLS\nCopes with spatially/temporally autocorrelated data\n\nyear &lt;- time(LakeHuron)\npar(mfrow = c(1, 2))\nacf(resid(lm(LakeHuron ~ year)))\npacf(resid(lm(LakeHuron ~ year)))\n\npar(mfrow = c(1, 1))"
+  },
+  {
+    "objectID": "gls_nls.html#section-3",
+    "href": "gls_nls.html#section-3",
+    "title": "Generalised Least Squares & Non-linear Least Squares",
+    "section": "",
+    "text": "Many different correlation structures available. Choose appropriate one.\nChange off-diagonal values in weights-matrix\n\nmod_ar1 &lt;- gls(LakeHuron ~ year, corr = corAR1())\nsummary(mod_ar1)\n\nGeneralized least squares fit by REML\n  Model: LakeHuron ~ year \n  Data: NULL \n       AIC      BIC    logLik\n  225.8304 236.0878 -108.9152\n\nCorrelation Structure: AR(1)\n Formula: ~1 \n Parameter estimate(s):\n      Phi \n0.8247674 \n\nCoefficients:\n               Value Std.Error   t-value p-value\n(Intercept) 616.4887 24.362632 25.304683  0.0000\nyear         -0.0194  0.012664 -1.534616  0.1282\n\n Correlation: \n     (Intr)\nyear -1    \n\nStandardized residuals:\n        Min          Q1         Med          Q3         Max \n-2.11192553 -0.57663992 -0.05772191  0.53782186  1.82271164 \n\nResidual standard error: 1.260554 \nDegrees of freedom: 98 total; 96 residual"
+  },
+  {
+    "objectID": "gls_nls.html#assumptions-of-least-squares-1",
+    "href": "gls_nls.html#assumptions-of-least-squares-1",
+    "title": "Generalised Least Squares & Non-linear Least Squares",
+    "section": "Assumptions of Least Squares",
+    "text": "Assumptions of Least Squares\n\nThe relationship between the response and the predictors is ~linear.\nThe residuals have a mean of zero.\nThe residuals have constant variance (not heteroscedastic).\nThe residuals are independent (uncorrelated).\nThe residuals are normally distributed.\n\nNon-linear least squares can be used when relationship is non-linear."
+  },
+  {
+    "objectID": "gls_nls.html#non-linear-least-squares-1",
+    "href": "gls_nls.html#non-linear-least-squares-1",
+    "title": "Generalised Least Squares & Non-linear Least Squares",
+    "section": "Non-linear least squares",
+    "text": "Non-linear least squares\n\n\nWe know something about the relationship\n\n\n\n\n\n\n\n\n\nUpper or lower bound (asymptote)\n\nThree options\n\nTransform response\nUse polynomials (\\(x^2\\))\nNon-linear expression"
+  },
+  {
+    "objectID": "gls_nls.html#section-4",
+    "href": "gls_nls.html#section-4",
+    "title": "Generalised Least Squares & Non-linear Least Squares",
+    "section": "",
+    "text": "Transformations:\n\nAVOID, statistics must be correct on transformed scale\nLog transform assumes that error is a constant proportion of the response"
+  },
+  {
+    "objectID": "gls_nls.html#section-5",
+    "href": "gls_nls.html#section-5",
+    "title": "Generalised Least Squares & Non-linear Least Squares",
+    "section": "",
+    "text": "Polynomial\n\\[y_i=\\beta_0 + \\beta_1x_i+\\beta_2x^2 + \\epsilon_i\\]\n\nVery useful\nCan give incorrect predictions"
+  },
+  {
+    "objectID": "gls_nls.html#nls",
+    "href": "gls_nls.html#nls",
+    "title": "Generalised Least Squares & Non-linear Least Squares",
+    "section": "NLS",
+    "text": "NLS\nThe relationship has an asymptote, and a exponential decline\n\n\n\\(y_i = \\beta_0 + \\beta_1\\exp(\\beta_2x_i) + \\epsilon_i\\)  If \\(\\beta_2 &lt; 0\\)\nx -&gt; inf\n\n\\(\\beta_1\\exp(\\beta_2x_i) = 0\\)\n\nx -&gt; 0\n\n\\(\\beta_1\\exp(\\beta_2x_i) = β_1\\)\n\n\n\n\n\n\n\n\n\n\n\n\n\\(\\beta_0\\) = asymptote\n\\(\\beta_0 + \\beta_1\\) = intercept\n\\(\\beta_2\\) = slope (proportional change)"
+  },
+  {
+    "objectID": "gls_nls.html#section-6",
+    "href": "gls_nls.html#section-6",
+    "title": "Generalised Least Squares & Non-linear Least Squares",
+    "section": "",
+    "text": "library(nlme)\nfit.nls &lt;- nls(amount ~ b0 + b1 * exp(b2 * calcium), \n               data = amount, \n               start = c(b0 = 0, b1 = 20, b2 = -1))\nsummary(fit.nls)\n\n\nFormula: amount ~ b0 + b1 * exp(b2 * calcium)\n\nParameters:\n   Estimate Std. Error t value Pr(&gt;|t|)    \nb0   0.4206     2.1141   0.199 0.844675    \nb1  43.5721    10.7301   4.061 0.000813 ***\nb2  -0.3435     0.1270  -2.705 0.015025 *  \n---\nSignif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1\n\nResidual standard error: 6.139 on 17 degrees of freedom\n\nNumber of iterations to convergence: 6 \nAchieved convergence tolerance: 8.94e-06"
+  },
+  {
+    "objectID": "gls_nls.html#section-7",
+    "href": "gls_nls.html#section-7",
+    "title": "Generalised Least Squares & Non-linear Least Squares",
+    "section": "",
+    "text": "ggplot(cbind(amount, fit = fitted(fit.nls)), aes(x = calcium, y = amount)) +\n  geom_point() +\n  geom_line(aes(y = fit))"
+  },
+  {
+    "objectID": "gls_nls.html#section-8",
+    "href": "gls_nls.html#section-8",
+    "title": "Generalised Least Squares & Non-linear Least Squares",
+    "section": "",
+    "text": "Is there a natural expression\nIdentify parameters\nRoughly estimate parameters\nStart NLS"
+  },
+  {
+    "objectID": "spatial_temporal.html#assumptions-of-least-squares",
+    "href": "spatial_temporal.html#assumptions-of-least-squares",
+    "title": "Spatial and temporal autocorrelation",
+    "section": "Assumptions of Least Squares",
+    "text": "Assumptions of Least Squares\n\nLinear relationship between response and predictors.\nThe residuals have a mean of zero.\nThe residuals have constant variance (not heteroscedastic).\nThe residuals are independent (uncorrelated).\nThe residuals are normally distributed.\n\nSpatial, temporal or phylogenetic autocorrelation violates this assumption"
+  },
+  {
+    "objectID": "spatial_temporal.html#autocorrelation-pervades-biological-data",
+    "href": "spatial_temporal.html#autocorrelation-pervades-biological-data",
+    "title": "Spatial and temporal autocorrelation",
+    "section": "Autocorrelation pervades biological data",
+    "text": "Autocorrelation pervades biological data\nResponse variable autocorrelated because\n\npredictor variable is autocorrelated residuals are independent – not a problem\nnuisance variables are autocorrelated add extra predictors until autocorrelation is accounted for\ncontagious processes (e.g. dispersal)\n\nPotential problem for time series data and spatial data."
+  },
+  {
+    "objectID": "spatial_temporal.html#simulated-time-series-with-and-without-autocorrelation",
+    "href": "spatial_temporal.html#simulated-time-series-with-and-without-autocorrelation",
+    "title": "Spatial and temporal autocorrelation",
+    "section": "Simulated time series with and without autocorrelation",
+    "text": "Simulated time series with and without autocorrelation"
+  },
+  {
+    "objectID": "spatial_temporal.html#why",
+    "href": "spatial_temporal.html#why",
+    "title": "Spatial and temporal autocorrelation",
+    "section": "Why",
+    "text": "Why\nResiduals are not independent – do not contribute a full degree of freedom each.\n\n\\(H_0\\) rejected more often than the data justify. Type I error.\nLower “effective sample size”: \\(n’\\) instead of \\(n\\).\nt statistic = \\(\\beta_0/se(\\beta_0)\\)\n\\(se=standard~deviation/\\sqrt{n}\\)\nif \\(n\\) &gt; \\(n'\\), the t statistic is inflated, p value too low\nConfidence intervals too narrow\nEstimated coefficients are unbiased"
+  },
+  {
+    "objectID": "spatial_temporal.html#effective-sample-size-number-of-observations",
+    "href": "spatial_temporal.html#effective-sample-size-number-of-observations",
+    "title": "Spatial and temporal autocorrelation",
+    "section": "Effective sample size < number of observations",
+    "text": "Effective sample size &lt; number of observations\nFirst order autoregressive model \\(y_i = ρ_1y_{i-1}+e_i\\)\n\\(N_{eff} = N(1-ρ_1)/(1+ρ_1)\\)\n\n\nCode\nbind_rows(\n  tidy(arima.sim(model = list(ar = 0.9), n = 100)) |&gt; \n    mutate(label = paste0(\"p[1]==0.9~N[eff]==\", round(100 * (1-0.9)/(1+0.9), 2))), \n    tidy(arima.sim(model = list(ar = 0.3), n = 100)) |&gt; \n    mutate(label = paste0(\"p[1]==0.3~N[eff]==\", round(100 * (1-0.3)/(1+0.3), 2)))\n) |&gt; \n  ggplot(aes(x = index, y = value)) +\n  geom_line() +\n  facet_wrap(facets = vars(label), labeller = label_parsed)+ \n  labs(x = \"Time\")\n\n\n\n\nx1 &lt;- arima.sim(list(ar = .9), n = 100)"
+  },
+  {
+    "objectID": "spatial_temporal.html#what-not-to-do",
+    "href": "spatial_temporal.html#what-not-to-do",
+    "title": "Spatial and temporal autocorrelation",
+    "section": "What not to do!",
+    "text": "What not to do!\n\nAdjust the significance level, e.g., consider p &lt;= 0.01 instead of p &lt;= 0.05?\nDon’t how much to adjust. Could end up with a test that is too conservative\nDrop observations to include only “independent samples?”\nWastes data and easy to mistake “critical distance to independence”"
+  },
+  {
+    "objectID": "spatial_temporal.html#lake-huron-water-level",
+    "href": "spatial_temporal.html#lake-huron-water-level",
+    "title": "Spatial and temporal autocorrelation",
+    "section": "Lake Huron water level",
+    "text": "Lake Huron water level\n\n\nCode\nLakeHuron_df &lt;- tidy(LakeHuron)\nggplot(LakeHuron_df, aes(x = index, y = value)) +\n  geom_line() + \n  labs(x = \"Year\", y = \"Lake level (feet)\")"
+  },
+  {
+    "objectID": "spatial_temporal.html#autocorrelation-in-the-residuals",
+    "href": "spatial_temporal.html#autocorrelation-in-the-residuals",
+    "title": "Spatial and temporal autocorrelation",
+    "section": "Autocorrelation in the residuals",
+    "text": "Autocorrelation in the residuals\n\nmod1 &lt;- lm(value ~ index, data = LakeHuron_df)\nsummary(mod1)$coef\n\n                Estimate  Std. Error   t value     Pr(&gt;|t|)\n(Intercept) 625.55491791 7.764293095 80.568174 5.808677e-90\nindex        -0.02420111 0.004036108 -5.996151 3.545230e-08\n\nacf(resid(mod1))"
+  },
+  {
+    "objectID": "spatial_temporal.html#autocorrelation-function",
+    "href": "spatial_temporal.html#autocorrelation-function",
+    "title": "Spatial and temporal autocorrelation",
+    "section": "Autocorrelation Function",
+    "text": "Autocorrelation Function\n\n\nAutocorrelation function: correlation of the series with its lagged self\nCorrelation at lag(0) = 1\nAutoregressive processes\n\\(y_i = ρ_1y_i-1+e_i\\)\n+ve autocorrelation - ACF exponentially declines\n-ve autocorrelation - ACF oscillates, exponential decline in magnitude\n\n\nlibrary(ggfortify)\nacf(resid(mod1), plot = FALSE) |&gt; \n  autoplot()"
+  },
+  {
+    "objectID": "spatial_temporal.html#partial-autocorrelation-function",
+    "href": "spatial_temporal.html#partial-autocorrelation-function",
+    "title": "Spatial and temporal autocorrelation",
+    "section": "Partial Autocorrelation Function",
+    "text": "Partial Autocorrelation Function\n\n\nCorrelation of the series with itself, lagged k steps with effect of autocorrelation at steps &lt;k removed\nPACF at lag(0) is not defined\nPACF at lag(1) = ACF at lag(1)\nAutoregressive processes will have spikes in the PACF. Number of significant spikes indicate the order\n\n\npacf(resid(mod1), plot = FALSE) |&gt; \n  autoplot()"
+  },
+  {
+    "objectID": "spatial_temporal.html#which-autocorrelation-process",
+    "href": "spatial_temporal.html#which-autocorrelation-process",
+    "title": "Spatial and temporal autocorrelation",
+    "section": "Which autocorrelation process?",
+    "text": "Which autocorrelation process?\nNon-stationary series\n\nx &lt;- cumsum(rnorm(100))\n\n\nACF remains significant at many lags, rather than quickly declining to zero."
+  },
+  {
+    "objectID": "spatial_temporal.html#section",
+    "href": "spatial_temporal.html#section",
+    "title": "Spatial and temporal autocorrelation",
+    "section": "",
+    "text": "Autoregressive processes\n\\(y_i = ρ_1y_{i-1}+ρ_2y_{i-2}+e_i\\)\n\n\n\nx &lt;- arima.sim(list(ar = .7), n = 100)\n\n\n\n\n\n\n\n\n\n\nx &lt;- arima.sim(list(ar = c(1, -.5)), n = 100)\n\n\n\n\n\n\n\n\n\n\nExponentially declining ACF and spikes in the first one or more lags of the PACF. # spikes indicates the AR order"
+  },
+  {
+    "objectID": "spatial_temporal.html#section-1",
+    "href": "spatial_temporal.html#section-1",
+    "title": "Spatial and temporal autocorrelation",
+    "section": "",
+    "text": "Moving average processes\n\\(w_t\\stackrel{iid}{\\sim}\\mathcal{N}(0,\\sigma^2_w)\\)\n\\(x_t = \\mu + w_t + \\theta_1w_{t-1}\\)\n\nx &lt;- arima.sim(model = list(ma = 0.8), n = 100)\n\n\nspikes in the first one or more lags of the ACF and an exponentially declining PACF. # spikes indicates the MA order"
+  },
+  {
+    "objectID": "spatial_temporal.html#section-2",
+    "href": "spatial_temporal.html#section-2",
+    "title": "Spatial and temporal autocorrelation",
+    "section": "",
+    "text": "Mixed (ARMA) processes\ntypically show exponential declines in both the ACF and the PACF."
+  },
+  {
+    "objectID": "spatial_temporal.html#identifying-the-autocorrelation-process",
+    "href": "spatial_temporal.html#identifying-the-autocorrelation-process",
+    "title": "Spatial and temporal autocorrelation",
+    "section": "Identifying the autocorrelation process",
+    "text": "Identifying the autocorrelation process\nFit an autoregressive model\n\nar(resid(mod1))\n\n\nCall:\nar(x = resid(mod1))\n\nCoefficients:\n      1        2  \n 0.9714  -0.2754  \n\nOrder selected 2  sigma^2 estimated as  0.501\n\n\nMore general models with autoregressive, integration and moving average components can be fitted with arima() Use AIC to select best model."
+  },
+  {
+    "objectID": "spatial_temporal.html#durbin-watson-test",
+    "href": "spatial_temporal.html#durbin-watson-test",
+    "title": "Spatial and temporal autocorrelation",
+    "section": "Durbin-Watson test",
+    "text": "Durbin-Watson test\nDurbin-Watson statistic always between 0 and 4\n\n== 2 No autocorrelation\n&lt;2 Positive autocorrelation\n&gt; 2 Negative autocorrelation\n\n\nlibrary(lmtest)\ndwtest(mod1)\n\n\n    Durbin-Watson test\n\ndata:  mod1\nDW = 0.43949, p-value &lt; 2.2e-16\nalternative hypothesis: true autocorrelation is greater than 0"
+  },
+  {
+    "objectID": "spatial_temporal.html#gls",
+    "href": "spatial_temporal.html#gls",
+    "title": "Spatial and temporal autocorrelation",
+    "section": "gls",
+    "text": "gls\n\nlibrary(nlme)\nfit.gls &lt;- gls(value ~ index, data = LakeHuron_df)\nsummary(fit.gls)$coef\n\n (Intercept)        index \n625.55491791  -0.02420111 \n\nsummary(mod1)$coef\n\n                Estimate  Std. Error   t value     Pr(&gt;|t|)\n(Intercept) 625.55491791 7.764293095 80.568174 5.808677e-90\nindex        -0.02420111 0.004036108 -5.996151 3.545230e-08"
+  },
+  {
+    "objectID": "spatial_temporal.html#gls-with-corar1",
+    "href": "spatial_temporal.html#gls-with-corar1",
+    "title": "Spatial and temporal autocorrelation",
+    "section": "gls with corAR1",
+    "text": "gls with corAR1\n\nfit2.gls&lt;-gls(value ~ index, data = LakeHuron_df, corr = corAR1())\nsummary(fit2.gls)\n\nGeneralized least squares fit by REML\n  Model: value ~ index \n  Data: LakeHuron_df \n       AIC      BIC    logLik\n  225.8304 236.0878 -108.9152\n\nCorrelation Structure: AR(1)\n Formula: ~1 \n Parameter estimate(s):\n      Phi \n0.8247674 \n\nCoefficients:\n               Value Std.Error   t-value p-value\n(Intercept) 616.4887 24.362632 25.304683  0.0000\nindex        -0.0194  0.012664 -1.534616  0.1282\n\n Correlation: \n      (Intr)\nindex -1    \n\nStandardized residuals:\n        Min          Q1         Med          Q3         Max \n-2.11192553 -0.57663992 -0.05772191  0.53782186  1.82271164 \n\nResidual standard error: 1.260554 \nDegrees of freedom: 98 total; 96 residual"
+  },
+  {
+    "objectID": "spatial_temporal.html#anova-to-compare-models",
+    "href": "spatial_temporal.html#anova-to-compare-models",
+    "title": "Spatial and temporal autocorrelation",
+    "section": "anova to compare models",
+    "text": "anova to compare models\n\nanova(fit.gls,fit2.gls)\n\n         Model df      AIC      BIC    logLik   Test  L.Ratio p-value\nfit.gls      1  3 317.8056 325.4986 -155.9028                        \nfit2.gls     2  4 225.8304 236.0878 -108.9152 1 vs 2 93.97515  &lt;.0001"
+  },
+  {
+    "objectID": "spatial_temporal.html#the-weights-matrix",
+    "href": "spatial_temporal.html#the-weights-matrix",
+    "title": "Spatial and temporal autocorrelation",
+    "section": "The weights matrix",
+    "text": "The weights matrix\n\n\nWeight Matrix for uncorrelated observations\n\n\n     [,1] [,2] [,3] [,4]\n[1,]    1    0    0    0\n[2,]    0    1    0    0\n[3,]    0    0    1    0\n[4,]    0    0    0    1\n\n\nOff diagonal terms are zero\n\nWeight Matrix for correlated observations\n\n\n     [,1] [,2] [,3] [,4]\n[1,] 1.00 0.80 0.64 0.51\n[2,] 0.80 1.00 0.80 0.64\n[3,] 0.64 0.80 1.00 0.80\n[4,] 0.51 0.64 0.80 1.00\n\n\nOff diagonal terms can be non-zero"
+  },
+  {
+    "objectID": "spatial_temporal.html#spatial-autocorrelation",
+    "href": "spatial_temporal.html#spatial-autocorrelation",
+    "title": "Spatial and temporal autocorrelation",
+    "section": "Spatial autocorrelation",
+    "text": "Spatial autocorrelation\n\n\nCode\nlibrary(gstat)\ndata(meuse, package = \"sp\")\nggplot(meuse, aes(x = x, y = y, size = zinc)) +\n  geom_point() +\n  scale_size_area() + \n  labs(size = \"Zinc ppm\", title = \"Zinc concentration on Meuse floodplain\")"
+  },
+  {
+    "objectID": "spatial_temporal.html#the-variogram",
+    "href": "spatial_temporal.html#the-variogram",
+    "title": "Spatial and temporal autocorrelation",
+    "section": "The variogram",
+    "text": "The variogram\nAverage squared difference between points a given distance apart\n\\[\\hat\\gamma(h\\pm\\delta) :=\\frac{1}{2|N(h \\pm \\delta)|}\\sum_{(i,j)\\in N(h \\pm \\delta)} |z_i-z_j|^2\\]"
+  },
+  {
+    "objectID": "spatial_temporal.html#the-variogram-1",
+    "href": "spatial_temporal.html#the-variogram-1",
+    "title": "Spatial and temporal autocorrelation",
+    "section": "The variogram",
+    "text": "The variogram\nVariogram of zinc concentrations on Meuse floodplain\n\nvg &lt;- variogram(zinc ~ 1, ~ x + y, data = meuse)\nplot(vg, pch = 16, col = 2)\n\n\nSill, range, nugget"
+  },
+  {
+    "objectID": "spatial_temporal.html#variogram-models",
+    "href": "spatial_temporal.html#variogram-models",
+    "title": "Spatial and temporal autocorrelation",
+    "section": "Variogram models",
+    "text": "Variogram models\n\n\nSeveral different models\n\nSpherical model\nCircular model\nExponential model\nGaussian model\n\nDifferent shapes\n\n\nvg &lt;- variogram(zinc ~ 1, ~ x + y, data = meuse)\nfit.vg &lt;- fit.variogram(\n  object = vg, \n  model = vgm(psill = 100000, \"Sph\", range = 900, nugget = 30000))\nplot(vg, model = fit.vg, pch = 16, col = 2)"
+  },
+  {
+    "objectID": "spatial_temporal.html#variogram-shapes",
+    "href": "spatial_temporal.html#variogram-shapes",
+    "title": "Spatial and temporal autocorrelation",
+    "section": "Variogram shapes",
+    "text": "Variogram shapes"
+  },
+  {
+    "objectID": "spatial_temporal.html#glslme-and-correlation-structures",
+    "href": "spatial_temporal.html#glslme-and-correlation-structures",
+    "title": "Spatial and temporal autocorrelation",
+    "section": "gls/lme and correlation structures",
+    "text": "gls/lme and correlation structures\n\n\n\n\n\n\n\ncorAR1()\nautoregressive process of order 1. Requires equal time steps\n\n\ncorARMA()\nautoregressive moving average process. Arbitrary orders for AR and MA components. Requires equal time steps\n\n\ncorCAR1()\ncontinuous autoregressive process – uneven time steps allowed\n\n\ncorExp()\nexponential spatial correlation\n\n\ncorSpher()\nspherical spatial correlation.\n\n\ncorGaus()\nGaussian spatial correlation."
+  },
+  {
+    "objectID": "spatial_temporal.html#conclusions",
+    "href": "spatial_temporal.html#conclusions",
+    "title": "Spatial and temporal autocorrelation",
+    "section": "Conclusions",
+    "text": "Conclusions\n\nDo not ignore autocorrelation\nIt can seriously bias your interpretations\nCoefficients are unbiased but uncertain\nAn imperfectly specified autocorrelation structure often better than incorrectly assuming no autocorrelation"
+  }
+]
