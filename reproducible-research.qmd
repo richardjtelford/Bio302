@@ -58,9 +58,10 @@ What to do when these assumptions are violated.
  - Use an integrated development environment (e.g. RStudio)
  - Adopt an R style guide
  - Getting help
- - Version control with git
- - Rmarkdown for dynamic documents
+ - Version control with git *
+ - Quarto for reproducible documents *
  - Data handling with `tidyverse`
+ - `targets` pipeline tool *
  
 
 ## Reproducibility Crisis
@@ -217,14 +218,11 @@ Can be more difficult to publish "negative" results
 
 Explore publication bias with a shiny app.
 
-In RStudio
-
- - install `remotes` R package
  - install `biostats.tutorials` package with `remotes::install_github("biostats-r/biostats.tutorials")`
  - load `biostats.tutorials` package with `library()`
  - run `publication_bias_app()`
  
-The app simulates the effect of publication bias on the literature is only "significant" studies are published.
+App simulates the effect of publication bias on the literature if only "significant" studies are published.
 
 Find conditions that cause large publication biases.
 
@@ -282,9 +280,9 @@ Make data available to others.
     
 ## Code archiving
 
-    Starting January 1, 2022, The American Naturalist will require that any
-    analysis and simulation code (R scripts, Matlab scripts, Mathematica notebooks)
-    used to generate reported results be archived in a public repository
+"Starting January 1, 2022, The American Naturalist will require that any
+analysis and simulation code (R scripts, Matlab scripts, Mathematica notebooks)
+used to generate reported results be archived in a public repository"
 
 [American Naturalist](http://comments.amnat.org/2021/12/guidelines-for-archiving-code-with-data.html)
  
