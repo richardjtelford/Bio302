@@ -11,7 +11,7 @@
   <meta name="generator" content="quarto-1.4.529">
 
   <meta name="author" content="Richard Telford">
-  <title>Power Tests</title>
+  <title>Sample size justification</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
@@ -391,7 +391,7 @@
     <div class="slides">
 
 <section id="title-slide" class="quarto-title-block center">
-  <h1 class="title">Power Tests</h1>
+  <h1 class="title">Sample size justification</h1>
 
 <div class="quarto-title-authors">
 <div class="quarto-title-author">
@@ -401,7 +401,26 @@ Richard Telford
 </div>
 </div>
 
-  <p class="date">March 2024</p>
+  <p class="date">April 2024</p>
+</section>
+<section id="sample-size-justification" class="slide level2">
+<h2>Sample size justification</h2>
+<p>Key step in designing study</p>
+<p>Advantages of large sample sizes?</p>
+<p>Advantages of small sample sizes?</p>
+</section>
+<section id="type-of-justification" class="slide level2">
+<h2>Type of justification</h2>
+<ul>
+<li>Measure entire population</li>
+<li>Resource constraints<br>
+</li>
+<li>Accuracy</li>
+<li>A-priori power analysis</li>
+<li>Heuristics</li>
+<li>No justification</li>
+</ul>
+<p><a href="https://doi.org/10.1525/collabra.33267">Lakens (2022)</a></p>
 </section>
 <section id="power" class="slide level2">
 <h2>Power</h2>
@@ -441,7 +460,7 @@ Richard Telford
 <section id="one-sided-z-test" class="slide level2">
 <h2>One sided Z-test</h2>
 
-<img data-src="power-analysis_files/figure-revealjs/TP-FP-1.png" width="960" class="r-stretch"></section>
+<img data-src="sample_size_justification_files/figure-revealjs/TP-FP-1.png" width="960" class="r-stretch"></section>
 <section id="analytic-power-analysis" class="slide level2">
 <h2>Analytic power analysis</h2>
 <p>Some power tests in base R.</p>
@@ -479,7 +498,7 @@ NOTE: n is number in *each* group</code></pre>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a></a><span class="fu">plot</span>(pow)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
 </div>
-<img data-src="power-analysis_files/figure-revealjs/pwr-plot, echo-1.png" width="960" class="r-stretch"></section>
+<img data-src="sample_size_justification_files/figure-revealjs/pwr-plot, echo-1.png" width="960" class="r-stretch"></section>
 <section id="power-analysis-by-simulation" class="slide level2">
 <h2>Power analysis by simulation</h2>
 <p>Analytical power analysis becomes complex with more complex statistics</p>
@@ -573,7 +592,7 @@ mean in group A mean in group B
 <span id="cb9-8"><a></a>  </span>
 <span id="cb9-9"><a></a>  <span class="co"># run test</span></span>
 <span id="cb9-10"><a></a>  test <span class="ot">&lt;-</span> <span class="fu">t.test</span>(y <span class="sc">~</span> x)</span>
-<span id="cb9-11"><a></a>  broom<span class="sc">::</span><span class="fu">tidy</span>(test) <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">n =</span> n, <span class="at">delta =</span> delta, <span class="at">sd =</span> sd)</span>
+<span id="cb9-11"><a></a>  broom<span class="sc">::</span><span class="fu">glance</span>(test) <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">n =</span> n, <span class="at">delta =</span> delta, <span class="at">sd =</span> sd)</span>
 <span id="cb9-12"><a></a>}</span>
 <span id="cb9-13"><a></a></span>
 <span id="cb9-14"><a></a><span class="fu">sim_t_test</span>(<span class="at">n =</span> <span class="dv">30</span>, <span class="at">delta =</span> <span class="dv">1</span>, <span class="at">sd =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -587,15 +606,15 @@ mean in group A mean in group B
 </div>
 </div>
 </section>
-<section id="repeat-many-times" class="slide level2">
-<h2>Repeat many times</h2>
+<section id="repeat-many-times-for-different-n" class="slide level2">
+<h2>Repeat many times for different n</h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a></a>nrep <span class="ot">=</span> <span class="dv">100</span></span>
 <span id="cb11-2"><a></a></span>
 <span id="cb11-3"><a></a>n <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="fu">seq</span>(<span class="dv">10</span>, <span class="dv">100</span>, <span class="dv">20</span>), <span class="at">each =</span> nrep)</span>
 <span id="cb11-4"><a></a></span>
 <span id="cb11-5"><a></a>runs <span class="ot">&lt;-</span> n <span class="sc">|&gt;</span> </span>
-<span id="cb11-6"><a></a>  <span class="fu">map</span>(<span class="sc">~</span><span class="fu">sim_t_test</span>(<span class="at">n =</span> .x, <span class="at">delta =</span> <span class="dv">1</span>, <span class="at">sd =</span> <span class="dv">2</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb11-6"><a></a>  <span class="fu">map</span>(\(x)<span class="fu">sim_t_test</span>(<span class="at">n =</span> x, <span class="at">delta =</span> <span class="dv">1</span>, <span class="at">sd =</span> <span class="dv">2</span>)) <span class="sc">|&gt;</span> </span>
 <span id="cb11-7"><a></a>  <span class="fu">list_rbind</span>() <span class="sc">|&gt;</span> </span>
 <span id="cb11-8"><a></a>  <span class="fu">mutate</span>(<span class="at">sig =</span> p.value <span class="sc">&lt;=</span> <span class="fl">0.05</span>)</span>
 <span id="cb11-9"><a></a></span>
@@ -610,14 +629,21 @@ mean in group A mean in group B
 <section class="slide level2">
 
 
-<img data-src="power-analysis_files/figure-revealjs/unnamed-chunk-5-1.png" width="960" class="r-stretch"></section>
+<img data-src="sample_size_justification_files/figure-revealjs/unnamed-chunk-5-1.png" width="960" class="r-stretch"></section>
 <section id="magnitude-of-effect" class="slide level2">
 <h2>Magnitude of Effect</h2>
 
-<img data-src="power-analysis_files/figure-revealjs/unnamed-chunk-6-1.png" width="960" class="r-stretch"></section>
+<img data-src="sample_size_justification_files/figure-revealjs/unnamed-chunk-6-1.png" width="960" class="r-stretch"></section>
 <section id="help-for-simulating-data" class="slide level2">
 <h2>Help for simulating data</h2>
 <p><a href="https://debruine.github.io/faux/"><code>faux</code></a> package</p>
+</section>
+<section id="fixed-sample-size" class="slide level2">
+<h2>Fixed sample size?</h2>
+<p>Experiment is run in batches.</p>
+<p>Can we stop sampling when we get a significant result?</p>
+
+<img data-src="sample_size_justification_files/figure-revealjs/unnamed-chunk-7-1.png" width="960" class="r-stretch"><p>But see futility stopping in clinical trials.</p>
 </section>
 <section id="summary" class="slide level2">
 <h2>Summary</h2>

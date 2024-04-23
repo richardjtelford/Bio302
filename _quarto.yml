@@ -9,6 +9,7 @@ project:
     - power-analysis.qmd
     - spatial_temporal.qmd
     - iterating-with-purrr.qmd
+    - sample_size_justification.qmd
   
     
 

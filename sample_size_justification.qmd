@@ -1,5 +1,5 @@
 ---
-title: "Power Tests"
+title: "Sample size justification"
 author: Richard Telford
 date: today
 date-format: "MMMM YYYY"
@@ -13,6 +13,29 @@ library("tidyverse")
 theme_set(theme_bw(base_size = 16))
 set.seed(42) # for reproducibility
 ```
+
+## Sample size justification
+
+Key step in designing study
+
+Advantages of large sample sizes?
+
+Advantages of small sample sizes?
+
+
+
+## Type of justification  
+
+- Measure entire population 
+- Resource constraints 	 
+- Accuracy
+- A-priori power analysis
+- Heuristics
+- No justification
+
+[Lakens (2022)](https://doi.org/10.1525/collabra.33267)
+
+
 
 ## Power
 
@@ -217,14 +240,14 @@ sim_t_test <- function(n, delta, sd, ...){
   
   # run test
   test <- t.test(y ~ x)
-  broom::tidy(test) |> mutate(n = n, delta = delta, sd = sd)
+  broom::glance(test) |> mutate(n = n, delta = delta, sd = sd)
 }
 
 sim_t_test(n = 30, delta = 1, sd = 2)
 
 ```
 
-## Repeat many times
+## Repeat many times for different n
 
 ```{r, message = FALSE}
 nrep = 100
@@ -232,7 +255,7 @@ nrep = 100
 n <- rep(seq(10, 100, 20), each = nrep)
 
 runs <- n |> 
-  map(~sim_t_test(n = .x, delta = 1, sd = 2)) |> 
+  map(\(x)sim_t_test(n = x, delta = 1, sd = 2)) |> 
   list_rbind() |> 
   mutate(sig = p.value <= 0.05)
 
@@ -264,6 +287,53 @@ runs |>
 ## Help for simulating data
 
 [`faux`](https://debruine.github.io/faux/) package
+
+## Fixed sample size?
+
+Experiment is run in batches.
+
+Can we stop sampling when we get a significant result?
+
+
+
+
+```{r}
+#| echo: false
+ 
+set.seed(119)
+n_experiments <- 100
+step_size <- 30
+n_steps <- 30
+steps <- seq(step_size, by = step_size, length.out = n_steps)
+
+sim <- map(seq_len(n_experiments), \(i){
+ x <- rnorm(n = step_size * n_steps) 
+ y <- rnorm(n = step_size * n_steps)
+ res <- steps |> 
+   map(\(step) {
+   p <- t.test(x[1:step], y[1:step])$p.value
+   c(i = i, step = step, p = p)
+ }) |> 
+   bind_rows()
+ if(any(res$p < 0.05)) {
+   first_sig <- which(res$p < 0.05)[1]
+   res <- res[1:first_sig, ]
+ }
+ res
+}) |> 
+  list_rbind()
+
+
+sim |> group_by(step) |> 
+  summarise(n = sum(p < 0.05), .groups = "drop") |> 
+  mutate(n2 = cumsum(n)/n_experiments) |> 
+  ggplot(aes(x = step, y = n2)) +
+  geom_col(fill = "grey70") +
+  geom_hline(yintercept = 0.05, linetype = "dashed") +
+  labs(x = "Sample size", y = "Type I error rate")
+  
+```
+But see futility stopping in clinical trials.
 
 ## Summary
 
