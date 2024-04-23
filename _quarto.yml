@@ -10,6 +10,7 @@ project:
     - spatial_temporal.qmd
     - iterating-with-purrr.qmd
     - sample_size_justification.qmd
+    - GLM_GAM.qmd
   
     
 
