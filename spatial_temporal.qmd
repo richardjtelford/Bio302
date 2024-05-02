@@ -103,7 +103,7 @@ Residuals are not independent -- do not contribute a full degree of freedom each
 -   Lower "effective sample size": $n’$ instead of $n$.\
     t statistic = $\beta_0/se(\beta_0)$\
     $se=standard~deviation/\sqrt{n}$\
-    if $n$ > $n'$, the t statistic is inflated, p value too low
+    if $n$ \> $n'$, the t statistic is inflated, p value too low
 -   Confidence intervals too narrow
 -   Estimated coefficients are unbiased
 
@@ -128,10 +128,6 @@ bind_rows(
   labs(x = "Time")
 ```
 
-```{r}
-#| eval: false
-x1 <- arima.sim(list(ar = .9), n = 100)
-```
 
 ## What not to do!
 
@@ -139,6 +135,13 @@ x1 <- arima.sim(list(ar = .9), n = 100)
     Don't how much to adjust. Could end up with a test that is too conservative
 2.  Drop observations to include only "independent samples?"\
     Wastes data and easy to mistake "critical distance to independence"
+    
+## Simulating autocorrelated data
+
+```{r}
+#| eval: false
+arima.sim(list(ar = 0.9), n = 100)
+```
 
 ## Lake Huron water level
 
@@ -151,6 +154,35 @@ ggplot(LakeHuron_df, aes(x = index, y = value)) +
   geom_line() + 
   labs(x = "Year", y = "Lake level (feet)")
 ```
+
+## Testing for temporal autocorrelation in residuals
+
+Durbin-Watson test
+
+$$
+d = \frac{\sum_{t = 2}^T(e_t-e_{t-1})^2}{\sum_{t = 1}^Te_t^2}
+$$
+
+Durbin-Watson statistic always between 0 and 4
+
+-   == 2 No autocorrelation
+
+-   \<2 Positive autocorrelation
+
+-   \> 2 Negative autocorrelation
+
+--- 
+
+- Tests for autocorrelation at lag 1
+- Equally-spaced residuals
+
+```{r}
+#| label: dw-test
+library(lmtest)
+mod1 <- lm(value ~ index, data = LakeHuron_df)
+dwtest(mod1)
+```
+
 
 ## Autocorrelation in the residuals
 
@@ -228,17 +260,15 @@ p2 <- acf(x, plot = FALSE) |>
 p1 + p2
 ```
 
-
 ACF remains significant at many lags, rather than quickly declining to zero.
 
-##
+## 
 
 ### Autoregressive processes
 
 $y_i = ρ_1y_{i-1}+ρ_2y_{i-2}+e_i$
 
-:::: {.columns}
-
+::: columns
 ::: {.column width="50%"}
 ```{r}
 #| label: ar_pos_fig
@@ -270,25 +300,18 @@ p3 <- pacf(x, plot = FALSE) |>
 p1 + p2 + p3
 ```
 :::
-
-::::
-
-
-
-
-
+:::
 
 Exponentially declining ACF and spikes in the first one or more lags of the PACF.
-\# spikes indicates the AR order
+# spikes indicates the AR order
 
 ## 
 
-###  Moving average processes
+### Moving average processes
 
 $w_t\stackrel{iid}{\sim}\mathcal{N}(0,\sigma^2_w)$
 
 $x_t = \mu + w_t + \theta_1w_{t-1}$
-
 
 ```{r}
 #| label: ma-fig
@@ -305,13 +328,14 @@ p1 + p2 + p3
 ```
 
 spikes in the first one or more lags of the ACF and an exponentially declining PACF.
-\# spikes indicates the MA order 
+# spikes indicates the MA order
 
 ## 
 
 ### Mixed (ARMA) processes
 
 typically show exponential declines in both the ACF and the PACF.
+
 
 ## Identifying the autocorrelation process
 
@@ -323,23 +347,12 @@ ar(resid(mod1))
 
 More general models with autoregressive, integration and moving average components can be fitted with `arima()` Use AIC to select best model.
 
-## Durbin-Watson test
 
-Durbin-Watson statistic always between 0 and 4
 
--   == 2 No autocorrelation
 
--   \<2 Positive autocorrelation
+## Fitting a model to autocorrelated data
 
--   \> 2 Negative autocorrelation
-
-```{r}
-#| label: dw-test
-library(lmtest)
-dwtest(mod1)
-```
-
-## gls
+Generalised least squares
 
 ```{r}
 library(nlme)
@@ -405,6 +418,26 @@ ggplot(meuse, aes(x = x, y = y, size = zinc)) +
   labs(size = "Zinc ppm", title = "Zinc concentration on Meuse floodplain")
 ```
 
+## Moran's I
+
+Test for spatial autocorrelation with Moran's I
+
+$$I=\frac{N}{W}\frac{\sum_{i = 1}^{N}\sum_{j = 1}^{N}w_{ij}(x_i- \bar{x})(x_j -\bar{x})}
+{\sum_{i = 1}^{N}(x_i- \bar{x})}$$
+
+- $N$ number of spatial units indexed by $i$ and $j$
+- $x$ variable of interest;
+- $\bar{x}$ mean of $x$
+- $w_{ij}$ elements of a matrix of spatial weights (0s on diagonal)
+- $W$ the sum of all $w_{ij}$ 
+
+---
+
+Expected value
+
+$$E(I)=\frac{-1}{N-1}$$
+`ape::Moran.I`
+
 ## The variogram
 
 Average squared difference between points a given distance apart
@@ -449,8 +482,8 @@ plot(vg, model = fit.vg, pch = 16, col = 2)
 :::
 :::
 
-
 ## Variogram shapes
+
 ```{r}
 #| label: fields-fig
 #| echo: false
@@ -461,17 +494,16 @@ plot(vg, model = fit.vg, pch = 16, col = 2)
 show.vgms(par.strip.text = list(cex = 1.5))
 ```
 
-
 ## gls/lme and correlation structures
 
-|              |                                                                                                                                                              |
-|------------|------------------------------------------------------------|
-| `corAR1()`   | autoregressive process of order 1. Requires equal time steps                                                                                               |
+|              |                                                                                                             |
+|----------------|--------------------------------------------------------|
+| `corAR1()`   | autoregressive process of order 1. Requires equal time steps                                                |
 | `corARMA()`  | autoregressive moving average process. Arbitrary orders for AR and MA components. Requires equal time steps |
-| `corCAR1()`  | continuous autoregressive process -- uneven time steps allowed                                             |
-| `corExp()`   | exponential spatial correlation                                                                                                                              |
-| `corSpher()` | spherical spatial correlation.                                                                                                                               |
-| `corGaus()`  | Gaussian spatial correlation.                                                                                                                                |
+| `corCAR1()`  | continuous autoregressive process -- uneven time steps allowed                                              |
+| `corExp()`   | exponential spatial correlation                                                                             |
+| `corSpher()` | spherical spatial correlation.                                                                              |
+| `corGaus()`  | Gaussian spatial correlation.                                                                               |
 
 ## Conclusions
 
