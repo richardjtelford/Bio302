@@ -1,15 +1,19 @@
 ---
 title: "Bayesian data analysis"
-author: "Richard J. Telford"
-date: "May 23, 2017"
-output: 
- ioslides_presentation:
-  widescreen: true
+subtitle: "Bio302 - Biological data analysis II"
+author: 
+- name: "Richard J. Telford"
+institute: Department of Biology, University of Bergen
+date: today
+date-format: "MMMM YYYY"
+format: revealjs
+editor: visual
+echo: true
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, cache = TRUE)
 library("tidyverse")
+theme_set(theme_bw(base_size = 20))
 ```
 
 ## Confidence and credibility intervals
@@ -25,9 +29,12 @@ $Posterior \propto Prior * Likelihood$
 Expert knowledge  
 Uninformative priors
 
-## Distributions{.columns-2}
+## Distributions
 
-```{r, echo = FALSE, fig.height= 5.3, fig.width=5}
+:::: {.columns}
+::: {.column width="60%"}
+```{r}
+#| echo: false
 prior <- data_frame(x = seq(-101, 101, length = 1000), 
            Uniform = dunif(x, min = -100, max = 100),
            Cauchy = dcauchy(x, location = 0, scale = 10), 
@@ -36,16 +43,19 @@ prior <- data_frame(x = seq(-101, 101, length = 1000),
            )
 gather(prior, key = Distribution, value = Probability, -x) %>% 
   ggplot(aes(x = x, y = Probability, colour = Distribution)) +
-    geom_line() +
+    geom_line(linewidth = 2) +
     theme(legend.position = c(1, 1), legend.justification = c(1, 1))
 
 ```
+:::
+::: {.column width="40%"}
 
 - Bounds
 - Shape
 - Tails
 - Discrete?
-
+:::
+::::
 ## Cromwell's rule
 
 Prior = 0  
