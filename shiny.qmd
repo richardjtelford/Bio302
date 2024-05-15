@@ -1,0 +1,328 @@
+---
+title: "Interactivity with R"
+subtitle: Bio302
+author: "Richard J. Telford (Richard.Telford@uib.no)"
+date: today
+date-format: "MMMM YYYY"
+format: revealjs
+editor: visual
+echo: true
+server: shiny
+---
+```{r}
+#| label: setup
+#| echo: false
+library(tidyverse)
+theme_set(theme_bw(base_size = 18))
+library(gapminder)
+```
+
+## Why interactivity?
+
+- Outreach
+- Teaching
+- Interactive data exploration
+- Dashboards
+
+
+
+
+# Interactivity without shiny
+
+No server required
+
+## gganimate
+
+```{r}
+#| label: gganimate
+#| echo: true
+#| output-location: slide
+#| cache: true
+
+library(gganimate)
+library(gapminder) # data  cf Hans Rosling 
+library(ggplot2)
+
+
+ggplot(gapminder, aes(x = gdpPercap, y = lifeExp, size = pop, colour = continent)) +
+  geom_point(alpha = 0.7) +
+  scale_colour_manual(values = continent_colors) +
+  scale_size(range = c(2, 12), guide = "none") +
+  scale_x_log10() +
+  theme(legend.position = c(0.99, 0.01), legend.justification = c(1, 0)) +
+  labs(title = 'Year: {frame_time}', x = 'GDP per capita', y = 'Life expectancy', colour = "Continent") +
+  transition_time(year)
+```
+
+https://www.youtube.com/watch?v=jbkSRLYSojo
+
+## Interactive plots
+
+```{r}
+#| label: ggiraph
+#| echo: true
+#| output-location: slide
+
+library(ggiraph)
+# remove ' from cote d'Ivoire
+gapminder <- gapminder |> 
+  mutate(country2 = str_replace(country, "'", ""))
+
+p <- ggplot(gapminder, aes(x = gdpPercap, y = lifeExp, colour = continent)) +
+  geom_point_interactive(aes(tooltip = country, data_id = country2, alpha = 0.7)) +
+  scale_colour_manual(values = continent_colors) +
+  scale_size(range = c(2, 12), guide = "none") +
+  scale_x_log10() +
+  facet_wrap(vars(year)) +
+  theme(legend.position = "none") +
+  labs(x = 'GDP per capita', y = 'Life expectancy', colour = "Continent") 
+
+
+girafe(ggobj = p, 
+       options = list(opts_hover(css = "fill: red") ))
+
+```
+
+
+## Interactive maps
+
+
+```{r}
+#| label: leaflet
+#| echo: true
+#| output-location: slide
+library(leaflet)
+bergen <- tribble(
+  ~lat, ~lon, ~name,
+  60.5, 5.5, "Bergen",
+)
+
+leaflet(bergen) %>%
+  addTiles() %>%
+  addMarkers(~lon, ~lat, popup = ~name)
+
+
+```
+
+
+## Interactive tables
+
+```{r}
+#| label: DT
+#| echo: true
+
+library(DT)
+datatable(gapminder, options = list(pageLength = 5))
+
+```
+
+## Crosstalk
+
+```{r}
+library(crosstalk)
+
+```
+# Shiny
+
+## What is shiny?
+
+User interface in a web browser
+
+Server running R
+
+
+[Shiny examples](https://shiny.posit.co/r/gallery/)
+
+
+
+## Shiny fundamentals
+
+Shiny apps have two components:
+
+ - User interface (UI)
+ - Server
+ 
+Run app with `shiny::shinyApp(ui = ui, server = server)`
+
+```{r}
+#| label: first_app
+#| eval: false
+library(shiny)
+library(bslib)
+
+ui <- page(title = "My first app")
+
+server <- function(input, output) {}
+shinyApp(ui = ui, server = server)
+```
+
+## Shiny UI
+
+- layout
+- text
+- inputs
+- outputs
+
+## Layout with bslib
+
+
+### Whole page
+bslib::page() is a good starting point
+
+- sidebar page_sidebar()
+- navbar page_navbar()
+
+### Columns
+- layout_column()
+
+```{r}
+#| eval: false
+ui <- page(
+  title = "My shiny app"
+)
+
+```
+
+
+## Including text etc
+
+Can use html tags 
+
+- p() paragraph
+- h1() to h6() headers
+
+Or shiny::markdown() to include markdown
+
+
+
+## Inputs
+
+
+```{r}
+sliderInput(inputId = "sliderID", label = "My slider", min = 0, max = 100, value = 50)
+```
+
+- textInput()
+- selectInput()
+- numericInput()
+- checkboxInput()
+- radioButtons()
+- fileInput()
+
+## Inputs
+
+```{r}
+#| eval: false
+
+ui <- page_sidebar(
+  title = "My shiny app",
+  sidebar = sidebar(
+    sliderInput(inputId = "n", label = "Number", min = 0, max = 100, value = 50)
+  )
+)
+server <- function(input, output) {}
+shinyApp(ui = ui, server = server)
+```
+
+
+## Outputs
+
+- plotOutput("myplot")
+- textOutput("mytext")
+- tableOutput("mytable")
+
+```{r}
+#| eval: false
+ui <- page_sidebar(
+  title = "My shiny app",
+  sidebar = sidebar(
+    sliderInput(inputId = "n", label = "Number", min = 0, max = 100, value = 50)
+  ),
+  # outputs
+  card(plotOutput("myplot"))
+)
+```
+
+
+
+## Server
+
+Server is a function. It is lazy. 
+
+Only does something when an input changes.
+
+renderPlot(), renderText(), renderTable()
+
+```{r}
+#| eval: false
+server <- function(input, output) {
+  output$myplot <- renderPlot({
+    hist(rnorm(input$n))
+  })
+}
+
+
+shinyApp(ui = ui, server = server)
+
+```
+
+## Reactives
+
+Reactive values are like variables that change when inputs change.
+
+Can be used to store intermediate results.
+
+```{r}
+#| eval: false
+server <- function(input, output) {
+  dist <- reactive({ # invalidated when input$n changes
+    rnorm(input$n)
+  })
+  output$myplot <- renderPlot({
+    hist(dist()) # NB brackets on dist as it is a reactive
+  })
+}
+```
+
+
+
+## Embedding an app in a quarto document
+
+    ---
+    title: "My app"
+    format: html
+    server: shiny
+    ---
+
+    ```{{r}}
+    sliderInput(inputId = "n", label = "Number", min = 0, max = 100, value = 50)
+    # outputs
+    plotOutput("myplot")
+    ```
+
+    ```{{r}}
+    #| context: server
+    output$myplot <- renderPlot({
+      hist(rnorm(input$n))
+    })
+    ```
+
+## Deploying the app
+
+- shinyapps.io (free tier)
+- shinylive-r uses browser as server
+- R package on github
+
+## Further reading
+
+
+- [Creating interactive visualizations with ggiraph](https://albert-rapp.de/posts/ggplot2-tips/17_ggiraph/17_ggiraph.html)
+- [Mastering Shiny](https://mastering-shiny.org/index.html) (Wickham, 2020)
+- Shiny in a [quarto document](https://quarto.org/docs/interactive/shiny/)
+- Shiny [dashboards](https://quarto.org/docs/dashboards/interactivity/shiny-r.html)
+
+```{r}
+#| context: server
+
+```
+
