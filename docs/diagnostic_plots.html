@@ -440,10 +440,11 @@ Richard Telford
 <div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a></a><span class="co"># use model coefficients and residual sd to simulate data</span></span>
 <span id="cb3-2"><a></a>co <span class="ot">&lt;-</span> <span class="fu">coef</span>(mod)</span>
-<span id="cb3-3"><a></a>sim <span class="ot">&lt;-</span> co[<span class="dv">1</span>] <span class="sc">+</span> co[<span class="dv">2</span>] <span class="sc">*</span> penguins<span class="sc">$</span>body_mass_g <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="fu">sigma</span>(mod))</span>
-<span id="cb3-4"><a></a></span>
-<span id="cb3-5"><a></a><span class="co"># using simulate()</span></span>
-<span id="cb3-6"><a></a>sim2 <span class="ot">&lt;-</span> <span class="fu">simulate</span>(mod, <span class="at">nsim =</span> <span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-3"><a></a>sim <span class="ot">&lt;-</span> co[<span class="dv">1</span>] <span class="sc">+</span> co[<span class="dv">2</span>] <span class="sc">*</span> penguins<span class="sc">$</span>body_mass_g <span class="sc">+</span> <span class="co"># fixed effects</span></span>
+<span id="cb3-4"><a></a>  <span class="fu">rnorm</span>(<span class="fu">nrow</span>(penguins), <span class="dv">0</span>, <span class="fu">sigma</span>(mod)) <span class="co"># add residuals</span></span>
+<span id="cb3-5"><a></a></span>
+<span id="cb3-6"><a></a><span class="co"># using simulate()</span></span>
+<span id="cb3-7"><a></a>sim2 <span class="ot">&lt;-</span> <span class="fu">simulate</span>(mod, <span class="at">nsim =</span> <span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="binomial-model" class="slide level2">
@@ -566,7 +567,7 @@ Richard Telford
     simulated
 
 data:  simulationOutput
-dispersion = 80.974, p-value &lt; 2.2e-16
+dispersion = 105.41, p-value &lt; 2.2e-16
 alternative hypothesis: two.sided</code></pre>
 </div>
 </div>

@@ -53,7 +53,8 @@ performance::check_model(mod)
 ```{r}
 # use model coefficients and residual sd to simulate data
 co <- coef(mod)
-sim <- co[1] + co[2] * penguins$body_mass_g + rnorm(1, 0, sigma(mod))
+sim <- co[1] + co[2] * penguins$body_mass_g + # fixed effects
+  rnorm(nrow(penguins), 0, sigma(mod)) # add residuals
 
 # using simulate()
 sim2 <- simulate(mod, nsim = 5)
