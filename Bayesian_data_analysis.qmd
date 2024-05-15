@@ -188,3 +188,46 @@ plot(stan_samples)
 mod <- lm(Petal.Length ~ Sepal.Length, data = iris)
 summary(mod)
 ```
+
+
+## brms packages
+
+Bayesian Regression Models using 'Stan'
+
+(g)lmer like-syntax
+
+- variety of error distributions
+- hierarchical data
+- auto-correlation
+- priors can be specified
+
+---
+
+```{r}
+#| message: false
+#| output: false 
+library(brms)
+mod <- brm(Petal.Length ~ Sepal.Length, data = iris)
+```
+
+
+```{r}
+summary(mod)
+```
+
+
+---
+
+```{r}
+plot(mod)
+```
+
+---
+
+```{r}
+#| eval: false 
+fit1 <- brm(count ~ zAge + zBase * Trt + (1|patient),
+            data = epilepsy, family = poisson())
+```
+
+
