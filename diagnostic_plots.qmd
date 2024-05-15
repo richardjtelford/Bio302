@@ -1,0 +1,215 @@
+---
+title: "Model diagnostics plots"
+author: Richard Telford
+date: today
+date-format: "MMMM YYYY"
+format: revealjs
+editor: visual
+echo: true
+---
+```{r}
+#| label: setup
+#| include: false
+
+library(tidyverse)
+library(palmerpenguins)
+library(patchwork)
+theme_set(theme_bw())
+```
+
+
+## Assumptions of Least Squares
+
+1. The relationship between the response and the predictors is ~linear.
+2. The residuals have a mean of zero.
+3. The residuals have constant variance (not heteroscedastic).
+4. The residuals are independent (uncorrelated).
+5. The residuals are normally distributed.
+
+Verify by examining plots of residuals.
+
+## Diagnostic plots for lm
+
+```{r}
+#| label: lm
+mod <- lm(bill_length_mm ~ body_mass_g, data = penguins)
+par(mfrow = c(2, 2), mar = c(3, 3, 1.5, 1), mgp = c(2, 0.5, 0))
+plot(mod)
+```
+
+## With performance package
+
+```{r}
+#| label: performance
+performance::check_model(mod)
+```
+
+## Posterior predictive checks
+
+1) Find density of response
+2) Simulate data from the model
+3) Compare density of simulated data to observed data
+
+```{r}
+# use model coefficients and residual sd to simulate data
+co <- coef(mod)
+sim <- co[1] + co[2] * penguins$body_mass_g + rnorm(1, 0, sigma(mod))
+
+# using simulate()
+sim2 <- simulate(mod, nsim = 5)
+```
+
+## Binomial model
+
+```{r}
+#| label: binomial
+sheep <- read_delim("data/SheepData.csv")
+mod2 <- glm(Survival ~ Weight, data = sheep, family = binomial)
+
+par(mfrow = c(2, 2), mar = c(3, 3, 1.5, 1), mgp = c(2, 0.5, 0))
+plot(mod2)
+```
+
+## Mixed-effect models
+
+```{r}
+#| label: mixed
+library(lme4)
+mod3 <- lmer(Reaction ~ Days + (Days|Subject), data = sleepstudy)
+performance::check_model(mod3)
+```
+
+
+## Which model is missing quadratic term
+
+```{r}
+#| label: missing-quadratic
+#| echo: false
+#| fig-height: 3
+
+library(DHARMa)
+library(lme4)
+
+testdata1 = createData(sampleSize = 250, overdispersion = 0, quadraticFixedEffects = -2, family = poisson())
+fitted1 <- glmer(observedResponse ~ Environment1 + (1|group) , family = "poisson", data = testdata1)
+
+plotConventionalResiduals(fitted1)
+
+testData2 = createData(sampleSize = 250, intercept = 0, overdispersion = 0, family = poisson(), randomEffectVariance = 0)
+fitted2 <- glmer(observedResponse ~ Environment1 + (1|group) , family = "poisson", data = testData2)
+plotConventionalResiduals(fitted2)
+```
+
+
+## DHARMa
+
+ "Diagnostics for HierArchical Regression Models"
+
+Standardises residuals to between 0 and 1 
+
+1) Simulate new response data from the fitted model for each observation.
+
+2) For each observation, calculate the empirical cumulative density function for the simulated observations.
+
+3) Residual defined as the value of the empirical density function at the value of the observed data
+
+---
+
+```{r}
+#| label: dharm-explain
+#| echo: false
+
+sim <- simulate(mod, nsim = 1000)[, 1] |> 
+  unlist()
+ecdf <- ggplot() +
+  stat_ecdf(aes(sim), color = "blue") +
+   geom_segment(aes(xend = penguins$bill_length_mm[1], x = penguins$bill_length_mm[1], y = 0, yend = 0.17), color = "red", arrow = arrow(length = unit(0.03, "npc"))) +
+  geom_segment(aes(xend = -Inf, x = penguins$bill_length_mm[1], y = 0.17, yend = 0.17), color = "red", arrow = arrow(length = unit(0.03, "npc"))) +
+  labs(x = "Bill length mm", title = "Empirical cumulative distribution function", y = "Cumulative probability")
+
+den <- ggplot() +
+  geom_density(aes(sim), color = "blue", fill = NA) +
+  geom_vline(xintercept = penguins$bill_length_mm[1], color = "red") +
+  labs(x = "Bill length mm", title = "Density")
+
+den + ecdf
+```
+
+---
+
+- fits many model types (eg lm, glm, lmer, glmer)
+- also Bayesian models with stan etc
+- not quasi models
+
+DHARMa residuals always have same distribution if model is correctly specified.
+
+---
+
+```{r}
+mod_resid <- simulateResiduals(mod)
+plot(mod_resid)
+
+```
+
+Plots against predictions, or any predictor.
+
+## Testing against a categorial predictor
+
+```{r}
+pred <- penguins |> drop_na(bill_length_mm, body_mass_g) |> 
+  pull(species)
+plotResiduals(mod_resid, form = pred)
+```
+
+
+## Interperting significant deviations
+
+- significance is NOT a measures of the strength of the residual pattern
+- a measure of the signal/noise ratio
+- with large sample sizes, even small deviations can be significant
+
+Need to decide if magnitude of deviation is important.
+
+
+
+## DHARMa goodness of fit
+
+- testDispersion()
+- testZeroinflation()
+- testTemporalAutocorrelation()
+- testSpatialAutocorrelation()
+
+## Simulating data to visualise problems
+
+```{r}
+#| label: createData
+overdispersed <- createData(sampleSize = 200, overdispersion = 1.5, family = poisson())
+overdispersedModel <- glm(observedResponse ~  Environment1 , family = "poisson", data = overdispersed)
+
+simulationOutput <- simulateResiduals(fittedModel = overdispersedModel)
+plot(simulationOutput)
+```
+
+---
+
+```{r}
+testOverdispersion(simulationOutput)
+```
+
+## Missing quadratic term
+
+```{r}
+sim1 <- simulateResiduals(fitted1)
+plot(sim1)
+```
+
+---
+
+```{r}
+sim2 <- simulateResiduals(fitted2)
+plot(sim2)
+```
+
+## Further reading
+
+DHARMa vignette

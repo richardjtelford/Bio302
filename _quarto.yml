@@ -12,6 +12,7 @@ project:
     - sample_size_justification.qmd
     - GLM_GAM.qmd
     - Bayesian_data_analysis.qmd
+    - diagnostic_plots.qmd
   
     
 
