@@ -1,0 +1,180 @@
+---
+title: "Using copilot LLM<br> to teach coding"
+subtitle: Experiences from Bio300B
+author: Richard J Telford <_richard.telford@uib.no_>
+institute: Department of Biological Sciences, University of Bergen
+date: today
+date-format: "D MMMM YYYY"
+format: 
+  revealjs:
+    title-slide-attributes:
+      data-background-image: figs/qr-code.svg
+      data-background-size: 20%
+      data-background-position: 98% 98%
+editor: visual
+execute:
+  echo: false
+---
+
+
+
+```{r}
+#| label: qr-code
+# generate qr code
+library(qrcode)
+qr_code("http://richardjtelford.github.io/Bio302/copilot-underviserseminar.html") |> 
+  generate_svg(file = "figs/qr-code.svg")
+```
+
+
+## Bio300B
+
+Master-level introduction to biostatistics with R
+
+-   Data processing
+
+-   Data visualisation
+
+-   Descriptive statistics to generalised linear model and mixed effect models
+
+-   Students have wide range of statistical and coding experience
+
+-   Assessed by portfolio of five assignments
+
+## One approach to LLMs
+
+```{r}
+#| label: UiA
+#| out-width: 100%
+knitr::include_graphics("figs/Screenshot from 2025-01-27 20-37-23.png")
+```
+
+::: aside
+[Khrono 26 August 2024](https://www.khrono.no/pa-denne-eksamenen-ble-hver-tredje-student-felt-for-chatgpt-fusk/895904)
+:::
+
+## An alternative approach
+
+::::: columns
+::: column
+AI is coming
+
+-   Students will use AI (and you cannot prove it)
+
+-   Competitors for jobs are using AI
+
+Students need to be able to use AI effectively
+
+
+Teach to solve problems, not to write code
+
+:::
+
+::: column
+```{r}
+#| label: Canute
+#| out-width: 90%
+knitr::include_graphics("figs/Canute_rebukes_his_courtiers.png")
+```
+:::
+:::::
+
+## Education has adapted to new technologies before
+
+```{r}
+#| label: Calculator
+#| out-width: 90%
+knitr::include_graphics("figs/576px-TI-30-3682e2.jpg")
+```
+
+
+## Tradition help for coding 
+
+-   Function documentation (help files)
+
+-   Vignettes
+
+-   [Stackoverflow.org](Stackoverflow.org)
+
+-   Course material
+
+-   Ask TA for help
+- Ask peers for help
+
+## AI tools to help coding
+
+### ChatBots
+
+-   [chat-GPT](https://chat-gpt.com/)
+
+-   [phind](https://phind.com/)
+
+### Integrated
+
+-   [GitHub Copilot](https://github.com/features/copilot)\
+    Works with VSCode and RStudio\
+    Requires GitHub account\
+    Free with educational license [https://github.com/education](https://github.com/education)
+    
+
+## Use of AI in coding
+
+- explain errors
+- explain code
+- suggest code
+
+Copilot uses context (including comments) to suggest code
+
+Works with any language
+
+## Problems with AI
+
+- AI doesn't understand the problem
+- Imagines functions that don't exist
+- Suggests old solutions
+- Generate nonsense code
+- Can promote poor coding practice
+
+## Potential
+
+- Let AI take care of the syntax so students can focus on problem solving
+- Help students get started
+- Help overcome challenges (unhelpful error messages, difficult documentation)
+
+## Challenges
+
+Will AI limit learning?
+
+## Assessment and LLM
+
+-   Cannot prevent students using LLMs in assessments without returning to timed, proctored exams
+
+-   Timed, proctored exams don't test the learning outcomes we are interested in
+
+- Need to make assessments that are non-trivial for LLMs to solve
+
+  - Open-ended tasks
+  - Tasks that require understanding of the data and the problem
+  - Real datasets
+
+## Students own their code
+
+"Copilot made me do it" is not an excuse for code failing.
+
+Students reponsible for verifying that AI code works as expected.
+
+## Setting up copilot in RStudio
+
+1) Make a github account [github.com](https://github.com)
+2) Get an educational license [github.com/education](https://github.com/education) (free)
+3) In RStudio, go to Tools -> Global Options -> Copilot -> Enable copilot
+4) Press <kbd>tab</kbd> to accept CoPilot suggestions
+5) Use <kbd>ctrl</kbd>+<kbd>space</kbd> to see RStudio autocomplete suggestions
+
+## Literature
+
+Developing literature on utility of AI coding and teaching with AI coding
+
+Becker et al (2023) https://doi.org/10.1145/3545945.3569759
+
+Lau et al 2023 https://doi.org/10.1145/3568813.3600138
