@@ -1,6 +1,6 @@
 ---
 title: Reproducible research
-subtitle: "Bio302 - Biological data analysis II"
+subtitle: "Bio302 - Methods for reproducible and open science"
 author: 
 - name: "Richard J. Telford"
 institute: Department of Biological Sciences, University of Bergen
@@ -11,26 +11,20 @@ editor: visual
 echo: true
 ---
 
-
-## Two Questions
-
- 1. What statistics do you think you need?
- 2. What do you find hard about data analysis?
-
 ## Course Contents
 
-From data to paper:  
+From data to paper:
 
- 1. Reproducible data analysis
- 2. Statistics  
+1.  Reproducible data analysis
+2.  Statistics
 
 ## Assumptions of Least Squares Regression
 
- 1. The relationship between the response and the predictors is ~linear.
- 2. The residuals have a mean of zero.
- 3. The residuals have constant variance (not heteroscedastic).
- 4. The residuals are independent (uncorrelated).
- 5. The residuals are normally distributed.
+1.  The relationship between the response and the predictors is \~linear.
+2.  The residuals have a mean of zero.
+3.  The residuals have constant variance (not heteroscedastic).
+4.  The residuals are independent (uncorrelated).
+5.  The residuals are normally distributed.
 
 How to identify when these assumptions are violated.
 
@@ -38,31 +32,41 @@ What to do when these assumptions are violated.
 
 ## Statistics
 
- - Exploratory data analysis
- - Linear regression
- - Analysis of variance with contrast matrices
- - Generalised least-squares
- - Non-linear least-squares
- - Generalised linear models
- - Generalised additive models
- - Mixed effect models
- - Introduction to Bayesian analysis
+-   Exploratory data analysis
+-   Linear regression
+-   Analysis of variance with contrast matrices
+-   Generalised least-squares
+-   Non-linear least-squares
+-   Generalised linear models
+-   Generalised additive models
+-   Mixed effect models
+-   Introduction to Bayesian analysis
 
 ## Reproducible data analysis
 
- - Is your current data analysis reproducible?
- - Why is reproducible data analysis important?
-  
+-   Why is reproducible data analysis important?
+-   Is your current data analysis reproducible?
+
+## Terminology
+
+Variety of terms in use
+
+- Reproducible - can get same result with same data
+- Replicable - can get same result if experiment repeated
+- Conceptual replication - get the same result with a similar experiment
+
+Often used differently
+
 ## Tools for reproducible data analysis
 
- - Use an integrated development environment (e.g. RStudio)
- - Adopt an R style guide
- - Getting help
- - Version control with git *
- - Quarto for reproducible documents *
- - Data handling with `tidyverse`
- - `targets` pipeline tool *
- 
+-   Use an integrated development environment (e.g. RStudio)
+-   Adopt an R style guide
+-   Getting help
+-   Version control with git \*
+-   Quarto for reproducible documents \*
+-   Data handling with `tidyverse`
+-   `targets` pipeline tool \*
+- Reproducible computational environments \*
 
 ## Reproducibility Crisis
 
@@ -70,9 +74,9 @@ What to do when these assumptions are violated.
 #| echo: false
 #| out-width: 600px
 knitr::include_graphics("figs/F1.large.jpg")
-``` 
+```
 
-Estimating the reproducibility of psychological science [_Science_](https://science.sciencemag.org/content/349/6251/aac4716)
+Estimating the reproducibility of psychological science [*Science*](https://science.sciencemag.org/content/349/6251/aac4716)
 
 ## Ocean Acidification and Fish Behaviour
 
@@ -80,9 +84,9 @@ Estimating the reproducibility of psychological science [_Science_](https://scie
 #| echo: false
 #| out-width: 700px
 knitr::include_graphics("figs/journal.pbio.3001511.g001.PNG")
-``` 
+```
 
-Meta-analysis reveals an extreme “decline effect” in the impacts of ocean acidification on fish behavior Clements et al 2022 [_PLOS Biology_](https://journals.plos.org/plosbiology/article?id=10.1371/journal.pbio.3001511)
+Meta-analysis reveals an extreme “decline effect” in the impacts of ocean acidification on fish behavior Clements et al 2022 [*PLOS Biology*](https://journals.plos.org/plosbiology/article?id=10.1371/journal.pbio.3001511)
 
 ## Most scientists 'can't replicate studies by their peers'
 
@@ -94,41 +98,40 @@ Meta-analysis reveals an extreme “decline effect” in the impacts of ocean ac
 
 ### Questions
 
+-   What is reproducibility?
+-   Why are papers non-reproducible
+-   Does this affect Biology?
+-   What is the role of statistics in reproducible analyses
 
- - What is reproducibility?
- - Why are papers non-reproducible
- - Does this affect Biology?
- - What is the role of statistics in reproducible analyses
- 
- 
-[What does research reproducibility mean?](http://stm.sciencemag.org/content/8/341/341ps12.full) 
+[What does research reproducibility mean?](http://stm.sciencemag.org/content/8/341/341ps12.full)
 
-##
+## Causes on non-reproducibility {.smaller}
 
 Bad luck
 
- - False Discovery
- 
+-   False Discovery
+-   Code errors
+
 Questionable research practices
 
- - HARKING
- - p-Hacking
- - Publication bias
- 
+-   HARKING
+-   p-Hacking / Researcher degrees of freedom
+-   Publication bias
+-  Selective reporting
+
 Misconduct
 
- - Fabrication, Falsification 
-
+-   Fabrication, Falsification
 
 ## P-values
 
 Often misinterpreted
- 
- - Not a measure of effect size or practical significance
- - Not the probability that hypothesis is true
- - Strongly affected by sample size
 
-_If there were actually no effect (if the true difference between means were zero) then the probability of observing a value for the difference equal to, or greater than, that actually observed would be p=0.05._
+-   Not a measure of effect size or practical significance
+-   Not the probability that hypothesis is true
+-   Strongly affected by sample size
+
+*If there were actually no effect (if the true difference between means were zero) then the probability of observing a value for the difference equal to, or greater than, that actually observed would be p=0.05.*
 
 Many assumptions
 
@@ -140,9 +143,8 @@ Many assumptions
 #| out-width: 200px
 knitr::include_graphics("https://imgs.xkcd.com/comics/significant.png")
 
-``` 
+```
 
- 
 ## False discovery rate
 
 ```{r}
@@ -150,14 +152,13 @@ knitr::include_graphics("https://imgs.xkcd.com/comics/significant.png")
 #| cache: true
 #| out-width: 350px
 knitr::include_graphics("https://imgs.xkcd.com/comics/frequentists_vs_bayesians.png")
-``` 
+```
 
+## 
 
-
-##
 [Colquhoun 2014. An investigation of the false discovery rate and the misinterpretation of p-values](http://rsos.royalsocietypublishing.org/content/1/3/140216)
 
-_If you use p=0.05 to suggest that you have made a discovery, you will be wrong at least 30% of the time. If, as is often the case, experiments are underpowered, you will be wrong most of the time_
+*If you use p=0.05 to suggest that you have made a discovery, you will be wrong at least 30% of the time. If, as is often the case, experiments are underpowered, you will be wrong most of the time*
 
 ```{r}
 #| echo: false
@@ -165,7 +166,7 @@ _If you use p=0.05 to suggest that you have made a discovery, you will be wrong 
 #| out-width: 500px
 knitr::include_graphics("https://royalsocietypublishing.org/cms/attachment/07568509-44a9-46a5-beab-65000fa05dae/rsos140216f01.jpg")
 
-``` 
+```
 
 ## Choice of statistical methods
 
@@ -174,21 +175,22 @@ knitr::include_graphics("https://royalsocietypublishing.org/cms/attachment/07568
 #| cache: true
 #| out-width: 700px
 knitr::include_graphics("figs/10.1177_2515245917747646-fig2.jpeg")
-``` 
+```
 
-Silberzahn et al. (2018) Many Analysts, One Data Set: Making Transparent How Variations in Analytic Choices Affect Results. [_Advances in Methods and Practices in Psychological Science_](https://doi.org/10.1177/2515245917747646)
+Silberzahn et al. (2018) Many Analysts, One Data Set: Making Transparent How Variations in Analytic Choices Affect Results.
+[*Advances in Methods and Practices in Psychological Science*](https://doi.org/10.1177/2515245917747646)
 
 ## Questionable research practices
-
 
 ```{r}
 #| echo: false
 #| cache: true
 #| out-width: 500px
 knitr::include_graphics("figs/pone.0200303.g001.PNG_L.png")
-``` 
+```
 
-Fraser H et al (2018) Questionable research practices in ecology and evolution. [PLoS ONE](https://doi.org/10.1371/journal.pone.0200303)
+Fraser H et al (2018) Questionable research practices in ecology and evolution.
+[PLoS ONE](https://doi.org/10.1371/journal.pone.0200303)
 
 ## P-hacking
 
@@ -218,77 +220,75 @@ Can be more difficult to publish "negative" results
 
 Explore publication bias with a shiny app.
 
- - install `biostats.tutorials` package with `remotes::install_github("biostats-r/biostats.tutorials")`
- - load `biostats.tutorials` package with `library()`
- - run `publication_bias_app()`
- 
+-   install `biostats.tutorials` package with `remotes::install_github("biostats-r/biostats.tutorials")`
+-   load `biostats.tutorials` package with `library()`
+-   run `publication_bias_app()`
+
 App simulates the effect of publication bias on the literature if only "significant" studies are published.
 
 Find conditions that cause large publication biases.
 
-
 ## Misconduct?
 
-Schiermeier (2017) Investigation finds Swedish scientists committed scientific misconduct. [_Nature_](https://www.nature.com/articles/d41586-017-08321-2)
+Schiermeier (2017) Investigation finds Swedish scientists committed scientific misconduct.
+[*Nature*](https://www.nature.com/articles/d41586-017-08321-2)
 
-Enserink (2021) Does ocean acidification alter fish behavior? Fraud allegations create a sea of doubt. [_Science_]( https://www.sciencemag.org/news/2021/05/does-ocean-acidification-alter-fish-behavior-fraud-allegations-create-sea-doubt)
+Enserink (2021) Does ocean acidification alter fish behavior?
+Fraud allegations create a sea of doubt.
+[*Science*](https://www.sciencemag.org/news/2021/05/does-ocean-acidification-alter-fish-behavior-fraud-allegations-create-sea-doubt)
 
-Viglione (2020) ‘Avalanche’ of spider-paper retractions shakes behavioural-ecology community [_Nature_](https://www.nature.com/articles/d41586-020-00287-y)
-
+Viglione (2020) ‘Avalanche’ of spider-paper retractions shakes behavioural-ecology community [*Nature*](https://www.nature.com/articles/d41586-020-00287-y)
 
 ## Solutions
 
-- Pre-registration
-- Reproducible workflows
-- Data management plans
-- Archiving data and code
+-   Pre-registration
+-   Reproducible workflows
+-   Data management plans
+-   Archiving data and code
 
 ## Registered reports
 
-1. Write introduction and methods
-2. Peer review
-3. Accept in principle
-3. Do experiments
-4. Write rest of paper
-5. Second peer review
+1.  Write introduction and methods
+2.  Peer review
+3.  Accept in principle
+4.  Do experiments
+5.  Write rest of paper
+6.  Second peer review
 
 Deviations from the accepted plan can be made but need to be noted.
 
-
-
-[Gya et al. 2023]( https://doi.org/10.1002/ece3.10023) Registered Reports: A new chapter at Ecology & Evolution
+[Gya et al. 2023](https://doi.org/10.1002/ece3.10023) Registered Reports: A new chapter at Ecology & Evolution
 
 ## Reproducible workflows
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/58FUfrIM6bE" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/58FUfrIM6bE" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
+
+</iframe>
 
 https://laskowskilab.faculty.ucdavis.edu/2020/08/03/keeping-a-paper-trail-data-management-skills-for-reproducible-science/
-
 
 ## Data management plans
 
 [Open Access to Research Data](https://www.uib.no/en/ub/111372/open-access-research-data)
- 
-Avoid the [stolen laptop scenario](https://retractionwatch.com/2021/05/03/ecologist-who-lost-thesis-awards-earns-expressions-of-concern-after-laptop-stolen/) 
+
+Avoid the [stolen laptop scenario](https://retractionwatch.com/2021/05/03/ecologist-who-lost-thesis-awards-earns-expressions-of-concern-after-laptop-stolen/)
 
 ## Data archiving
 
-- [Zenodo](https://zenodo.org/)
-- [DataDryad](https://datadryad.org/stash)
+-   [Zenodo](https://zenodo.org/)
+-   [DataDryad](https://datadryad.org/stash)
 
 Make data available to others.
-    
+
 ## Code archiving
 
-"Starting January 1, 2022, The American Naturalist will require that any
-analysis and simulation code (R scripts, Matlab scripts, Mathematica notebooks)
-used to generate reported results be archived in a public repository"
+"Starting January 1, 2022, The American Naturalist will require that any analysis and simulation code (R scripts, Matlab scripts, Mathematica notebooks) used to generate reported results be archived in a public repository"
 
 [American Naturalist](http://comments.amnat.org/2021/12/guidelines-for-archiving-code-with-data.html)
- 
+
 ## General Reading
 
- - Gillespie, C and Lovelace, R (2016) Efficient R programming. https://csgillespie.github.io/efficientR/
- - Crawley, MJ (2012) The R Book. Wiley.
- - Wickham, H. and Garrett Grolemund, G. (2017) R for Data Science [https://r4ds.had.co.nz/](https://r4ds.had.co.nz/)
- - Zuur AF et al (2009) Mixed effects models and extensions in ecology with R. Springer. 	
+-   Gillespie, C and Lovelace, R (2016) Efficient R programming. https://csgillespie.github.io/efficientR/
+-   Crawley, MJ (2012) The R Book. Wiley.
+-   Wickham, H. and Garrett Grolemund, G. (2017) R for Data Science <https://r4ds.had.co.nz/>
+-   Zuur AF et al (2009) Mixed effects models and extensions in ecology with R. Springer.
