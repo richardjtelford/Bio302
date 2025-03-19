@@ -10,6 +10,8 @@ echo: true
 
 ```{r setup, include=FALSE}
 library("tidyverse")
+library(tictoc)
+
 theme_set(theme_bw(base_size = 16))
 set.seed(42) # for reproducibility
 ```
@@ -22,20 +24,16 @@ Advantages of large sample sizes?
 
 Advantages of small sample sizes?
 
+## Type of justification
 
-
-## Type of justification  
-
-- Measure entire population 
-- Resource constraints 	 
-- Accuracy
-- A-priori power analysis
-- Heuristics
-- No justification
+-   Measure entire population
+-   Resource constraints\
+-   Accuracy
+-   A-priori power analysis
+-   Heuristics
+-   No justification
 
 [Lakens (2022)](https://doi.org/10.1525/collabra.33267)
-
-
 
 ## Power
 
@@ -227,7 +225,7 @@ test
 broom::glance(test)
 ```
 
-## Make a function to re-run
+## Make a function
 
 ```{r}
 sim_t_test <- function(n, delta, sd, ...){
@@ -247,7 +245,104 @@ sim_t_test(n = 30, delta = 1, sd = 2)
 
 ```
 
-## Repeat many times for different n
+## Repeating functions many times
+
+Very common problem
+
+-   Import many similar datasets
+
+-   Run analyses on multiple datasets
+
+-   Make many plots
+
+Many solutions in R
+
+-   for loops
+
+-   Base R apply family
+
+-   purrr/furrr packages
+
+## for loops
+
+Common in other languages
+
+Useful when one iteration depends on previous
+
+```{r}
+nrep <- 10
+out <- numeric(nrep)
+for(i in 2:nrep) {
+  out[i] <- out[i-1] + rnorm(1)
+}
+```
+
+Good practice to create output object in advance.
+
+Can be very slow if output object grows repeatedly
+
+```{r}
+# slow
+nrep <- 10
+out <- 0
+for(i in 2:nrep) {
+  out <- c(out, out[i-1] + rnorm(1))
+}
+```
+
+## The apply family
+
+-   `apply` iterates over the rows/columns of a data.frame/matrix
+
+-   `lapply` iterates over a list/data.frame and returns a list
+
+-   `sapply` same as `lapply` but simplifies to a vector
+
+Generally better to use purrr for consistent behaviour.
+
+## purrr package
+
+-   `map` iterates over a vector/list and returns a list
+
+```{r}
+rnd <- 1:10 |> 
+  map(rnorm)
+```
+
+```{r}
+rnd <- 1:10 |> 
+  map(\(x)rnorm(x)) # anonymous function
+```
+
+-   `map2` and `pmap` for iterating over multiple inputs
+
+-   `map_chr`/`map_dbl` etc simplify list to a vector
+
+-   pipe to `list_rbind()` to combine data.frames
+
+## furrr package: parallel purrr
+
+For speed with slow jobs.
+
+```{r}
+library(furrr)
+
+no_cores <- availableCores() - 1
+no_cores
+
+sequence <- rep(10, 5)
+plan(sequential)
+tic()
+nothing <- future_map(sequence, Sys.sleep)
+toc()
+
+plan(strategy = multisession, workers = no_cores)
+tic()
+nothing <- future_map(sequence, Sys.sleep)
+toc()
+```
+
+## Rerunning simulation many times
 
 ```{r, message = FALSE}
 nrep = 100
@@ -270,12 +365,14 @@ p <- runs  |>
 ------------------------------------------------------------------------
 
 ```{r echo=FALSE}
+#| label: sim-power
 p + geom_hline(yintercept = 0.8, linetype = "dashed", colour = "grey50")
 ```
 
-## Magnitude of Effect
+## Magnitude of Effect given significance
 
 ```{r, echo = FALSE}
+#| label: sim-bias
 runs |> 
   filter(sig) |> 
   ggplot(aes(x = n, y = estimate, group = n)) +
@@ -294,10 +391,8 @@ Experiment is run in batches.
 
 Can we stop sampling when we get a significant result?
 
-
-
-
 ```{r}
+#| label: optional-stopping
 #| echo: false
  
 set.seed(119)
@@ -333,6 +428,7 @@ sim |> group_by(step) |>
   labs(x = "Sample size", y = "Type I error rate")
   
 ```
+
 But see futility stopping in clinical trials.
 
 ## Summary
